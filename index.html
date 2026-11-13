@@ -236,11 +236,11 @@
                         Meter</span>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <button onclick="toggleSelectAllMeters()" id="selectAllMetersBtn"
+                    <button type="button" onclick="toggleSelectAllMeters()" id="selectAllMetersBtn"
                         class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-bold transition active:scale-95">
                         <span>Select All</span>
                     </button>
-                    <button onclick="openMetersModal()"
+                    <button type="button" onclick="openMetersModal()"
                         class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/60 text-[10px] font-bold transition active:scale-95">
                         <i data-lucide="layers" class="w-3 h-3"></i>
                         <span>Manage / + Add</span>
@@ -250,8 +250,8 @@
 
             <!-- Active EB Meter Dropdown Trigger -->
             <div class="relative" id="meterDropdownWrapper">
-                <div id="meterDropdownTrigger" onclick="toggleMeterDropdown()"
-                    class="px-3 py-2.5 rounded-xl border border-emerald-500 bg-emerald-600 text-white shadow-xs cursor-pointer flex items-center justify-between gap-2 transition active:scale-[0.99]">
+                <div id="meterDropdownTrigger" onclick="toggleMeterDropdown(event)" role="button" tabindex="0"
+                    class="px-3 py-2.5 rounded-xl border border-emerald-500 bg-emerald-600 text-white shadow-xs cursor-pointer flex items-center justify-between gap-2 transition active:scale-[0.99] select-none">
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-1.5 flex-wrap">
                             <span id="dropdownActiveName" class="text-xs font-extrabold truncate">Main Meter</span>
@@ -1185,12 +1185,11 @@
             if (e.target.closest('button, label[for], a')) {
                 triggerHaptic('light');
             }
-            // Close meter dropdown when tapping outside
             const wrapper = document.getElementById('meterDropdownWrapper');
             if (isMeterDropdownOpen && wrapper && !wrapper.contains(e.target)) {
                 setMeterDropdownOpen(false);
             }
-        }, { passive: true });
+        });
 
         // ==================== SYSTEM & MANUAL THEME CONTROLLER ====================
         let currentThemePref = localStorage.getItem(THEME_KEY) || 'system';
@@ -1499,7 +1498,10 @@
             }
         }
 
-        function toggleMeterDropdown() {
+        function toggleMeterDropdown(event) {
+            if (event && typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
             setMeterDropdownOpen(!isMeterDropdownOpen);
             triggerHaptic('light');
         }
@@ -2430,7 +2432,6 @@
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        // Clear Home Screen badge when user returns to the app & re-check missed schedule
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
                 clearUnreadNotificationBadge();
