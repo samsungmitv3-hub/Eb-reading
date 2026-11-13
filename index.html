@@ -139,7 +139,11 @@
         }
 
         .pt-safe-header {
-            padding-top: max(0.75rem, env(safe-area-inset-top));
+            padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+        }
+
+        .pt-safe-main {
+            padding-top: calc(env(safe-area-inset-top, 0px) + 6.75rem);
         }
 
         .pb-safe-nav {
@@ -160,10 +164,10 @@
         class="fixed bottom-24 inset-x-0 z-[70] px-4 pointer-events-none flex flex-col items-center justify-center gap-2">
     </div>
 
-    <!-- Top Sticky App Header -->
+    <!-- Top Fixed App Header (iOS Safe-Area Aware) -->
     <header
-        class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors">
-        <div class="max-w-lg mx-auto px-4 pt-safe-header pb-2.5">
+        class="fixed top-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors pt-safe-header">
+        <div class="max-w-lg mx-auto px-4 pb-2.5">
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div
@@ -217,7 +221,7 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="max-w-lg mx-auto px-4 pt-4 space-y-4">
+    <main class="max-w-lg mx-auto px-4 pt-safe-main space-y-4">
 
         <!-- ==================== TAB 1: DASHBOARD ==================== -->
         <section id="view-dashboard" class="view-section space-y-4">
