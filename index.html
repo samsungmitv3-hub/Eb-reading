@@ -211,6 +211,8 @@
                         <i data-lucide="bell" class="w-4 h-4"></i>
                         <span id="bellActiveDot"
                             class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span id="bellUnreadBadge"
+                            class="hidden absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-rose-600 text-white text-[9px] font-extrabold flex items-center justify-center shadow-xs">1</span>
                     </button>
                     <button onclick="openBackupModal()" title="Backup & Export Data"
                         class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
@@ -1025,7 +1027,53 @@
         const STORAGE_KEY = 'tneb_smart_tracker_v2';
         const THEME_KEY = 'tneb_theme_pref';
         const REMINDER_KEY = 'tneb_weekly_reminder_v1';
+        const BASE_TITLE = 'TNEB Smart Meter & Bi-Monthly Bill Tracker';
         let paceChartInstance = null;
+
+        // ==================== HOME SCREEN APP ICON BADGE ENGINE ====================
+        function updateHomeScreenBadge(count) {
+            const badgeCount = Math.max(0, Math.round(Number(count) || 0));
+            try {
+                if ('setAppBadge' in navigator) {
+                    if (badgeCount > 0) {
+                        navigator.setAppBadge(badgeCount).catch(() => { });
+                    } else if ('clearAppBadge' in navigator) {
+                        navigator.clearAppBadge().catch(() => { });
+                    }
+                }
+            } catch (e) { }
+
+            // Fallback title count & dynamic Home Screen / favicon badge indicator
+            document.title = badgeCount > 0 ? `(${badgeCount}) ${BASE_TITLE}` : BASE_TITLE;
+            updateDynamicAppIcon(badgeCount);
+
+            const bellDot = document.getElementById('bellActiveDot');
+            const bellUnread = document.getElementById('bellUnreadBadge');
+            const prefs = getReminderPrefs();
+            if (bellUnread) {
+                bellUnread.textContent = badgeCount > 9 ? '9+' : String(badgeCount);
+                bellUnread.classList.toggle('hidden', badgeCount <= 0);
+            }
+            if (bellDot) {
+                bellDot.classList.toggle('hidden', !prefs.enabled || badgeCount > 0);
+            }
+        }
+
+        function clearUnreadNotificationBadge() {
+            const prefs = getReminderPrefs();
+            if ((prefs.unreadCount || 0) > 0) {
+                prefs.unreadCount = 0;
+                setReminderPrefs(prefs);
+            }
+            updateHomeScreenBadge(0);
+        }
+
+        function incrementUnreadNotificationBadge() {
+            const prefs = getReminderPrefs();
+            prefs.unreadCount = (prefs.unreadCount || 0) + 1;
+            setReminderPrefs(prefs);
+            updateHomeScreenBadge(prefs.unreadCount);
+        }
 
         // ==================== iOS & MOBILE HAPTIC ENGINE ====================
         function triggerHaptic(style = 'light') {
@@ -1764,6 +1812,7 @@
 
         // --- Reading Modal ---
         function openReadingModal() {
+            clearUnreadNotificationBadge();
             const meter = getActiveMeter();
             const m = getMeterMetrics(meter);
             document.getElementById('readingModalMeterSubtitle').textContent = `${meter.name} · ${formatDisplayDate(m.startStr)} → ${formatDisplayDate(m.endStr)}`;
@@ -1817,6 +1866,7 @@
                 reading: val,
                 note: noteVal
             });
+            clearUnreadNotificationBadge();
             saveState();
             closeModal('readingModal');
             renderAll();
@@ -2258,8 +2308,21 @@
             renderAll();
             updateSimulator();
             initWeeklyReminderScheduler();
+            const prefs = getReminderPrefs();
+            updateHomeScreenBadge(prefs.unreadCount || 0);
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
+
+        // Clear Home Screen badge when user returns to the app
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                clearUnreadNotificationBadge();
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            clearUnreadNotificationBadge();
+        });
 
         // ==================== WEEKLY READING NOTIFICATIONS & CALENDAR ALERTS ====================
         const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -2269,7 +2332,7 @@
                 const raw = localStorage.getItem(REMINDER_KEY);
                 if (raw) return JSON.parse(raw);
             } catch (e) { }
-            return { enabled: true, dayOfWeek: 0, time: '09:00', lastNotifiedDate: '' };
+            return { enabled: true, dayOfWeek: 0, time: '09:00', lastNotifiedDate: '', unreadCount: 0 };
         }
 
         function setReminderPrefs(prefs) {
@@ -2280,6 +2343,7 @@
 
         function openReminderModal() {
             triggerHaptic('light');
+            clearUnreadNotificationBadge();
             const prefs = getReminderPrefs();
             document.getElementById('inputReminderDay').value = String(prefs.dayOfWeek);
             document.getElementById('inputReminderTime').value = prefs.time || '09:00';
@@ -2337,9 +2401,15 @@
 
         function updateReminderUI(meter, m) {
             const prefs = getReminderPrefs();
+            const unread = prefs.unreadCount || 0;
             const bellDot = document.getElementById('bellActiveDot');
+            const bellUnread = document.getElementById('bellUnreadBadge');
+            if (bellUnread) {
+                bellUnread.textContent = unread > 9 ? '9+' : String(unread);
+                bellUnread.classList.toggle('hidden', unread <= 0);
+            }
             if (bellDot) {
-                bellDot.classList.toggle('hidden', !prefs.enabled);
+                bellDot.classList.toggle('hidden', !prefs.enabled || unread > 0);
             }
         }
 
@@ -2349,11 +2419,15 @@
             const title = isTest ? 'TNEB Tracker · Test Weekly Alert' : `TNEB Meter Check Due (${meter.name})`;
             const body = `Current usage: ${Math.round(m.actualUnits)} kWh (Est. ₹${m.actualBillObj.total}). Tap to log this week's meter reading.`;
 
+            // Increment Home Screen app icon badge count when notification fires
+            incrementUnreadNotificationBadge();
+
             if ('Notification' in window && Notification.permission === 'granted') {
                 try {
-                    const n = new Notification(title, { body });
+                    const n = new Notification(title, { body, badge: document.getElementById('appleTouchIcon')?.href || undefined });
                     n.onclick = () => {
                         window.focus();
+                        clearUnreadNotificationBadge();
                         openReadingModal();
                     };
                     return true;
@@ -2367,14 +2441,15 @@
                 try {
                     const perm = await Notification.requestPermission();
                     if (perm !== 'granted') {
-                        showToast('Browser notifications blocked', 'error');
+                        incrementUnreadNotificationBadge();
+                        showToast('Badge set (allow browser notifications for system alert)', 'error');
                         return;
                     }
                 } catch (e) { }
             }
             const sent = fireReadingReminderNotification(true);
             triggerHaptic('success');
-            showToast(sent ? 'Test notification sent!' : 'Weekly reminder preview triggered');
+            showToast(sent ? 'Test notification & Home Screen badge sent!' : 'Weekly reminder badge triggered');
         }
 
         function downloadWeeklyCalendarICS() {
@@ -2449,59 +2524,93 @@
             setInterval(checkSchedule, 60000);
         }
 
-        // ==================== PWA / ADD TO HOME SCREEN SETUP ====================
+        // ==================== PWA / ADD TO HOME SCREEN & DYNAMIC ICON BADGE ====================
         let deferredInstallPrompt = null;
+        let lastManifestBlobUrl = null;
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredInstallPrompt = e;
         });
 
-        function setupPWA() {
+        function renderIconDataUrl(badgeCount = 0) {
+            const iconCanvas = document.createElement('canvas');
+            iconCanvas.width = 512;
+            iconCanvas.height = 512;
+            const ctx = iconCanvas.getContext('2d');
+            if (!ctx) return '';
+
+            const grad = ctx.createLinearGradient(0, 0, 512, 512);
+            grad.addColorStop(0, '#059669');
+            grad.addColorStop(1, '#0f766e');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 512, 512);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.moveTo(285, 96);
+            ctx.lineTo(154, 282);
+            ctx.lineTo(248, 282);
+            ctx.lineTo(222, 416);
+            ctx.lineTo(358, 226);
+            ctx.lineTo(264, 226);
+            ctx.closePath();
+            ctx.fill();
+
+            if (badgeCount > 0) {
+                const cx = 408;
+                const cy = 104;
+                const r = 74;
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.lineWidth = 12;
+                ctx.strokeStyle = '#ffffff';
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 76px Inter, -apple-system, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(badgeCount > 9 ? '9+' : String(badgeCount), cx, cy + 4);
+            }
+
+            return iconCanvas.toDataURL('image/png');
+        }
+
+        function updateDynamicAppIcon(badgeCount = 0) {
             try {
-                const iconCanvas = document.createElement('canvas');
-                iconCanvas.width = 512;
-                iconCanvas.height = 512;
-                const ctx = iconCanvas.getContext('2d');
-                if (ctx) {
-                    const grad = ctx.createLinearGradient(0, 0, 512, 512);
-                    grad.addColorStop(0, '#059669');
-                    grad.addColorStop(1, '#0f766e');
-                    ctx.fillStyle = grad;
-                    ctx.fillRect(0, 0, 512, 512);
+                const iconDataUrl = renderIconDataUrl(badgeCount);
+                if (!iconDataUrl) return;
 
-                    ctx.fillStyle = '#ffffff';
-                    ctx.beginPath();
-                    ctx.moveTo(285, 96);
-                    ctx.lineTo(154, 282);
-                    ctx.lineTo(248, 282);
-                    ctx.lineTo(222, 416);
-                    ctx.lineTo(358, 226);
-                    ctx.lineTo(264, 226);
-                    ctx.closePath();
-                    ctx.fill();
+                const appleIcon = document.getElementById('appleTouchIcon');
+                if (appleIcon) appleIcon.href = iconDataUrl;
 
-                    const iconDataUrl = iconCanvas.toDataURL('image/png');
-                    const appleIcon = document.getElementById('appleTouchIcon');
-                    if (appleIcon) appleIcon.href = iconDataUrl;
-
-                    const manifestObj = {
-                        name: 'TNEB Smart Meter & Bill Tracker',
-                        short_name: 'TNEB Tracker',
-                        description: 'Bi-monthly TNEB kWh & bill tracker (28th to 27th cycle)',
-                        start_url: window.location.href,
-                        display: 'standalone',
-                        background_color: '#020617',
-                        theme_color: '#059669',
-                        icons: [
-                            { src: iconDataUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-                        ]
-                    };
-                    const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
-                    const manifestLink = document.getElementById('pwaManifestLink');
-                    if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
-                }
+                const manifestObj = {
+                    name: 'TNEB Smart Meter & Bill Tracker',
+                    short_name: 'TNEB Tracker',
+                    description: 'Bi-monthly TNEB kWh & bill tracker (28th to 27th cycle)',
+                    start_url: window.location.href,
+                    display: 'standalone',
+                    background_color: '#020617',
+                    theme_color: '#059669',
+                    icons: [
+                        { src: iconDataUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+                    ]
+                };
+                if (lastManifestBlobUrl) URL.revokeObjectURL(lastManifestBlobUrl);
+                const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+                lastManifestBlobUrl = URL.createObjectURL(manifestBlob);
+                const manifestLink = document.getElementById('pwaManifestLink');
+                if (manifestLink) manifestLink.href = lastManifestBlobUrl;
             } catch (e) { }
+        }
+
+        function setupPWA() {
+            const prefs = getReminderPrefs();
+            updateDynamicAppIcon(prefs.unreadCount || 0);
         }
 
         async function installPWA() {
