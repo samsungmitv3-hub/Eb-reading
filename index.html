@@ -80,7 +80,7 @@
             color-scheme: dark;
         }
 
-        /* Hide scrollbars cleanly on horizontal meter pills */
+        /* Hide scrollbars cleanly */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -226,14 +226,14 @@
     <!-- Main Content Container -->
     <main class="max-w-lg mx-auto px-4 pt-safe-main space-y-3.5">
 
-        <!-- Compact Meter Switcher Card with Multi-Select Combined Total (Hidden on Slabs tab) -->
+        <!-- Compact EB Meter Dropdown & Multi-Select Combined Total Card (Hidden on Slabs tab) -->
         <div id="yourMetersCard"
-            class="bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-2">
+            class="bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-2.5 relative">
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-1.5">
                     <i data-lucide="gauge" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
-                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">Your
-                        Meters</span>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">EB
+                        Meter</span>
                 </div>
                 <div class="flex items-center gap-1.5">
                     <button onclick="toggleSelectAllMeters()" id="selectAllMetersBtn"
@@ -248,14 +248,41 @@
                 </div>
             </div>
 
-            <!-- Compact Individual Meter Rows -->
-            <div id="meterPillsContainer" class="space-y-1.5">
-                <div onclick="selectMeter('default-home')"
-                    class="px-2.5 py-2 rounded-xl border border-emerald-500 bg-emerald-600 text-white shadow-sm cursor-pointer">
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="text-xs font-extrabold truncate">Main Meter</span>
-                        <span class="text-[11px] font-extrabold px-1.5 py-0.5 rounded-md bg-white/20 text-white">0u</span>
+            <!-- Active EB Meter Dropdown Trigger -->
+            <div class="relative" id="meterDropdownWrapper">
+                <div id="meterDropdownTrigger" onclick="toggleMeterDropdown()"
+                    class="px-3 py-2.5 rounded-xl border border-emerald-500 bg-emerald-600 text-white shadow-xs cursor-pointer flex items-center justify-between gap-2 transition active:scale-[0.99]">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span id="dropdownActiveName" class="text-xs font-extrabold truncate">Main Meter</span>
+                            <span id="dropdownActiveSC"
+                                class="hidden text-[10px] tracking-wide px-1.5 py-0.2 rounded bg-amber-300 text-slate-950 font-extrabold shrink-0"></span>
+                            <span id="dropdownActiveTariff"
+                                class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-white/20 text-white shrink-0">LT-IA</span>
+                        </div>
+                        <p id="dropdownActiveSub"
+                            class="text-[10px] font-medium text-emerald-100 truncate leading-tight mt-0.5">
+                            28 Oct → 27 Dec (60d) · ₹0
+                        </p>
                     </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <span id="dropdownActiveUnits"
+                            class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-white/20 text-white">0u</span>
+                        <button type="button" onclick="event.stopPropagation(); openActiveMeterForm()"
+                            title="Edit Meter Settings"
+                            class="p-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white transition active:scale-95">
+                            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <div class="w-6 h-6 rounded-lg bg-white/15 flex items-center justify-center">
+                            <i id="meterDropdownChevron" data-lucide="chevron-down"
+                                class="w-4 h-4 text-white transition-transform duration-200"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dropdown Menu List of All EB Meters -->
+                <div id="meterDropdownMenu"
+                    class="hidden mt-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-1.5 space-y-1 max-h-64 overflow-y-auto">
                 </div>
             </div>
 
@@ -267,7 +294,7 @@
                         class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Selected
                         Total (1 Meter)</span>
                     <span id="selectedMetersNamesHint"
-                        class="text-[10px] text-slate-400 dark:text-slate-500 truncate block">Tap checkboxes to combine
+                        class="text-[10px] text-slate-400 dark:text-slate-500 truncate block">Open dropdown to combine
                         meters</span>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
@@ -1035,6 +1062,7 @@
         const BASE_TITLE = 'TNEB Smart Meter & Bi-Monthly Bill Tracker';
         let paceChartInstance = null;
         let swRegistration = null;
+        let isMeterDropdownOpen = false;
 
         // ==================== SERVICE WORKER FOR iOS & MOBILE NOTIFICATIONS ====================
         async function registerInlineServiceWorker() {
@@ -1156,6 +1184,11 @@
         document.addEventListener('click', (e) => {
             if (e.target.closest('button, label[for], a')) {
                 triggerHaptic('light');
+            }
+            // Close meter dropdown when tapping outside
+            const wrapper = document.getElementById('meterDropdownWrapper');
+            if (isMeterDropdownOpen && wrapper && !wrapper.contains(e.target)) {
+                setMeterDropdownOpen(false);
             }
         }, { passive: true });
 
@@ -1453,6 +1486,29 @@
             };
         }
 
+        // ==================== EB METER DROPDOWN CONTROLS ====================
+        function setMeterDropdownOpen(open) {
+            isMeterDropdownOpen = Boolean(open);
+            const menu = document.getElementById('meterDropdownMenu');
+            const chevron = document.getElementById('meterDropdownChevron');
+            if (menu) {
+                menu.classList.toggle('hidden', !isMeterDropdownOpen);
+            }
+            if (chevron) {
+                chevron.style.transform = isMeterDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        function toggleMeterDropdown() {
+            setMeterDropdownOpen(!isMeterDropdownOpen);
+            triggerHaptic('light');
+        }
+
+        function openActiveMeterForm() {
+            const meter = getActiveMeter();
+            openMeterFormModal(meter.id);
+        }
+
         // ==================== MULTI-SELECT METER SUMMARY ====================
         function toggleMeterSelection(meterId) {
             if (!Array.isArray(appState.selectedMeterIds)) {
@@ -1507,7 +1563,7 @@
             }
             if (namesHintEl) {
                 namesHintEl.textContent = count === 0
-                    ? 'Tap checkboxes to sum units & bills'
+                    ? 'Open dropdown to sum units & bills'
                     : selectedMeters.map(m => m.name).join(' + ');
             }
             if (unitsEl) {
@@ -1532,47 +1588,50 @@
                 headerTariffBadge.textContent = meter.tariff === 'common' ? 'LT-ID' : 'LT-IA';
             }
 
-            // 1. Compact Individual Meter Rows with Selection Checkbox, Highlighted Consumer Number & Bill
-            const pillsContainer = document.getElementById('meterPillsContainer');
-            if (pillsContainer) {
-                pillsContainer.innerHTML = appState.meters.map(item => {
+            // 1A. Populate Active EB Meter Dropdown Trigger
+            const activeTariffShort = meter.tariff === 'common' ? 'LT-ID' : 'LT-IA';
+            const ddName = document.getElementById('dropdownActiveName');
+            const ddSC = document.getElementById('dropdownActiveSC');
+            const ddTariff = document.getElementById('dropdownActiveTariff');
+            const ddSub = document.getElementById('dropdownActiveSub');
+            const ddUnits = document.getElementById('dropdownActiveUnits');
+
+            if (ddName) ddName.textContent = meter.name;
+            if (ddSC) {
+                if (meter.serviceNo) {
+                    ddSC.textContent = `SC ${meter.serviceNo}`;
+                    ddSC.classList.remove('hidden');
+                } else {
+                    ddSC.classList.add('hidden');
+                }
+            }
+            if (ddTariff) ddTariff.textContent = activeTariffShort;
+            if (ddSub) {
+                ddSub.textContent = `${formatDisplayDate(m.startStr)} → ${formatDisplayDate(m.endStr)} (${m.totalCycleDays}d) · ₹${m.actualBillObj.total.toLocaleString('en-IN')}`;
+            }
+            if (ddUnits) ddUnits.textContent = `${Math.round(m.actualUnits)}u`;
+
+            // 1B. Populate EB Meter Dropdown Menu Options
+            const dropdownMenu = document.getElementById('meterDropdownMenu');
+            if (dropdownMenu) {
+                dropdownMenu.innerHTML = appState.meters.map(item => {
                     const isActive = item.id === meter.id;
                     const isChecked = (appState.selectedMeterIds || []).includes(item.id);
                     const itemMetrics = getMeterMetrics(item);
                     const tariffShort = item.tariff === 'common' ? 'LT-ID' : 'LT-IA';
 
-                    const cardClasses = isActive
-                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-xs'
-                        : 'bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800';
-                    const tariffBadgeClasses = isActive
-                        ? 'bg-white/20 text-white'
-                        : 'bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300';
-                    const consumerBadgeClasses = isActive
-                        ? 'bg-amber-300 text-slate-950 font-extrabold'
-                        : 'bg-amber-100 dark:bg-amber-950/90 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/70 font-extrabold';
-                    const subTextClasses = isActive
-                        ? 'text-emerald-100'
-                        : 'text-slate-500 dark:text-slate-400';
-                    const unitBadgeClasses = isActive
-                        ? 'bg-white/20 text-white'
-                        : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200/70 dark:border-slate-700';
-                    const editBtnClasses = isActive
-                        ? 'bg-white/15 hover:bg-white/25 text-white'
-                        : 'bg-white dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700';
-                    const checkBtnClasses = isChecked
-                        ? (isActive
-                            ? 'bg-white text-emerald-700 border-white'
-                            : 'bg-emerald-600 text-white border-emerald-600')
-                        : (isActive
-                            ? 'bg-emerald-700/60 text-transparent border-white/50'
-                            : 'bg-white dark:bg-slate-900 text-transparent border-slate-300 dark:border-slate-600');
-
+                    const rowClasses = isActive
+                        ? 'bg-emerald-50 dark:bg-emerald-950/70 text-slate-900 dark:text-white border-emerald-300 dark:border-emerald-700'
+                        : 'bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-900 dark:text-white border-transparent';
                     const consumerBadgeHTML = item.serviceNo
-                        ? `<span class="text-[10px] tracking-wide px-1.5 py-0.2 rounded shrink-0 ${consumerBadgeClasses}">SC ${escapeHTML(item.serviceNo)}</span>`
+                        ? `<span class="text-[10px] tracking-wide px-1.5 py-0.2 rounded shrink-0 bg-amber-100 dark:bg-amber-950/90 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/70 font-extrabold">SC ${escapeHTML(item.serviceNo)}</span>`
                         : '';
+                    const checkBtnClasses = isChecked
+                        ? 'bg-emerald-600 text-white border-emerald-600'
+                        : 'bg-white dark:bg-slate-900 text-transparent border-slate-300 dark:border-slate-600';
 
                     return `
-                        <div onclick="selectMeter('${item.id}')" class="px-2.5 py-1.5 rounded-xl border transition cursor-pointer flex items-center justify-between gap-2 ${cardClasses}">
+                        <div onclick="selectMeter('${item.id}'); setMeterDropdownOpen(false);" class="px-2.5 py-2 rounded-xl border transition cursor-pointer flex items-center justify-between gap-2 ${rowClasses}">
                             <button type="button" onclick="event.stopPropagation(); toggleMeterSelection('${item.id}')" title="Include in Combined Total" class="w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition active:scale-90 ${checkBtnClasses}">
                                 <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>
                             </button>
@@ -1580,15 +1639,15 @@
                                 <div class="flex items-center gap-1.5 flex-wrap">
                                     <span class="text-xs font-extrabold truncate">${escapeHTML(item.name)}</span>
                                     ${consumerBadgeHTML}
-                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0 ${tariffBadgeClasses}">${tariffShort}</span>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0 bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300">${tariffShort}</span>
                                 </div>
-                                <p class="text-[10px] font-medium truncate leading-tight mt-0.5 ${subTextClasses}">
-                                    ${formatDisplayDate(itemMetrics.startStr)} → ${formatDisplayDate(itemMetrics.endStr)} (${itemMetrics.totalCycleDays}d) · ₹${itemMetrics.actualBillObj.total.toLocaleString('en-IN')}
+                                <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate leading-tight mt-0.5">
+                                    ${formatDisplayDate(itemMetrics.startStr)} → ${formatDisplayDate(itemMetrics.endStr)} · ₹${itemMetrics.actualBillObj.total.toLocaleString('en-IN')}
                                 </p>
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
-                                <span class="text-[11px] font-extrabold px-1.5 py-0.5 rounded-lg ${unitBadgeClasses}">${Math.round(itemMetrics.actualUnits)}u</span>
-                                <button onclick="event.stopPropagation(); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="p-1.5 rounded-lg transition active:scale-95 ${editBtnClasses}">
+                                <span class="text-[11px] font-extrabold px-1.5 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200">${Math.round(itemMetrics.actualUnits)}u</span>
+                                <button type="button" onclick="event.stopPropagation(); setMeterDropdownOpen(false); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="p-1.5 rounded-lg bg-white dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700 transition active:scale-95">
                                     <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
@@ -1816,6 +1875,7 @@
 
         // ==================== MODAL & ACTION HANDLERS ====================
         function switchTab(tabName) {
+            setMeterDropdownOpen(false);
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
             document.getElementById(`view-${tabName}`).classList.remove('hidden');
 
@@ -1853,6 +1913,7 @@
         }
 
         function openBackupModal() {
+            setMeterDropdownOpen(false);
             triggerHaptic('light');
             const modal = document.getElementById('backupModal');
             if (modal) {
@@ -1863,6 +1924,7 @@
 
         // --- Reading Modal ---
         function openReadingModal() {
+            setMeterDropdownOpen(false);
             clearUnreadNotificationBadge();
             const meter = getActiveMeter();
             const m = getMeterMetrics(meter);
@@ -1935,6 +1997,7 @@
 
         // --- Reset Cycle Modal ---
         function openResetModal() {
+            setMeterDropdownOpen(false);
             const meter = getActiveMeter();
             const m = getMeterMetrics(meter);
             document.getElementById('resetArchiveWindow').textContent = `${formatDisplayDate(m.startStr)} → ${formatDisplayDate(m.endStr)}`;
@@ -1981,6 +2044,7 @@
 
         // --- Manage Individual Meters ---
         function openMetersModal() {
+            setMeterDropdownOpen(false);
             renderMetersListModal();
             document.getElementById('metersModal').classList.remove('hidden');
             if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -2020,6 +2084,7 @@
         }
 
         function openMeterFormModal(meterId = null) {
+            setMeterDropdownOpen(false);
             closeModal('metersModal');
             const isEdit = Boolean(meterId);
             document.getElementById('meterFormTitle').textContent = isEdit ? 'Edit Individual Meter' : 'Add Individual Meter';
@@ -2419,6 +2484,7 @@
         }
 
         function openReminderModal() {
+            setMeterDropdownOpen(false);
             triggerHaptic('light');
             clearUnreadNotificationBadge();
             const prefs = getReminderPrefs();
@@ -2499,11 +2565,9 @@
             const body = `Current usage: ${Math.round(m.actualUnits)} kWh (Est. ₹${m.actualBillObj.total}). Tap to log this week's meter reading.`;
             const iconUrl = document.getElementById('appleTouchIcon')?.href || undefined;
 
-            // Increment Home Screen app icon badge count when notification fires
             incrementUnreadNotificationBadge();
 
             if ('Notification' in window && Notification.permission === 'granted') {
-                // 1. Prefer Service Worker showNotification (required by iOS Safari / Home Screen PWAs)
                 try {
                     const reg = swRegistration || await registerInlineServiceWorker();
                     if (reg && typeof reg.showNotification === 'function') {
@@ -2518,7 +2582,6 @@
                     }
                 } catch (e) { }
 
-                // 2. Fallback to standard Window Notification API
                 try {
                     const n = new Notification(title, { body, icon: iconUrl, badge: iconUrl });
                     n.onclick = () => {
@@ -2612,7 +2675,6 @@
             const todayStr = getTodayStr();
             if (prefs.lastNotifiedDate === todayStr) return;
 
-            // Check if today is the scheduled day and time has arrived
             if (now.getDay() === prefs.dayOfWeek) {
                 const [hh, mm] = (prefs.time || '09:00').split(':').map(Number);
                 const nowMins = now.getHours() * 60 + now.getMinutes();
@@ -2625,8 +2687,6 @@
                 }
             }
 
-            // iOS background catch-up: if iOS froze the app during the scheduled day/time,
-            // fire once when opened if no reading was logged in the past 7+ days
             const meter = getActiveMeter();
             const m = getMeterMetrics(meter);
             const daysSinceLastCheck = diffDays(m.latestDateStr, todayStr);
