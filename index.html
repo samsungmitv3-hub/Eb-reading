@@ -222,60 +222,38 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="max-w-lg mx-auto px-4 pt-safe-main space-y-4">
+    <main class="max-w-lg mx-auto px-4 pt-safe-main space-y-3.5">
 
-        <!-- Convenient Meter Switcher Card with Full Individual Meter Details -->
+        <!-- Compact Meter Switcher Card -->
         <div
-            class="bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-3">
+            class="bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-2">
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-1.5">
-                    <i data-lucide="gauge" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
-                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">Your
+                    <i data-lucide="gauge" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">Your
                         Meters</span>
                 </div>
                 <button onclick="openMetersModal()"
-                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/60 text-[11px] font-bold transition active:scale-95">
+                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/60 text-[10px] font-bold transition active:scale-95">
                     <i data-lucide="layers" class="w-3 h-3"></i>
                     <span>Manage / + Add</span>
                 </button>
             </div>
 
-            <!-- Individual Meter Cards with Tariff, Cycle Dates, SC & Settings -->
-            <div id="meterPillsContainer" class="space-y-2">
+            <!-- Compact Individual Meter Rows -->
+            <div id="meterPillsContainer" class="space-y-1.5">
                 <div onclick="selectMeter('default-home')"
-                    class="p-3 rounded-2xl border border-emerald-500 bg-emerald-600 text-white shadow-sm cursor-pointer">
+                    class="px-2.5 py-2 rounded-xl border border-emerald-500 bg-emerald-600 text-white shadow-sm cursor-pointer">
                     <div class="flex items-center justify-between gap-2">
-                        <span class="text-sm font-extrabold truncate">Main Meter</span>
-                        <span class="text-xs font-extrabold px-2 py-0.5 rounded-lg bg-white/20 text-white">0u</span>
+                        <span class="text-xs font-extrabold truncate">Main Meter</span>
+                        <span class="text-[11px] font-extrabold px-1.5 py-0.5 rounded-md bg-white/20 text-white">0u</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- ==================== TAB 1: DASHBOARD ==================== -->
-        <section id="view-dashboard" class="view-section space-y-4">
-
-            <!-- Weekly Reading Reminder Due Banner -->
-            <div id="weeklyReminderDueBanner"
-                class="hidden rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50/70 dark:from-amber-950/60 dark:to-orange-950/40 border border-amber-200/80 dark:border-amber-800/60 p-3.5 flex items-center justify-between gap-2.5">
-                <div class="flex items-start gap-2.5 min-w-0 flex-1">
-                    <div
-                        class="w-9 h-9 rounded-xl bg-amber-500/15 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
-                        <i data-lucide="bell-ring" class="w-4 h-4"></i>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-xs font-extrabold text-amber-950 dark:text-amber-200 leading-snug">Weekly Meter
-                            Check Due</p>
-                        <p id="weeklyReminderDueSub"
-                            class="text-[11px] font-medium text-amber-800/90 dark:text-amber-300/90 leading-snug mt-0.5 break-words">
-                            Last reading: 28 Oct (16d ago)</p>
-                    </div>
-                </div>
-                <button onclick="openReadingModal()"
-                    class="shrink-0 px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold shadow-xs transition active:scale-95">
-                    Log Now
-                </button>
-            </div>
+        <section id="view-dashboard" class="view-section space-y-3.5">
 
             <!-- Primary Bi-Month Cycle Status & Bill Card -->
             <div
@@ -1343,17 +1321,17 @@
                 headerTariffBadge.textContent = meter.tariff === 'common' ? 'LT-ID' : 'LT-IA';
             }
 
-            // 1. Individual Meter Cards with Full Details (Tariff, Dates, SC & Settings)
+            // 1. Compact Individual Meter Rows with Tariff, Dates, SC & Settings
             const pillsContainer = document.getElementById('meterPillsContainer');
             if (pillsContainer) {
                 pillsContainer.innerHTML = appState.meters.map(item => {
                     const isActive = item.id === meter.id;
                     const itemMetrics = getMeterMetrics(item);
-                    const tariffShort = item.tariff === 'common' ? 'Common LT-ID' : 'Domestic LT-IA (200 Free ≤500u)';
-                    const serviceText = item.serviceNo ? ` · SC: ${escapeHTML(item.serviceNo)}` : '';
+                    const tariffShort = item.tariff === 'common' ? 'LT-ID' : 'LT-IA';
+                    const serviceText = item.serviceNo ? ` · SC:${escapeHTML(item.serviceNo)}` : '';
 
                     const cardClasses = isActive
-                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-xs'
                         : 'bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800';
                     const tariffBadgeClasses = isActive
                         ? 'bg-white/20 text-white'
@@ -1369,19 +1347,19 @@
                         : 'bg-white dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700';
 
                     return `
-                        <div onclick="selectMeter('${item.id}')" class="p-3 rounded-2xl border transition cursor-pointer flex items-center justify-between gap-2.5 ${cardClasses}">
+                        <div onclick="selectMeter('${item.id}')" class="px-2.5 py-1.5 rounded-xl border transition cursor-pointer flex items-center justify-between gap-2 ${cardClasses}">
                             <div class="min-w-0 flex-1">
-                                <div class="flex items-center gap-1.5 flex-wrap">
-                                    <span class="text-sm font-extrabold truncate">${escapeHTML(item.name)}</span>
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 ${tariffBadgeClasses}">${tariffShort}</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-extrabold truncate">${escapeHTML(item.name)}</span>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0 ${tariffBadgeClasses}">${tariffShort}</span>
                                 </div>
-                                <p class="text-[11px] font-medium truncate mt-1 ${subTextClasses}">
+                                <p class="text-[10px] font-medium truncate leading-tight mt-0.5 ${subTextClasses}">
                                     ${formatDisplayDate(itemMetrics.startStr)} → ${formatDisplayDate(itemMetrics.endStr)} (${itemMetrics.totalCycleDays}d)${serviceText}
                                 </p>
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
-                                <span class="text-xs font-extrabold px-2 py-1 rounded-xl ${unitBadgeClasses}">${Math.round(itemMetrics.actualUnits)}u</span>
-                                <button onclick="event.stopPropagation(); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="p-2 rounded-xl transition active:scale-95 ${editBtnClasses}">
+                                <span class="text-[11px] font-extrabold px-1.5 py-0.5 rounded-lg ${unitBadgeClasses}">${Math.round(itemMetrics.actualUnits)}u</span>
+                                <button onclick="event.stopPropagation(); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="p-1.5 rounded-lg transition active:scale-95 ${editBtnClasses}">
                                     <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
@@ -2211,23 +2189,6 @@
             if (bellDot) {
                 bellDot.classList.toggle('hidden', !prefs.enabled);
             }
-
-            const dueBanner = document.getElementById('weeklyReminderDueBanner');
-            const dueSub = document.getElementById('weeklyReminderDueSub');
-            if (!dueBanner) return;
-
-            const daysSinceLastCheck = diffDays(m.latestDateStr, getTodayStr());
-            if (prefs.enabled && daysSinceLastCheck >= 7) {
-                dueBanner.classList.remove('hidden');
-                if (dueSub) {
-                    const lastDateFormatted = formatFullDate(m.latestDateStr);
-                    dueSub.textContent = m.sortedReadings.length > 0
-                        ? `Last reading: ${lastDateFormatted} (${daysSinceLastCheck}d ago)`
-                        : `Cycle started ${lastDateFormatted} (${daysSinceLastCheck}d ago)`;
-                }
-            } else {
-                dueBanner.classList.add('hidden');
-            }
         }
 
         function fireReadingReminderNotification(isTest = false) {
@@ -2254,7 +2215,7 @@
                 try {
                     const perm = await Notification.requestPermission();
                     if (perm !== 'granted') {
-                        showToast('In-app banner active (browser notifications blocked)', 'error');
+                        showToast('Browser notifications blocked', 'error');
                         return;
                     }
                 } catch (e) { }
