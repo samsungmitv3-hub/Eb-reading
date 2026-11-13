@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TNEB Smart Meter & Bi-Monthly Bill Tracker</title>
 
     <!-- PWA & Add to Home Screen Meta Tags (iOS & Android) -->
@@ -45,12 +47,16 @@
             -webkit-tap-highlight-color: transparent;
             overscroll-behavior-y: none;
         }
+
         /* Prevent iOS Safari auto-zoom when focusing inputs/selects */
-        input, select, textarea {
+        input,
+        select,
+        textarea {
             font-size: 16px !important;
             max-width: 100%;
             box-sizing: border-box;
         }
+
         input[type="date"] {
             -webkit-appearance: none;
             appearance: none;
@@ -61,88 +67,138 @@
             height: 48px;
             line-height: 1.2;
         }
+
         input[type="date"]::-webkit-date-and-time-value {
             text-align: left;
             margin: 0;
         }
+
         html.dark input[type="date"] {
             color-scheme: dark;
         }
+
         /* Hide scrollbars cleanly on horizontal meter pills */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
+
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
         /* Smooth view transitions */
         .view-section {
             animation: fadeIn 0.2s ease-out;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         /* Bottom Toast Slide Up */
         @keyframes slideUpToast {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .toast-bottom {
             animation: slideUpToast 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
         /* Custom subtle shadows */
         .card-shadow {
             box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.05), 0 1px 3px -1px rgba(15, 23, 42, 0.03);
         }
+
         html.dark .card-shadow {
             box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.45);
         }
+
         .nav-shadow {
             box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.14), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
         }
+
         html.dark .nav-shadow {
             box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.06);
         }
+
+        .pt-safe-header {
+            padding-top: max(0.75rem, env(safe-area-inset-top));
+        }
+
         .pb-safe-nav {
             bottom: max(1rem, env(safe-area-inset-bottom));
         }
+
+        .pb-safe-modal {
+            padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+        }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-emerald-100 dark:selection:bg-emerald-900 selection:text-emerald-900 dark:selection:text-emerald-100 pb-28 transition-colors duration-200">
+
+<body
+    class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-emerald-100 dark:selection:bg-emerald-900 selection:text-emerald-900 dark:selection:text-emerald-100 pb-28 transition-colors duration-200">
 
     <!-- Bottom Toast Container -->
-    <div id="toastContainer" class="fixed bottom-24 inset-x-0 z-[70] px-4 pointer-events-none flex flex-col items-center justify-center gap-2"></div>
+    <div id="toastContainer"
+        class="fixed bottom-24 inset-x-0 z-[70] px-4 pointer-events-none flex flex-col items-center justify-center gap-2">
+    </div>
 
     <!-- Top Sticky App Header -->
-    <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors">
-        <div class="max-w-lg mx-auto px-4 pt-3 pb-2.5">
+    <header
+        class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors">
+        <div class="max-w-lg mx-auto px-4 pt-safe-header pb-2.5">
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-sm shrink-0">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-sm shrink-0">
                         <i data-lucide="zap" class="w-5 h-5"></i>
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5">
-                            <h1 class="text-base font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight truncate">TNEB Tracker</h1>
-                            <span id="headerTariffBadge" class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">LT-IA</span>
+                            <h1
+                                class="text-base font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+                                TNEB Tracker</h1>
+                            <span id="headerTariffBadge"
+                                class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">LT-IA</span>
                         </div>
-                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight truncate">28th → 27th · 200u Free Slab</p>
+                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight truncate">
+                            28th → 27th · 200u Free Slab</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
-                    <button onclick="cycleTheme()" id="themeToggleBtn" title="Switch Theme (Auto / Light / Dark)" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                    <button onclick="cycleTheme()" id="themeToggleBtn" title="Switch Theme (Auto / Light / Dark)"
+                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="monitor" class="w-4 h-4"></i>
                     </button>
-                    <button onclick="openReminderModal()" id="headerBellBtn" title="Weekly Reading Reminders" class="relative p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                    <button onclick="openReminderModal()" id="headerBellBtn" title="Weekly Reading Reminders"
+                        class="relative p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="bell" class="w-4 h-4"></i>
-                        <span id="bellActiveDot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span id="bellActiveDot"
+                            class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500"></span>
                     </button>
-                    <button onclick="openBackupModal()" title="Backup & Export Data" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                    <button onclick="openBackupModal()" title="Backup & Export Data"
+                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="folder-down" class="w-4 h-4"></i>
                     </button>
-                    <button onclick="openMetersModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm">
+                    <button onclick="openMetersModal()"
+                        class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm">
                         <i data-lucide="layers" class="w-3.5 h-3.5"></i>
                         <span>Meters</span>
                     </button>
@@ -151,7 +207,8 @@
 
             <!-- Horizontal Individual Meter Switcher Pills -->
             <div id="meterPillsContainer" class="flex items-center gap-2 overflow-x-auto no-scrollbar pt-2.5 pb-0.5">
-                <button onclick="selectMeter('default-home')" class="shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm">
+                <button onclick="selectMeter('default-home')"
+                    class="shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm">
                     <span>Main Meter</span>
                     <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-white/20 text-white">0u</span>
                 </button>
@@ -166,73 +223,98 @@
         <section id="view-dashboard" class="view-section space-y-4">
 
             <!-- Active Meter Header Card -->
-            <div id="activeMeterBanner" class="bg-white dark:bg-slate-900 rounded-2xl p-3.5 border border-slate-200/80 dark:border-slate-800 card-shadow flex items-center justify-between gap-3">
+            <div id="activeMeterBanner"
+                class="bg-white dark:bg-slate-900 rounded-2xl p-3.5 border border-slate-200/80 dark:border-slate-800 card-shadow flex items-center justify-between gap-3">
                 <div class="min-w-0">
                     <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Main Meter</h2>
-                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">28 Oct → 27 Dec (60d) · Domestic LT-IA (200 Free ≤500u)</p>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">28 Oct → 27
+                        Dec (60d) · Domestic LT-IA (200 Free ≤500u)</p>
                 </div>
-                <button onclick="openMetersModal()" title="Configure Meter" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition shrink-0">
+                <button onclick="openMetersModal()" title="Configure Meter"
+                    class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition shrink-0">
                     <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <!-- Weekly Reading Reminder Due Banner -->
-            <div id="weeklyReminderDueBanner" class="hidden rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50/70 dark:from-amber-950/60 dark:to-orange-950/40 border border-amber-200/80 dark:border-amber-800/60 p-3.5 flex items-center justify-between gap-2.5">
+            <div id="weeklyReminderDueBanner"
+                class="hidden rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50/70 dark:from-amber-950/60 dark:to-orange-950/40 border border-amber-200/80 dark:border-amber-800/60 p-3.5 flex items-center justify-between gap-2.5">
                 <div class="flex items-start gap-2.5 min-w-0 flex-1">
-                    <div class="w-9 h-9 rounded-xl bg-amber-500/15 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-amber-500/15 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
                         <i data-lucide="bell-ring" class="w-4 h-4"></i>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="text-xs font-extrabold text-amber-950 dark:text-amber-200 leading-snug">Weekly Meter Check Due</p>
-                        <p id="weeklyReminderDueSub" class="text-[11px] font-medium text-amber-800/90 dark:text-amber-300/90 leading-snug mt-0.5 break-words">Last reading: 28 Oct (16d ago)</p>
+                        <p class="text-xs font-extrabold text-amber-950 dark:text-amber-200 leading-snug">Weekly Meter
+                            Check Due</p>
+                        <p id="weeklyReminderDueSub"
+                            class="text-[11px] font-medium text-amber-800/90 dark:text-amber-300/90 leading-snug mt-0.5 break-words">
+                            Last reading: 28 Oct (16d ago)</p>
                     </div>
                 </div>
-                <button onclick="openReadingModal()" class="shrink-0 px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold shadow-xs transition active:scale-95">
+                <button onclick="openReadingModal()"
+                    class="shrink-0 px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold shadow-xs transition active:scale-95">
                     Log Now
                 </button>
             </div>
 
             <!-- Primary Bi-Month Cycle Status & Bill Card -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow relative overflow-hidden">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow relative overflow-hidden">
                 <!-- Top Cycle Window Bar -->
                 <div class="flex items-center justify-between gap-2 mb-4">
-                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/70 dark:border-emerald-800/60">
+                    <div
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/70 dark:border-emerald-800/60">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span id="dashCycleLabel" class="text-[11px] font-bold text-emerald-800 dark:text-emerald-300">Active Bi-Month</span>
+                        <span id="dashCycleLabel"
+                            class="text-[11px] font-bold text-emerald-800 dark:text-emerald-300">Active Bi-Month</span>
                     </div>
-                    <span id="dashDaysBadge" class="text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full">0 / 60d</span>
+                    <span id="dashDaysBadge"
+                        class="text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full">0
+                        / 60d</span>
                 </div>
 
                 <!-- Main Consumption & Bill Figures -->
                 <div class="grid grid-cols-2 gap-3 mb-4">
-                    <div class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-3.5 border border-slate-100 dark:border-slate-700/70">
-                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">Units Used</span>
+                    <div
+                        class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-3.5 border border-slate-100 dark:border-slate-700/70">
+                        <span
+                            class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">Units
+                            Used</span>
                         <div class="flex items-baseline gap-1">
-                            <span id="dashActualUnits" class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">0</span>
+                            <span id="dashActualUnits"
+                                class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">0</span>
                             <span class="text-xs font-bold text-slate-500 dark:text-slate-400">kWh</span>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50/70 dark:from-emerald-950/50 dark:to-teal-950/40 rounded-2xl p-3.5 border border-emerald-200/60 dark:border-emerald-800/60">
-                        <span class="text-[11px] font-semibold uppercase tracking-wider text-emerald-800/80 dark:text-emerald-400 block mb-1">TNEB Bill</span>
+                    <div
+                        class="bg-gradient-to-br from-emerald-50 to-teal-50/70 dark:from-emerald-950/50 dark:to-teal-950/40 rounded-2xl p-3.5 border border-emerald-200/60 dark:border-emerald-800/60">
+                        <span
+                            class="text-[11px] font-semibold uppercase tracking-wider text-emerald-800/80 dark:text-emerald-400 block mb-1">TNEB
+                            Bill</span>
                         <div class="flex items-baseline gap-0.5">
-                            <span id="dashActualBill" class="text-3xl font-extrabold text-emerald-700 dark:text-emerald-400 tracking-tight">₹0</span>
+                            <span id="dashActualBill"
+                                class="text-3xl font-extrabold text-emerald-700 dark:text-emerald-400 tracking-tight">₹0</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Opening vs Latest Reading Strip -->
-                <div id="dashCycleDates" class="bg-slate-50/90 dark:bg-slate-800/60 rounded-xl px-3.5 py-2.5 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs mb-4">
+                <div id="dashCycleDates"
+                    class="bg-slate-50/90 dark:bg-slate-800/60 rounded-xl px-3.5 py-2.5 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs mb-4">
                     <span>Open: <strong class="text-slate-800 dark:text-slate-200">0</strong></span>
                     <span>Latest: <strong class="text-slate-800 dark:text-slate-200">0 kWh</strong></span>
                 </div>
 
                 <!-- Quick Action Row: Log Reading & Reset Cycle -->
                 <div class="grid grid-cols-5 gap-2.5">
-                    <button onclick="openReadingModal()" class="col-span-3 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition active:scale-95">
+                    <button onclick="openReadingModal()"
+                        class="col-span-3 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition active:scale-95">
                         <i data-lucide="plus-circle" class="w-4 h-4"></i>
                         <span>Log Reading</span>
                     </button>
-                    <button onclick="openResetModal()" class="col-span-2 flex items-center justify-center gap-1.5 py-3 px-3 rounded-2xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 font-bold text-xs transition active:scale-95">
+                    <button onclick="openResetModal()"
+                        class="col-span-2 flex items-center justify-center gap-1.5 py-3 px-3 rounded-2xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 font-bold text-xs transition active:scale-95">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                         <span>Unit Reset</span>
                     </button>
@@ -240,26 +322,38 @@
             </div>
 
             <!-- Usage Pace & 500-Unit Threshold Card -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-4">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-4">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200">Usage Pace & 500-Unit Limit</h2>
-                    <span id="dashSubsidyBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400">200 Free ≤500u</span>
+                    <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200">Usage
+                        Pace & 500-Unit Limit</h2>
+                    <span id="dashSubsidyBadge"
+                        class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400">200
+                        Free ≤500u</span>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2.5 text-center">
-                    <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/70">
+                    <div
+                        class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/70">
                         <span class="text-[10px] font-bold uppercase text-slate-400 block mb-0.5">Cycle Avg</span>
-                        <span id="dashOverallAvg" class="text-base font-extrabold text-slate-900 dark:text-white">0.0</span>
+                        <span id="dashOverallAvg"
+                            class="text-base font-extrabold text-slate-900 dark:text-white">0.0</span>
                         <span class="text-[10px] text-slate-500 dark:text-slate-400 block">u / day</span>
                     </div>
-                    <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/70">
+                    <div
+                        class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/70">
                         <span class="text-[10px] font-bold uppercase text-slate-400 block mb-0.5">Last Check</span>
-                        <span id="dashRecentAvg" class="text-base font-extrabold text-slate-900 dark:text-white">0.0</span>
+                        <span id="dashRecentAvg"
+                            class="text-base font-extrabold text-slate-900 dark:text-white">0.0</span>
                         <span class="text-[10px] text-slate-500 dark:text-slate-400 block">u / day</span>
                     </div>
-                    <div class="p-3 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/60">
-                        <span class="text-[10px] font-bold uppercase text-emerald-700 dark:text-emerald-400 block mb-0.5">Left ≤500</span>
-                        <span id="dashUnitsLeft500" class="text-base font-extrabold text-emerald-700 dark:text-emerald-400">500</span>
+                    <div
+                        class="p-3 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/60">
+                        <span
+                            class="text-[10px] font-bold uppercase text-emerald-700 dark:text-emerald-400 block mb-0.5">Left
+                            ≤500</span>
+                        <span id="dashUnitsLeft500"
+                            class="text-base font-extrabold text-emerald-700 dark:text-emerald-400">500</span>
                         <span class="text-[10px] text-emerald-700/80 dark:text-emerald-400/80 block">kWh left</span>
                     </div>
                 </div>
@@ -268,28 +362,36 @@
                 <div class="space-y-1.5">
                     <div class="flex justify-between text-xs font-semibold">
                         <span class="text-slate-600 dark:text-slate-400">Subsidized Tier Progress</span>
-                        <span id="dash500ProgressText" class="text-slate-900 dark:text-slate-200 font-bold">0 / 500 kWh</span>
+                        <span id="dash500ProgressText" class="text-slate-900 dark:text-slate-200 font-bold">0 / 500
+                            kWh</span>
                     </div>
                     <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                        <div id="dash500ProgressBar" class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        <div id="dash500ProgressBar"
+                            class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 0%">
+                        </div>
                     </div>
-                    <p id="dashPaceNote" class="text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">Add your first meter check to see daily unit pace.</p>
+                    <p id="dashPaceNote" class="text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">Add your first
+                        meter check to see daily unit pace.</p>
                 </div>
             </div>
 
             <!-- Previous Bi-Month Records Summary Card -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
                 <div class="flex items-center justify-between gap-2 mb-3">
                     <div class="min-w-0">
-                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Previous Bi-Month Records</h2>
+                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Previous Bi-Month
+                            Records</h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Completed 28th → 27th cycles</p>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
-                        <button onclick="downloadBiMonthPDF()" title="Download Bi-Month PDF" class="inline-flex items-center gap-1 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-xl transition active:scale-95">
+                        <button onclick="downloadBiMonthPDF()" title="Download Bi-Month PDF"
+                            class="inline-flex items-center gap-1 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-xl transition active:scale-95">
                             <i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
                             <span>PDF</span>
                         </button>
-                        <button onclick="switchTab('history')" class="text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1.5 rounded-xl transition active:scale-95">
+                        <button onclick="switchTab('history')"
+                            class="text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1.5 rounded-xl transition active:scale-95">
                             All →
                         </button>
                     </div>
@@ -298,13 +400,16 @@
             </div>
 
             <!-- Current Bi-Month Slab Breakdown Card -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
                 <div class="flex items-center justify-between mb-3">
                     <div>
                         <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">TNEB Slab Breakdown</h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Current bi-month tariff calculation</p>
                     </div>
-                    <span id="dashSlabTierBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400">≤500 Tier</span>
+                    <span id="dashSlabTierBadge"
+                        class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400">≤500
+                        Tier</span>
                 </div>
                 <div id="dashSlabTableContainer" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm"></div>
             </div>
@@ -315,13 +420,17 @@
         <section id="view-history" class="view-section hidden space-y-4">
 
             <!-- Daily / Check Pace Chart Card -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
                 <div class="flex items-center justify-between mb-3">
                     <div>
                         <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Daily Unit Trend</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Units/day between readings in current cycle</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Units/day between readings in current
+                            cycle</p>
                     </div>
-                    <span class="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1 rounded-full">kWh / day</span>
+                    <span
+                        class="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1 rounded-full">kWh
+                        / day</span>
                 </div>
                 <div class="h-44 w-full relative">
                     <canvas id="paceChart"></canvas>
@@ -329,18 +438,23 @@
             </div>
 
             <!-- Archived Bi-Month Cycles (28th to 27th) -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
                 <div class="flex items-center justify-between gap-2 mb-3">
                     <div class="min-w-0">
-                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Archived Bi-Month Cycles</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Past 28th → 27th records for this meter</p>
+                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Archived Bi-Month
+                            Cycles</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Past 28th → 27th records for this
+                            meter</p>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
-                        <button onclick="downloadBiMonthPDF()" class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200/70 dark:border-emerald-800/60 px-2.5 py-1.5 rounded-xl transition active:scale-95">
+                        <button onclick="downloadBiMonthPDF()"
+                            class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200/70 dark:border-emerald-800/60 px-2.5 py-1.5 rounded-xl transition active:scale-95">
                             <i data-lucide="download" class="w-3.5 h-3.5"></i>
                             <span>PDF</span>
                         </button>
-                        <button onclick="openResetModal()" class="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 px-2.5 py-1.5 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/60 transition active:scale-95">
+                        <button onclick="openResetModal()"
+                            class="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 px-2.5 py-1.5 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/60 transition active:scale-95">
                             + Reset
                         </button>
                     </div>
@@ -349,13 +463,15 @@
             </div>
 
             <!-- Current Cycle Readings Timeline -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
                 <div class="flex items-center justify-between mb-3">
                     <div>
                         <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Current Cycle Reading Log</h2>
                         <p id="historyCountLabel" class="text-xs text-slate-500 dark:text-slate-400">0 checks logged</p>
                     </div>
-                    <button onclick="openReadingModal()" class="text-xs font-bold bg-emerald-600 text-white px-3 py-1.5 rounded-xl hover:bg-emerald-700 transition active:scale-95">
+                    <button onclick="openReadingModal()"
+                        class="text-xs font-bold bg-emerald-600 text-white px-3 py-1.5 rounded-xl hover:bg-emerald-700 transition active:scale-95">
                         + Add Check
                     </button>
                 </div>
@@ -367,37 +483,53 @@
         <section id="view-slabs" class="view-section hidden space-y-4">
 
             <!-- Interactive Quick Bill Estimator -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <div>
-                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white mb-0.5">Bi-Monthly Bill Calculator</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Test any bi-monthly kWh unit total under TNEB tariffs</p>
+                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white mb-0.5">Bi-Monthly Bill
+                            Calculator</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Test any bi-monthly kWh unit total under
+                            TNEB tariffs</p>
                     </div>
-                    <span id="simTierBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 shrink-0">&gt;500 Slab</span>
+                    <span id="simTierBadge"
+                        class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 shrink-0">&gt;500
+                        Slab</span>
                 </div>
 
                 <!-- Tariff Switcher inside Calculator -->
                 <div class="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 mb-3.5">
-                    <button type="button" id="simTariffDomesticBtn" onclick="setSimTariff('domestic')" class="py-2 px-3 rounded-xl text-xs font-extrabold transition bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs">
+                    <button type="button" id="simTariffDomesticBtn" onclick="setSimTariff('domestic')"
+                        class="py-2 px-3 rounded-xl text-xs font-extrabold transition bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs">
                         Domestic LT-IA
                     </button>
-                    <button type="button" id="simTariffCommonBtn" onclick="setSimTariff('common')" class="py-2 px-3 rounded-xl text-xs font-bold transition text-slate-600 dark:text-slate-300">
+                    <button type="button" id="simTariffCommonBtn" onclick="setSimTariff('common')"
+                        class="py-2 px-3 rounded-xl text-xs font-bold transition text-slate-600 dark:text-slate-300">
                         Common LT-ID (₹8.40)
                     </button>
                 </div>
 
-                <div class="flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-2xl border border-slate-200/70 dark:border-slate-700/70 mb-4">
+                <div
+                    class="flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-2xl border border-slate-200/70 dark:border-slate-700/70 mb-4">
                     <div class="flex-1">
-                        <label for="simUnitsInput" class="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400 block mb-1">Test Units (kWh)</label>
-                        <input type="number" id="simUnitsInput" value="590" min="0" max="10000" oninput="updateSimulator()" class="w-full text-2xl font-extrabold text-slate-900 dark:text-white bg-transparent focus:outline-none">
+                        <label for="simUnitsInput"
+                            class="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400 block mb-1">Test
+                            Units (kWh)</label>
+                        <input type="number" id="simUnitsInput" value="590" min="0" max="10000"
+                            oninput="updateSimulator()"
+                            class="w-full text-2xl font-extrabold text-slate-900 dark:text-white bg-transparent focus:outline-none">
                     </div>
                     <div class="text-right">
-                        <span class="text-[11px] font-bold uppercase text-emerald-700 dark:text-emerald-400 block mb-1">Estimated Bill</span>
-                        <span id="simBillOutput" class="text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">₹2,796</span>
+                        <span
+                            class="text-[11px] font-bold uppercase text-emerald-700 dark:text-emerald-400 block mb-1">Estimated
+                            Bill</span>
+                        <span id="simBillOutput"
+                            class="text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">₹2,796</span>
                     </div>
                 </div>
 
-                <input type="range" id="simUnitsSlider" min="0" max="1200" step="10" value="590" oninput="syncSimSlider(this.value)" class="w-full accent-emerald-600 mb-2 cursor-pointer">
+                <input type="range" id="simUnitsSlider" min="0" max="1200" step="10" value="590"
+                    oninput="syncSimSlider(this.value)" class="w-full accent-emerald-600 mb-2 cursor-pointer">
                 <div class="flex justify-between text-[11px] font-semibold text-slate-400">
                     <span>200 u (Free)</span>
                     <span>400 u</span>
@@ -406,50 +538,75 @@
                     <span>1200 u</span>
                 </div>
 
-                <div id="simBreakdownList" class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs"></div>
+                <div id="simBreakdownList"
+                    class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs"></div>
             </div>
 
             <!-- Official TNEB Tariff Reference Card -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-4">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-4">
                 <div>
-                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">TNEB Domestic Tariff (LT-IA · 2026)</h2>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Bi-monthly slab structure (28th → 27th cycle)</p>
+                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">TNEB Domestic Tariff (LT-IA ·
+                        2026)</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Bi-monthly slab structure (28th → 27th cycle)
+                    </p>
                 </div>
 
-                <div class="rounded-2xl border border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50/40 dark:bg-emerald-950/30 p-3.5 space-y-2">
+                <div
+                    class="rounded-2xl border border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50/40 dark:bg-emerald-950/30 p-3.5 space-y-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-emerald-900 dark:text-emerald-300">Up to 500 Units (Subsidized)</span>
-                        <span class="text-[11px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-md">200 Free</span>
+                        <span class="text-xs font-extrabold text-emerald-900 dark:text-emerald-300">Up to 500 Units
+                            (Subsidized)</span>
+                        <span class="text-[11px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-md">200
+                            Free</span>
                     </div>
                     <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-700 dark:text-slate-300 pt-1">
-                        <div>0 – 200 units:</div><div class="font-bold text-right text-emerald-700 dark:text-emerald-400">₹0.00 / unit</div>
-                        <div>201 – 400 units:</div><div class="font-bold text-right">₹4.70 / unit</div>
-                        <div>401 – 500 units:</div><div class="font-bold text-right">₹6.30 / unit</div>
+                        <div>0 – 200 units:</div>
+                        <div class="font-bold text-right text-emerald-700 dark:text-emerald-400">₹0.00 / unit</div>
+                        <div>201 – 400 units:</div>
+                        <div class="font-bold text-right">₹4.70 / unit</div>
+                        <div>401 – 500 units:</div>
+                        <div class="font-bold text-right">₹6.30 / unit</div>
                     </div>
                 </div>
 
-                <div class="rounded-2xl border border-amber-200/80 dark:border-amber-800/60 bg-amber-50/40 dark:bg-amber-950/30 p-3.5 space-y-2">
+                <div
+                    class="rounded-2xl border border-amber-200/80 dark:border-amber-800/60 bg-amber-50/40 dark:bg-amber-950/30 p-3.5 space-y-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-amber-950 dark:text-amber-300">Above 500 Units (Non-Subsidized)</span>
-                        <span class="text-[11px] font-bold bg-amber-600 text-white px-2 py-0.5 rounded-md">100 Free</span>
+                        <span class="text-xs font-extrabold text-amber-950 dark:text-amber-300">Above 500 Units
+                            (Non-Subsidized)</span>
+                        <span class="text-[11px] font-bold bg-amber-600 text-white px-2 py-0.5 rounded-md">100
+                            Free</span>
                     </div>
                     <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-700 dark:text-slate-300 pt-1">
-                        <div>0 – 100 units:</div><div class="font-bold text-right text-emerald-700 dark:text-emerald-400">₹0.00 / unit</div>
-                        <div>101 – 400 units:</div><div class="font-bold text-right">₹4.70 / unit</div>
-                        <div>401 – 500 units:</div><div class="font-bold text-right">₹6.30 / unit</div>
-                        <div>501 – 600 units:</div><div class="font-bold text-right">₹8.40 / unit</div>
-                        <div>601 – 800 units:</div><div class="font-bold text-right">₹9.45 / unit</div>
-                        <div>801 – 1000 units:</div><div class="font-bold text-right">₹10.50 / unit</div>
-                        <div>Above 1000 units:</div><div class="font-bold text-right">₹11.55 / unit</div>
+                        <div>0 – 100 units:</div>
+                        <div class="font-bold text-right text-emerald-700 dark:text-emerald-400">₹0.00 / unit</div>
+                        <div>101 – 400 units:</div>
+                        <div class="font-bold text-right">₹4.70 / unit</div>
+                        <div>401 – 500 units:</div>
+                        <div class="font-bold text-right">₹6.30 / unit</div>
+                        <div>501 – 600 units:</div>
+                        <div class="font-bold text-right">₹8.40 / unit</div>
+                        <div>601 – 800 units:</div>
+                        <div class="font-bold text-right">₹9.45 / unit</div>
+                        <div>801 – 1000 units:</div>
+                        <div class="font-bold text-right">₹10.50 / unit</div>
+                        <div>Above 1000 units:</div>
+                        <div class="font-bold text-right">₹11.55 / unit</div>
                     </div>
                 </div>
 
-                <div class="rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/60 p-3.5 flex items-center justify-between">
+                <div
+                    class="rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/60 p-3.5 flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-extrabold text-slate-900 dark:text-white block">Common / Apartment Meter (LT-ID)</span>
-                        <span class="text-[11px] text-slate-500 dark:text-slate-400">Flat tariff without 100-unit free subsidy</span>
+                        <span class="text-xs font-extrabold text-slate-900 dark:text-white block">Common / Apartment
+                            Meter (LT-ID)</span>
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400">Flat tariff without 100-unit free
+                            subsidy</span>
                     </div>
-                    <span class="text-xs font-extrabold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">₹8.40 / u</span>
+                    <span
+                        class="text-xs font-extrabold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">₹8.40
+                        / u</span>
                 </div>
             </div>
         </section>
@@ -458,62 +615,82 @@
 
     <!-- Bottom Floating Pill Navigation Bar -->
     <nav class="fixed inset-x-0 pb-safe-nav z-30 px-4 pointer-events-none">
-        <div class="max-w-md mx-auto bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 rounded-full p-1.5 flex items-center justify-between gap-1.5 nav-shadow pointer-events-auto">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold transition bg-emerald-600 text-white shadow-sm">
+        <div
+            class="max-w-md mx-auto bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 rounded-full p-1.5 flex items-center justify-between gap-1.5 nav-shadow pointer-events-auto">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard"
+                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold transition bg-emerald-600 text-white shadow-sm">
                 <i data-lucide="home" class="w-4 h-4"></i>
                 <span>Home</span>
             </button>
-            <button onclick="switchTab('history')" id="nav-history" class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <button onclick="switchTab('history')" id="nav-history"
+                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                 <i data-lucide="history" class="w-4 h-4"></i>
                 <span>History</span>
             </button>
-            <button onclick="switchTab('slabs')" id="nav-slabs" class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <button onclick="switchTab('slabs')" id="nav-slabs"
+                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                 <i data-lucide="percent" class="w-4 h-4"></i>
                 <span>Slabs</span>
             </button>
-            <button onclick="openReadingModal()" title="Quick Log Reading" class="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-md transition active:scale-95 shrink-0">
+            <button onclick="openReadingModal()" title="Quick Log Reading"
+                class="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-md transition active:scale-95 shrink-0">
                 <i data-lucide="plus" class="w-5 h-5"></i>
             </button>
         </div>
     </nav>
 
     <!-- ==================== MODAL 1: LOG METER READING ==================== -->
-    <div id="readingModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+    <div id="readingModal"
+        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Log Meter Reading</h3>
-                    <p id="readingModalMeterSubtitle" class="text-xs text-slate-500 dark:text-slate-400">Main Meter · 28th Cycle</p>
+                    <p id="readingModalMeterSubtitle" class="text-xs text-slate-500 dark:text-slate-400">Main Meter ·
+                        28th Cycle</p>
                 </div>
-                <button onclick="closeModal('readingModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                <button onclick="closeModal('readingModal')"
+                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
-            <div class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-3 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between text-xs">
+            <div
+                class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-3 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between text-xs">
                 <span class="text-slate-500 dark:text-slate-400">Previous Reading:</span>
                 <span id="modalPrevReadingHint" class="font-extrabold text-slate-900 dark:text-white">0 kWh</span>
             </div>
 
             <div class="space-y-3">
                 <div>
-                    <label for="inputNewReading" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Current Meter Reading (kWh)</label>
-                    <input type="number" id="inputNewReading" step="0.1" placeholder="e.g. 4250" oninput="updateLiveEntryPreview()" class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-lg font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    <label for="inputNewReading"
+                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Current Meter Reading
+                        (kWh)</label>
+                    <input type="number" id="inputNewReading" step="0.1" placeholder="e.g. 4250"
+                        oninput="updateLiveEntryPreview()"
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-lg font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
                 </div>
                 <div class="grid grid-cols-2 gap-3 items-end">
                     <div class="min-w-0">
-                        <label for="inputReadingDate" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Check Date</label>
-                        <input type="date" id="inputReadingDate" onchange="updateLiveEntryPreview()" class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        <label for="inputReadingDate"
+                            class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Check Date</label>
+                        <input type="date" id="inputReadingDate" onchange="updateLiveEntryPreview()"
+                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
                     </div>
                     <div class="min-w-0">
-                        <label for="inputReadingNote" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Note (Optional)</label>
-                        <input type="text" id="inputReadingNote" placeholder="e.g. Week 2" class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        <label for="inputReadingNote"
+                            class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Note
+                            (Optional)</label>
+                        <input type="text" id="inputReadingNote" placeholder="e.g. Week 2"
+                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
                     </div>
                 </div>
             </div>
 
             <!-- Live Delta Preview -->
-            <div id="liveEntryPreview" class="hidden rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 p-3 text-xs space-y-1">
+            <div id="liveEntryPreview"
+                class="hidden rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 p-3 text-xs space-y-1">
                 <div class="flex justify-between font-bold text-emerald-900 dark:text-emerald-300">
                     <span>Units Added Since Last Check:</span>
                     <span id="previewDeltaUnits">+0 kWh</span>
@@ -524,27 +701,33 @@
                 </div>
             </div>
 
-            <button onclick="saveNewReading()" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+            <button onclick="saveNewReading()"
+                class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
                 Save Meter Reading
             </button>
         </div>
     </div>
 
     <!-- ==================== MODAL 2: BI-MONTH UNIT RESET (28TH CYCLE) ==================== -->
-    <div id="resetModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+    <div id="resetModal"
+        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Reset Bi-Month Units (28th)</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Archive current 28th → 27th record & start fresh at 0 units</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Archive current 28th → 27th record & start
+                        fresh at 0 units</p>
                 </div>
-                <button onclick="closeModal('resetModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                <button onclick="closeModal('resetModal')"
+                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <!-- Current Cycle Summary Before Archiving -->
-            <div class="rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 p-3.5 space-y-1.5 text-xs">
+            <div
+                class="rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 p-3.5 space-y-1.5 text-xs">
                 <div class="font-extrabold text-amber-950 dark:text-amber-300 flex items-center gap-1.5">
                     <i data-lucide="archive" class="w-3.5 h-3.5"></i>
                     <span>Current Bi-Month to Save in History:</span>
@@ -561,31 +744,43 @@
 
             <div class="space-y-3">
                 <div>
-                    <label for="inputResetOpeningKwh" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Closing / New Opening Meter Reading (kWh)</label>
-                    <input type="number" id="inputResetOpeningKwh" step="0.1" class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-base font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Closes the old bi-month at this reading and starts the new cycle at 0 units used.</p>
+                    <label for="inputResetOpeningKwh"
+                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Closing / New Opening
+                        Meter Reading (kWh)</label>
+                    <input type="number" id="inputResetOpeningKwh" step="0.1"
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-base font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Closes the old bi-month at this
+                        reading and starts the new cycle at 0 units used.</p>
                 </div>
                 <div>
-                    <label for="inputResetNewStartDate" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">New Bi-Month Start Date (28th)</label>
-                    <input type="date" id="inputResetNewStartDate" class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    <label for="inputResetNewStartDate"
+                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">New Bi-Month Start Date
+                        (28th)</label>
+                    <input type="date" id="inputResetNewStartDate"
+                        class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
                 </div>
             </div>
 
-            <button onclick="executeCycleReset()" class="w-full py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+            <button onclick="executeCycleReset()"
+                class="w-full py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
                 Archive Record & Start New 28th Cycle
             </button>
         </div>
     </div>
 
     <!-- ==================== MODAL 3: MANAGE INDIVIDUAL METERS ==================== -->
-    <div id="metersModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto space-y-4">
+    <div id="metersModal"
+        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Individual Meters</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Each meter tracks its own 28th → 27th bi-month</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Each meter tracks its own 28th → 27th bi-month
+                    </p>
                 </div>
-                <button onclick="closeModal('metersModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                <button onclick="closeModal('metersModal')"
+                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -593,7 +788,8 @@
             <!-- List of Configured Meters -->
             <div id="metersListContainer" class="space-y-2.5"></div>
 
-            <button onclick="openMeterFormModal()" class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95">
+            <button onclick="openMeterFormModal()"
+                class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span>Add New Individual Meter</span>
             </button>
@@ -601,14 +797,18 @@
     </div>
 
     <!-- ==================== MODAL 4: ADD / EDIT METER FORM ==================== -->
-    <div id="meterFormModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+    <div id="meterFormModal"
+        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 id="meterFormTitle" class="text-base font-extrabold text-slate-900 dark:text-white">Add Individual Meter</h3>
+                    <h3 id="meterFormTitle" class="text-base font-extrabold text-slate-900 dark:text-white">Add
+                        Individual Meter</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Configure meter details & 28th cycle start</p>
                 </div>
-                <button onclick="closeModal('meterFormModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                <button onclick="closeModal('meterFormModal')"
+                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -617,112 +817,146 @@
 
             <div class="space-y-3">
                 <div>
-                    <label for="inputMeterName" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Meter Name</label>
-                    <input type="text" id="inputMeterName" placeholder="e.g. Ground Floor, House, Shop" class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    <label for="inputMeterName"
+                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Meter Name</label>
+                    <input type="text" id="inputMeterName" placeholder="e.g. Ground Floor, House, Shop"
+                        class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
                 </div>
 
                 <div>
-                    <label for="inputServiceNo" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">TNEB Service No. (Optional)</label>
-                    <input type="text" id="inputServiceNo" placeholder="e.g. 09-123-456-789" class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    <label for="inputServiceNo"
+                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">TNEB Service No.
+                        (Optional)</label>
+                    <input type="text" id="inputServiceNo" placeholder="e.g. 09-123-456-789"
+                        class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 items-end">
                     <div class="min-w-0">
-                        <label for="inputCycleStartDate" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Cycle Start (28th)</label>
-                        <input type="date" id="inputCycleStartDate" onchange="previewCycleWindowInForm()" class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        <label for="inputCycleStartDate"
+                            class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Cycle Start
+                            (28th)</label>
+                        <input type="date" id="inputCycleStartDate" onchange="previewCycleWindowInForm()"
+                            class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
                     </div>
                     <div class="min-w-0">
-                        <label for="inputOpeningReading" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Opening kWh</label>
-                        <input type="number" id="inputOpeningReading" step="0.1" placeholder="0" class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        <label for="inputOpeningReading"
+                            class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Opening
+                            kWh</label>
+                        <input type="number" id="inputOpeningReading" step="0.1" placeholder="0"
+                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
                     </div>
                 </div>
 
-                <div id="formCyclePreviewBanner" class="rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/70 dark:border-emerald-800/60 px-3 py-2 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                <div id="formCyclePreviewBanner"
+                    class="rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/70 dark:border-emerald-800/60 px-3 py-2 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
                     Bi-Month Window: 28th → 27th
                 </div>
 
                 <div>
-                    <label for="inputMeterTariff" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">TNEB Tariff / Subsidy Slab</label>
-                    <select id="inputMeterTariff" class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:outline-none focus:border-emerald-600">
+                    <label for="inputMeterTariff"
+                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">TNEB Tariff / Subsidy
+                        Slab</label>
+                    <select id="inputMeterTariff"
+                        class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:outline-none focus:border-emerald-600">
                         <option value="domestic">Domestic LT-IA (200 Units Free ≤500u)</option>
                         <option value="common">Common / Apartment LT-ID (₹8.40 Flat)</option>
                     </select>
                 </div>
             </div>
 
-            <button onclick="saveMeterForm()" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+            <button onclick="saveMeterForm()"
+                class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
                 Save Meter
             </button>
         </div>
     </div>
 
     <!-- ==================== MODAL 5: BACKUP & EXPORT ==================== -->
-    <div id="backupModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+    <div id="backupModal"
+        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Backup & Data</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Export PDF statement or backup meter data</p>
                 </div>
-                <button onclick="closeModal('backupModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                <button onclick="closeModal('backupModal')"
+                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <div class="space-y-2.5">
-                <button onclick="installPWA()" id="installPwaBtn" class="w-full py-3.5 px-4 rounded-2xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-sm flex items-center justify-center gap-2 border border-slate-700/60 shadow-sm transition active:scale-95">
+                <button onclick="installPWA()" id="installPwaBtn"
+                    class="w-full py-3.5 px-4 rounded-2xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-sm flex items-center justify-center gap-2 border border-slate-700/60 shadow-sm transition active:scale-95">
                     <i data-lucide="smartphone" class="w-4 h-4 text-emerald-400"></i>
                     <span>Add App to Home Screen</span>
                 </button>
 
-                <button onclick="downloadBiMonthPDF()" class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                <button onclick="downloadBiMonthPDF()"
+                    class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
                     <i data-lucide="file-text" class="w-4 h-4"></i>
                     <span>Download Bi-Month PDF Statement</span>
                 </button>
 
-                <button onclick="exportBackupJSON()" class="w-full py-3.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95">
+                <button onclick="exportBackupJSON()"
+                    class="w-full py-3.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95">
                     <i data-lucide="download" class="w-4 h-4"></i>
                     <span>Download JSON Backup</span>
                 </button>
 
-                <label class="w-full py-3.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition active:scale-95">
+                <label
+                    class="w-full py-3.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition active:scale-95">
                     <i data-lucide="upload" class="w-4 h-4"></i>
                     <span>Restore From Backup File</span>
-                    <input type="file" id="importFileInput" accept=".json" onchange="importBackupJSON(event)" class="hidden">
+                    <input type="file" id="importFileInput" accept=".json" onchange="importBackupJSON(event)"
+                        class="hidden">
                 </label>
             </div>
         </div>
     </div>
 
     <!-- ==================== MODAL 6: WEEKLY READING REMINDERS ==================== -->
-    <div id="reminderModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+    <div id="reminderModal"
+        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Weekly Reading Reminder</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Get notified every week to log your kWh reading</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Get notified every week to log your kWh
+                        reading</p>
                 </div>
-                <button onclick="closeModal('reminderModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                <button onclick="closeModal('reminderModal')"
+                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <!-- Enable Toggle Card -->
-            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-3">
+            <div
+                class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-3">
                 <div>
                     <span class="text-sm font-extrabold text-slate-900 dark:text-white block">Weekly Check Alert</span>
-                    <span id="reminderStatusLabel" class="text-xs text-slate-500 dark:text-slate-400">Every Sunday at 09:00 AM</span>
+                    <span id="reminderStatusLabel" class="text-xs text-slate-500 dark:text-slate-400">Every Sunday at
+                        09:00 AM</span>
                 </div>
-                <button type="button" id="reminderToggleSwitch" onclick="toggleWeeklyReminder()" class="w-12 h-7 rounded-full bg-slate-300 dark:bg-slate-700 p-1 transition-colors relative shrink-0">
-                    <span id="reminderToggleKnob" class="block w-5 h-5 rounded-full bg-white shadow-sm transition-transform translate-x-0"></span>
+                <button type="button" id="reminderToggleSwitch" onclick="toggleWeeklyReminder()"
+                    class="w-12 h-7 rounded-full bg-slate-300 dark:bg-slate-700 p-1 transition-colors relative shrink-0">
+                    <span id="reminderToggleKnob"
+                        class="block w-5 h-5 rounded-full bg-white shadow-sm transition-transform translate-x-0"></span>
                 </button>
             </div>
 
             <!-- Day & Time Pickers -->
             <div class="grid grid-cols-2 gap-3 items-end">
                 <div class="min-w-0">
-                    <label for="inputReminderDay" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Day of Week</label>
-                    <select id="inputReminderDay" onchange="saveReminderPrefs()" class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    <label for="inputReminderDay"
+                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Day of Week</label>
+                    <select id="inputReminderDay" onchange="saveReminderPrefs()"
+                        class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
                         <option value="0">Sunday</option>
                         <option value="1">Monday</option>
                         <option value="2">Tuesday</option>
@@ -733,18 +967,22 @@
                     </select>
                 </div>
                 <div class="min-w-0">
-                    <label for="inputReminderTime" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Reminder Time</label>
-                    <input type="time" id="inputReminderTime" value="09:00" onchange="saveReminderPrefs()" class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    <label for="inputReminderTime"
+                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Reminder Time</label>
+                    <input type="time" id="inputReminderTime" value="09:00" onchange="saveReminderPrefs()"
+                        class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
                 </div>
             </div>
 
             <!-- System Calendar & Test Notification Actions -->
             <div class="space-y-2 pt-1">
-                <button onclick="downloadWeeklyCalendarICS()" class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                <button onclick="downloadWeeklyCalendarICS()"
+                    class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
                     <i data-lucide="calendar-plus" class="w-4 h-4"></i>
                     <span>Add Weekly Alert to Phone Calendar (.ics)</span>
                 </button>
-                <button onclick="sendTestReminderNotification()" class="w-full py-3 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95">
+                <button onclick="sendTestReminderNotification()"
+                    class="w-full py-3 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95">
                     <i data-lucide="bell" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
                     <span>Send Test Notification Now</span>
                 </button>
@@ -782,7 +1020,7 @@
                     label.click();
                     label.remove();
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         document.addEventListener('click', (e) => {
@@ -1009,7 +1247,7 @@
         function saveState() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function getActiveMeter() {
@@ -1812,7 +2050,7 @@
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 try {
                     const parsed = JSON.parse(e.target.result);
                     if (parsed && Array.isArray(parsed.meters) && parsed.meters.length > 0) {
@@ -1876,14 +2114,14 @@
             try {
                 const raw = localStorage.getItem(REMINDER_KEY);
                 if (raw) return JSON.parse(raw);
-            } catch (e) {}
+            } catch (e) { }
             return { enabled: true, dayOfWeek: 0, time: '09:00', lastNotifiedDate: '' };
         }
 
         function setReminderPrefs(prefs) {
             try {
                 localStorage.setItem(REMINDER_KEY, JSON.stringify(prefs));
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function openReminderModal() {
@@ -1923,7 +2161,7 @@
             if (prefs.enabled && 'Notification' in window && Notification.permission === 'default') {
                 try {
                     await Notification.requestPermission();
-                } catch (e) {}
+                } catch (e) { }
             }
 
             setReminderPrefs(prefs);
@@ -1982,7 +2220,7 @@
                         openReadingModal();
                     };
                     return true;
-                } catch (e) {}
+                } catch (e) { }
             }
             return false;
         }
@@ -1995,7 +2233,7 @@
                         showToast('In-app banner active (browser notifications blocked)', 'error');
                         return;
                     }
-                } catch (e) {}
+                } catch (e) { }
             }
             const sent = fireReadingReminderNotification(true);
             triggerHaptic('success');
@@ -2126,7 +2364,7 @@
                     const manifestLink = document.getElementById('pwaManifestLink');
                     if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         async function installPWA() {
@@ -2156,4 +2394,5 @@
         initApp();
     </script>
 </body>
+
 </html>
