@@ -224,7 +224,7 @@
     <!-- Main Content Container -->
     <main class="max-w-lg mx-auto px-4 pt-safe-main space-y-4">
 
-        <!-- Convenient Meter Switcher & Active Meter Card (Always Easy to View) -->
+        <!-- Convenient Meter Switcher Card with Full Individual Meter Details -->
         <div
             class="bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-3">
             <div class="flex items-center justify-between gap-2">
@@ -240,27 +240,15 @@
                 </button>
             </div>
 
-            <!-- Wrapped Grid/Pills of All Meters -->
-            <div id="meterPillsContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                <button onclick="selectMeter('default-home')"
-                    class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl text-xs font-bold bg-emerald-600 text-white shadow-sm">
-                    <span class="truncate">Main Meter</span>
-                    <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-white/20 text-white shrink-0">0u</span>
-                </button>
-            </div>
-
-            <!-- Active Meter Details Footer -->
-            <div id="activeMeterBanner"
-                class="pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Main Meter</h2>
-                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">28 Oct → 27
-                        Dec (60d) · Domestic LT-IA (200 Free ≤500u)</p>
+            <!-- Individual Meter Cards with Tariff, Cycle Dates, SC & Settings -->
+            <div id="meterPillsContainer" class="space-y-2">
+                <div onclick="selectMeter('default-home')"
+                    class="p-3 rounded-2xl border border-emerald-500 bg-emerald-600 text-white shadow-sm cursor-pointer">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-sm font-extrabold truncate">Main Meter</span>
+                        <span class="text-xs font-extrabold px-2 py-0.5 rounded-lg bg-white/20 text-white">0u</span>
+                    </div>
                 </div>
-                <button onclick="openMetersModal()" title="Configure Meter"
-                    class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition shrink-0">
-                    <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
-                </button>
             </div>
         </div>
 
@@ -1355,49 +1343,54 @@
                 headerTariffBadge.textContent = meter.tariff === 'common' ? 'LT-ID' : 'LT-IA';
             }
 
-            // 1. Convenient Wrapped Grid of All Meters
+            // 1. Individual Meter Cards with Full Details (Tariff, Dates, SC & Settings)
             const pillsContainer = document.getElementById('meterPillsContainer');
             if (pillsContainer) {
                 pillsContainer.innerHTML = appState.meters.map(item => {
                     const isActive = item.id === meter.id;
                     const itemMetrics = getMeterMetrics(item);
-                    const activeClasses = isActive
+                    const tariffShort = item.tariff === 'common' ? 'Common LT-ID' : 'Domestic LT-IA (200 Free ≤500u)';
+                    const serviceText = item.serviceNo ? ` · SC: ${escapeHTML(item.serviceNo)}` : '';
+
+                    const cardClasses = isActive
                         ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
-                        : 'bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800';
-                    const badgeClasses = isActive
+                        : 'bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800';
+                    const tariffBadgeClasses = isActive
                         ? 'bg-white/20 text-white'
-                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300';
+                        : 'bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300';
+                    const subTextClasses = isActive
+                        ? 'text-emerald-100'
+                        : 'text-slate-500 dark:text-slate-400';
+                    const unitBadgeClasses = isActive
+                        ? 'bg-white/20 text-white'
+                        : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200/70 dark:border-slate-700';
+                    const editBtnClasses = isActive
+                        ? 'bg-white/15 hover:bg-white/25 text-white'
+                        : 'bg-white dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700';
+
                     return `
-                        <button onclick="selectMeter('${item.id}')" class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl border text-xs font-bold transition active:scale-95 min-w-0 ${activeClasses}">
-                            <span class="truncate">${escapeHTML(item.name)}</span>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded-md shrink-0 ${badgeClasses}">${Math.round(itemMetrics.actualUnits)}u</span>
-                        </button>
+                        <div onclick="selectMeter('${item.id}')" class="p-3 rounded-2xl border transition cursor-pointer flex items-center justify-between gap-2.5 ${cardClasses}">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-sm font-extrabold truncate">${escapeHTML(item.name)}</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 ${tariffBadgeClasses}">${tariffShort}</span>
+                                </div>
+                                <p class="text-[11px] font-medium truncate mt-1 ${subTextClasses}">
+                                    ${formatDisplayDate(itemMetrics.startStr)} → ${formatDisplayDate(itemMetrics.endStr)} (${itemMetrics.totalCycleDays}d)${serviceText}
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <span class="text-xs font-extrabold px-2 py-1 rounded-xl ${unitBadgeClasses}">${Math.round(itemMetrics.actualUnits)}u</span>
+                                <button onclick="event.stopPropagation(); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="p-2 rounded-xl transition active:scale-95 ${editBtnClasses}">
+                                    <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
                     `;
                 }).join('');
             }
 
-            // 2. Active Meter Banner
-            const tariffShort = meter.tariff === 'common' ? 'Common LT-ID' : 'Domestic LT-IA (200 Free ≤500u)';
-            const serviceText = meter.serviceNo ? ` · SC: ${escapeHTML(meter.serviceNo)}` : '';
-            const bannerEl = document.getElementById('activeMeterBanner');
-            if (bannerEl) {
-                bannerEl.innerHTML = `
-                    <div class="min-w-0">
-                        <div class="flex items-center gap-2">
-                            <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">${escapeHTML(meter.name)}</h2>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 shrink-0">${tariffShort}</span>
-                        </div>
-                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                            ${formatDisplayDate(m.startStr)} → ${formatDisplayDate(m.endStr)} (${m.totalCycleDays}d)${serviceText}
-                        </p>
-                    </div>
-                    <button onclick="openMeterFormModal('${meter.id}')" title="Edit Meter Settings" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition shrink-0">
-                        <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
-                    </button>
-                `;
-            }
-
-            // 3. Dashboard Primary Figures
+            // 2. Dashboard Primary Figures
             document.getElementById('dashDaysBadge').textContent = `${m.elapsedDays} / ${m.totalCycleDays}d`;
             document.getElementById('dashActualUnits').textContent = Math.round(m.actualUnits).toLocaleString('en-IN');
             document.getElementById('dashActualBill').textContent = `₹${m.actualBillObj.total.toLocaleString('en-IN')}`;
@@ -1406,7 +1399,7 @@
                 <span>Latest: <strong class="text-slate-800 dark:text-slate-200">${m.currentKwh} kWh</strong> (${formatDisplayDate(m.latestDateStr)})</span>
             `;
 
-            // 4. Pace & 500-Unit Limit
+            // 3. Pace & 500-Unit Limit
             document.getElementById('dashSubsidyBadge').textContent = meter.tariff === 'common' ? 'Flat ₹8.40' : (m.actualUnits > 500 ? '100 Free (>500u)' : '200 Free ≤500u');
             document.getElementById('dashOverallAvg').textContent = m.overallDailyAvg.toFixed(1);
             document.getElementById('dashRecentAvg').textContent = m.recentDailyAvg.toFixed(1);
@@ -1429,10 +1422,10 @@
             }
             document.getElementById('dash500ProgressText').textContent = `${Math.round(m.actualUnits)} / 500 kWh`;
 
-            // 5. Previous Bi-Month Records Summary
+            // 4. Previous Bi-Month Records Summary
             renderPastCycles(meter);
 
-            // 6. Slab Breakdown Table
+            // 5. Slab Breakdown Table
             document.getElementById('dashSlabTierBadge').textContent = m.actualBillObj.tierLabel;
             const slabContainer = document.getElementById('dashSlabTableContainer');
             if (m.actualBillObj.breakdown.length === 0) {
@@ -1456,7 +1449,7 @@
                 `;
             }
 
-            // 7. History Timeline & Chart
+            // 6. History Timeline & Chart
             renderHistoryTimeline(meter, m);
             renderPaceChart(meter, m);
             updateReminderUI(meter, m);
