@@ -10,7 +10,7 @@
     <!-- PWA & Add to Home Screen Meta Tags (iOS & Android) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TNEB Tracker">
     <meta name="application-name" content="TNEB Tracker">
     <meta name="theme-color" content="#059669" id="metaThemeColor">
@@ -144,6 +144,18 @@
 
         .pt-safe-main {
             padding-top: calc(env(safe-area-inset-top, 0px) + 6.75rem);
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            @media all and (display-mode: standalone) {
+                .pt-safe-header {
+                    padding-top: calc(max(env(safe-area-inset-top, 0px), 3.35rem) + 0.5rem);
+                }
+
+                .pt-safe-main {
+                    padding-top: calc(max(env(safe-area-inset-top, 0px), 3.35rem) + 6.5rem);
+                }
+            }
         }
 
         .pb-safe-nav {
