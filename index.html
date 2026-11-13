@@ -224,7 +224,7 @@
     <!-- Main Content Container -->
     <main class="max-w-lg mx-auto px-4 pt-safe-main space-y-3.5">
 
-        <!-- Compact Meter Switcher Card (Hidden on Slabs tab) -->
+        <!-- Compact Meter Switcher Card with Multi-Select Combined Total (Hidden on Slabs tab) -->
         <div id="yourMetersCard"
             class="bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-2">
             <div class="flex items-center justify-between gap-2">
@@ -233,11 +233,17 @@
                     <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">Your
                         Meters</span>
                 </div>
-                <button onclick="openMetersModal()"
-                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/60 text-[10px] font-bold transition active:scale-95">
-                    <i data-lucide="layers" class="w-3 h-3"></i>
-                    <span>Manage / + Add</span>
-                </button>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="toggleSelectAllMeters()" id="selectAllMetersBtn"
+                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-bold transition active:scale-95">
+                        <span>Select All</span>
+                    </button>
+                    <button onclick="openMetersModal()"
+                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/60 text-[10px] font-bold transition active:scale-95">
+                        <i data-lucide="layers" class="w-3 h-3"></i>
+                        <span>Manage / + Add</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Compact Individual Meter Rows -->
@@ -247,6 +253,33 @@
                     <div class="flex items-center justify-between gap-2">
                         <span class="text-xs font-extrabold truncate">Main Meter</span>
                         <span class="text-[11px] font-extrabold px-1.5 py-0.5 rounded-md bg-white/20 text-white">0u</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selected Meters Combined Total Summary Bar -->
+            <div id="selectedMetersTotalBar"
+                class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                    <span id="selectedMetersCountLabel"
+                        class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Selected
+                        Total (1 Meter)</span>
+                    <span id="selectedMetersNamesHint"
+                        class="text-[10px] text-slate-400 dark:text-slate-500 truncate block">Tap checkboxes to combine
+                        meters</span>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <div class="text-right">
+                        <span id="selectedTotalUnits"
+                            class="text-xs font-extrabold text-slate-900 dark:text-white block">0 kWh</span>
+                        <span class="text-[9px] font-semibold text-slate-400 block">Combined Units</span>
+                    </div>
+                    <div
+                        class="px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200/70 dark:border-emerald-800/70 text-right">
+                        <span id="selectedTotalBill"
+                            class="text-sm font-extrabold text-emerald-700 dark:text-emerald-400 block leading-tight">₹0</span>
+                        <span class="text-[9px] font-bold text-emerald-700/80 dark:text-emerald-400/80 block">Total
+                            Bill</span>
                     </div>
                 </div>
             </div>
@@ -1199,6 +1232,7 @@
             const start28 = getDefault28thStartStr();
             return {
                 activeMeterId: 'default-home',
+                selectedMeterIds: ['default-home'],
                 meters: [
                     {
                         id: 'default-home',
@@ -1231,6 +1265,14 @@
                 });
                 if (!parsed.meters.some(m => m.id === parsed.activeMeterId)) {
                     parsed.activeMeterId = parsed.meters[0].id;
+                }
+                if (!Array.isArray(parsed.selectedMeterIds)) {
+                    parsed.selectedMeterIds = [parsed.activeMeterId];
+                } else {
+                    parsed.selectedMeterIds = parsed.selectedMeterIds.filter(id => parsed.meters.some(m => m.id === id));
+                    if (parsed.selectedMeterIds.length === 0) {
+                        parsed.selectedMeterIds = [parsed.activeMeterId];
+                    }
                 }
                 return parsed;
             } catch (e) {
@@ -1311,6 +1353,75 @@
             };
         }
 
+        // ==================== MULTI-SELECT METER SUMMARY ====================
+        function toggleMeterSelection(meterId) {
+            if (!Array.isArray(appState.selectedMeterIds)) {
+                appState.selectedMeterIds = [appState.activeMeterId];
+            }
+            const idx = appState.selectedMeterIds.indexOf(meterId);
+            if (idx >= 0) {
+                appState.selectedMeterIds.splice(idx, 1);
+            } else {
+                appState.selectedMeterIds.push(meterId);
+            }
+            saveState();
+            renderAll();
+            triggerHaptic('light');
+        }
+
+        function toggleSelectAllMeters() {
+            const allSelected = appState.meters.every(m => appState.selectedMeterIds.includes(m.id));
+            if (allSelected) {
+                appState.selectedMeterIds = [appState.activeMeterId];
+            } else {
+                appState.selectedMeterIds = appState.meters.map(m => m.id);
+            }
+            saveState();
+            renderAll();
+            triggerHaptic('light');
+        }
+
+        function renderSelectedMetersSummary() {
+            const selectedIds = appState.selectedMeterIds || [];
+            const selectedMeters = appState.meters.filter(m => selectedIds.includes(m.id));
+
+            let combinedUnits = 0;
+            let combinedBill = 0;
+            selectedMeters.forEach(item => {
+                const metrics = getMeterMetrics(item);
+                combinedUnits += metrics.actualUnits;
+                combinedBill += metrics.actualBillObj.total;
+            });
+
+            const count = selectedMeters.length;
+            const countLabelEl = document.getElementById('selectedMetersCountLabel');
+            const namesHintEl = document.getElementById('selectedMetersNamesHint');
+            const unitsEl = document.getElementById('selectedTotalUnits');
+            const billEl = document.getElementById('selectedTotalBill');
+            const selectAllBtn = document.getElementById('selectAllMetersBtn');
+
+            if (countLabelEl) {
+                countLabelEl.textContent = count === 0
+                    ? 'No Meters Selected'
+                    : `Selected Total (${count} ${count === 1 ? 'Meter' : 'Meters'})`;
+            }
+            if (namesHintEl) {
+                namesHintEl.textContent = count === 0
+                    ? 'Tap checkboxes to sum units & bills'
+                    : selectedMeters.map(m => m.name).join(' + ');
+            }
+            if (unitsEl) {
+                unitsEl.textContent = `${Math.round(combinedUnits).toLocaleString('en-IN')} kWh`;
+            }
+            if (billEl) {
+                billEl.textContent = `₹${Math.round(combinedBill).toLocaleString('en-IN')}`;
+            }
+            if (selectAllBtn) {
+                const allSelected = appState.meters.length > 0 && appState.meters.every(m => selectedIds.includes(m.id));
+                selectAllBtn.innerHTML = `<span>${allSelected ? 'Clear All' : 'Select All'}</span>`;
+            }
+        }
+
         // ==================== UI RENDERING ====================
         function renderAll() {
             const meter = getActiveMeter();
@@ -1321,11 +1432,12 @@
                 headerTariffBadge.textContent = meter.tariff === 'common' ? 'LT-ID' : 'LT-IA';
             }
 
-            // 1. Compact Individual Meter Rows with Highlighted Consumer Number
+            // 1. Compact Individual Meter Rows with Selection Checkbox, Highlighted Consumer Number & Bill
             const pillsContainer = document.getElementById('meterPillsContainer');
             if (pillsContainer) {
                 pillsContainer.innerHTML = appState.meters.map(item => {
                     const isActive = item.id === meter.id;
+                    const isChecked = (appState.selectedMeterIds || []).includes(item.id);
                     const itemMetrics = getMeterMetrics(item);
                     const tariffShort = item.tariff === 'common' ? 'LT-ID' : 'LT-IA';
 
@@ -1347,6 +1459,13 @@
                     const editBtnClasses = isActive
                         ? 'bg-white/15 hover:bg-white/25 text-white'
                         : 'bg-white dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700';
+                    const checkBtnClasses = isChecked
+                        ? (isActive
+                            ? 'bg-white text-emerald-700 border-white'
+                            : 'bg-emerald-600 text-white border-emerald-600')
+                        : (isActive
+                            ? 'bg-emerald-700/60 text-transparent border-white/50'
+                            : 'bg-white dark:bg-slate-900 text-transparent border-slate-300 dark:border-slate-600');
 
                     const consumerBadgeHTML = item.serviceNo
                         ? `<span class="text-[10px] tracking-wide px-1.5 py-0.2 rounded shrink-0 ${consumerBadgeClasses}">SC ${escapeHTML(item.serviceNo)}</span>`
@@ -1354,6 +1473,9 @@
 
                     return `
                         <div onclick="selectMeter('${item.id}')" class="px-2.5 py-1.5 rounded-xl border transition cursor-pointer flex items-center justify-between gap-2 ${cardClasses}">
+                            <button type="button" onclick="event.stopPropagation(); toggleMeterSelection('${item.id}')" title="Include in Combined Total" class="w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition active:scale-90 ${checkBtnClasses}">
+                                <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>
+                            </button>
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-1.5 flex-wrap">
                                     <span class="text-xs font-extrabold truncate">${escapeHTML(item.name)}</span>
@@ -1361,7 +1483,7 @@
                                     <span class="text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0 ${tariffBadgeClasses}">${tariffShort}</span>
                                 </div>
                                 <p class="text-[10px] font-medium truncate leading-tight mt-0.5 ${subTextClasses}">
-                                    ${formatDisplayDate(itemMetrics.startStr)} → ${formatDisplayDate(itemMetrics.endStr)} (${itemMetrics.totalCycleDays}d)
+                                    ${formatDisplayDate(itemMetrics.startStr)} → ${formatDisplayDate(itemMetrics.endStr)} (${itemMetrics.totalCycleDays}d) · ₹${itemMetrics.actualBillObj.total.toLocaleString('en-IN')}
                                 </p>
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
@@ -1374,6 +1496,8 @@
                     `;
                 }).join('');
             }
+
+            renderSelectedMetersSummary();
 
             // 2. Dashboard Primary Figures
             document.getElementById('dashDaysBadge').textContent = `${m.elapsedDays} / ${m.totalCycleDays}d`;
@@ -1617,6 +1741,9 @@
 
         function selectMeter(meterId) {
             appState.activeMeterId = meterId;
+            if (!Array.isArray(appState.selectedMeterIds) || appState.selectedMeterIds.length <= 1) {
+                appState.selectedMeterIds = [meterId];
+            }
             saveState();
             renderAll();
         }
@@ -1858,6 +1985,7 @@
                     pastCycles: []
                 });
                 appState.activeMeterId = newId;
+                appState.selectedMeterIds.push(newId);
                 showToast(`Added "${name}"`);
             }
 
@@ -1877,8 +2005,12 @@
             }
             pendingDeleteMeterId = null;
             appState.meters = appState.meters.filter(m => m.id !== id);
+            appState.selectedMeterIds = (appState.selectedMeterIds || []).filter(sid => sid !== id);
             if (appState.activeMeterId === id) {
                 appState.activeMeterId = appState.meters[0].id;
+            }
+            if (appState.selectedMeterIds.length === 0) {
+                appState.selectedMeterIds = [appState.activeMeterId];
             }
             saveState();
             renderAll();
@@ -2074,6 +2206,9 @@
                     const parsed = JSON.parse(e.target.result);
                     if (parsed && Array.isArray(parsed.meters) && parsed.meters.length > 0) {
                         appState = parsed;
+                        if (!Array.isArray(appState.selectedMeterIds) || appState.selectedMeterIds.length === 0) {
+                            appState.selectedMeterIds = [appState.activeMeterId || appState.meters[0].id];
+                        }
                         saveState();
                         renderAll();
                         closeModal('backupModal');
