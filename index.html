@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TNEB Smart Meter & Bi-Monthly Bill Tracker</title>
+
+    <!-- PWA & Add to Home Screen Meta Tags (iOS & Android) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TNEB Tracker">
+    <meta name="application-name" content="TNEB Tracker">
+    <meta name="theme-color" content="#059669" id="metaThemeColor">
+    <link rel="apple-touch-icon" id="appleTouchIcon">
+    <link rel="manifest" id="pwaManifestLink">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js for Visual Usage Pace -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF for Bi-Monthly PDF Statement Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none;
+        }
+        /* Prevent iOS Safari auto-zoom when focusing inputs/selects */
+        input, select, textarea {
+            font-size: 16px !important;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="date"] {
+            -webkit-appearance: none;
+            appearance: none;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            min-width: 0;
+            height: 48px;
+            line-height: 1.2;
+        }
+        input[type="date"]::-webkit-date-and-time-value {
+            text-align: left;
+            margin: 0;
+        }
+        html.dark input[type="date"] {
+            color-scheme: dark;
+        }
+        /* Hide scrollbars cleanly on horizontal meter pills */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Smooth view transitions */
+        .view-section {
+            animation: fadeIn 0.2s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Bottom Toast Slide Up */
+        @keyframes slideUpToast {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast-bottom {
+            animation: slideUpToast 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        /* Custom subtle shadows */
+        .card-shadow {
+            box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.05), 0 1px 3px -1px rgba(15, 23, 42, 0.03);
+        }
+        html.dark .card-shadow {
+            box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.45);
+        }
+        .nav-shadow {
+            box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.14), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+        }
+        html.dark .nav-shadow {
+            box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.06);
+        }
+        .pb-safe-nav {
+            bottom: max(1rem, env(safe-area-inset-bottom));
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-emerald-100 dark:selection:bg-emerald-900 selection:text-emerald-900 dark:selection:text-emerald-100 pb-28 transition-colors duration-200">
+
+    <!-- Bottom Toast Container -->
+    <div id="toastContainer" class="fixed bottom-24 inset-x-0 z-[70] px-4 pointer-events-none flex flex-col items-center justify-center gap-2"></div>
+
+    <!-- Top Sticky App Header -->
+    <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors">
+        <div class="max-w-lg mx-auto px-4 pt-3 pb-2.5">
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-sm shrink-0">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-1.5">
+                            <h1 class="text-base font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight truncate">TNEB Tracker</h1>
+                            <span id="headerTariffBadge" class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">LT-IA</span>
+                        </div>
+                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight truncate">28th → 27th · 200u Free Slab</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="cycleTheme()" id="themeToggleBtn" title="Switch Theme (Auto / Light / Dark)" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        <i data-lucide="monitor" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="openReminderModal()" id="headerBellBtn" title="Weekly Reading Reminders" class="relative p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
+                        <span id="bellActiveDot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500"></span>
+                    </button>
+                    <button onclick="openBackupModal()" title="Backup & Export Data" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        <i data-lucide="folder-down" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="openMetersModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm">
+                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                        <span>Meters</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Horizontal Individual Meter Switcher Pills -->
+            <div id="meterPillsContainer" class="flex items-center gap-2 overflow-x-auto no-scrollbar pt-2.5 pb-0.5">
+                <button onclick="selectMeter('default-home')" class="shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm">
+                    <span>Main Meter</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-white/20 text-white">0u</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-lg mx-auto px-4 pt-4 space-y-4">
+
+        <!-- ==================== TAB 1: DASHBOARD ==================== -->
+        <section id="view-dashboard" class="view-section space-y-4">
+
+            <!-- Active Meter Header Card -->
+            <div id="activeMeterBanner" class="bg-white dark:bg-slate-900 rounded-2xl p-3.5 border border-slate-200/80 dark:border-slate-800 card-shadow flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Main Meter</h2>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">28 Oct → 27 Dec (60d) · Domestic LT-IA (200 Free ≤500u)</p>
+                </div>
+                <button onclick="openMetersModal()" title="Configure Meter" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition shrink-0">
+                    <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Weekly Reading Reminder Due Banner -->
+            <div id="weeklyReminderDueBanner" class="hidden rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50/70 dark:from-amber-950/60 dark:to-orange-950/40 border border-amber-200/80 dark:border-amber-800/60 p-3.5 flex items-center justify-between gap-2.5">
+                <div class="flex items-start gap-2.5 min-w-0 flex-1">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500/15 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
+                        <i data-lucide="bell-ring" class="w-4 h-4"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-extrabold text-amber-950 dark:text-amber-200 leading-snug">Weekly Meter Check Due</p>
+                        <p id="weeklyReminderDueSub" class="text-[11px] font-medium text-amber-800/90 dark:text-amber-300/90 leading-snug mt-0.5 break-words">Last reading: 28 Oct (16d ago)</p>
+                    </div>
+                </div>
+                <button onclick="openReadingModal()" class="shrink-0 px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold shadow-xs transition active:scale-95">
+                    Log Now
+                </button>
+            </div>
+
+            <!-- Primary Bi-Month Cycle Status & Bill Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow relative overflow-hidden">
+                <!-- Top Cycle Window Bar -->
+                <div class="flex items-center justify-between gap-2 mb-4">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/70 dark:border-emerald-800/60">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span id="dashCycleLabel" class="text-[11px] font-bold text-emerald-800 dark:text-emerald-300">Active Bi-Month</span>
+                    </div>
+                    <span id="dashDaysBadge" class="text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full">0 / 60d</span>
+                </div>
+
+                <!-- Main Consumption & Bill Figures -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-3.5 border border-slate-100 dark:border-slate-700/70">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">Units Used</span>
+                        <div class="flex items-baseline gap-1">
+                            <span id="dashActualUnits" class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">0</span>
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">kWh</span>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50/70 dark:from-emerald-950/50 dark:to-teal-950/40 rounded-2xl p-3.5 border border-emerald-200/60 dark:border-emerald-800/60">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-emerald-800/80 dark:text-emerald-400 block mb-1">TNEB Bill</span>
+                        <div class="flex items-baseline gap-0.5">
+                            <span id="dashActualBill" class="text-3xl font-extrabold text-emerald-700 dark:text-emerald-400 tracking-tight">₹0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opening vs Latest Reading Strip -->
+                <div id="dashCycleDates" class="bg-slate-50/90 dark:bg-slate-800/60 rounded-xl px-3.5 py-2.5 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs mb-4">
+                    <span>Open: <strong class="text-slate-800 dark:text-slate-200">0</strong></span>
+                    <span>Latest: <strong class="text-slate-800 dark:text-slate-200">0 kWh</strong></span>
+                </div>
+
+                <!-- Quick Action Row: Log Reading & Reset Cycle -->
+                <div class="grid grid-cols-5 gap-2.5">
+                    <button onclick="openReadingModal()" class="col-span-3 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition active:scale-95">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Log Reading</span>
+                    </button>
+                    <button onclick="openResetModal()" class="col-span-2 flex items-center justify-center gap-1.5 py-3 px-3 rounded-2xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 font-bold text-xs transition active:scale-95">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        <span>Unit Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Usage Pace & 500-Unit Threshold Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200">Usage Pace & 500-Unit Limit</h2>
+                    <span id="dashSubsidyBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400">200 Free ≤500u</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2.5 text-center">
+                    <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/70">
+                        <span class="text-[10px] font-bold uppercase text-slate-400 block mb-0.5">Cycle Avg</span>
+                        <span id="dashOverallAvg" class="text-base font-extrabold text-slate-900 dark:text-white">0.0</span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 block">u / day</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/70">
+                        <span class="text-[10px] font-bold uppercase text-slate-400 block mb-0.5">Last Check</span>
+                        <span id="dashRecentAvg" class="text-base font-extrabold text-slate-900 dark:text-white">0.0</span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 block">u / day</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/60">
+                        <span class="text-[10px] font-bold uppercase text-emerald-700 dark:text-emerald-400 block mb-0.5">Left ≤500</span>
+                        <span id="dashUnitsLeft500" class="text-base font-extrabold text-emerald-700 dark:text-emerald-400">500</span>
+                        <span class="text-[10px] text-emerald-700/80 dark:text-emerald-400/80 block">kWh left</span>
+                    </div>
+                </div>
+
+                <!-- 500-Unit Tier Progress Bar -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="text-slate-600 dark:text-slate-400">Subsidized Tier Progress</span>
+                        <span id="dash500ProgressText" class="text-slate-900 dark:text-slate-200 font-bold">0 / 500 kWh</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div id="dash500ProgressBar" class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <p id="dashPaceNote" class="text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">Add your first meter check to see daily unit pace.</p>
+                </div>
+            </div>
+
+            <!-- Previous Bi-Month Records Summary Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                <div class="flex items-center justify-between gap-2 mb-3">
+                    <div class="min-w-0">
+                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Previous Bi-Month Records</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Completed 28th → 27th cycles</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="downloadBiMonthPDF()" title="Download Bi-Month PDF" class="inline-flex items-center gap-1 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-xl transition active:scale-95">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                            <span>PDF</span>
+                        </button>
+                        <button onclick="switchTab('history')" class="text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1.5 rounded-xl transition active:scale-95">
+                            All →
+                        </button>
+                    </div>
+                </div>
+                <div id="dashPastCyclesList" class="space-y-2"></div>
+            </div>
+
+            <!-- Current Bi-Month Slab Breakdown Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">TNEB Slab Breakdown</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Current bi-month tariff calculation</p>
+                    </div>
+                    <span id="dashSlabTierBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400">≤500 Tier</span>
+                </div>
+                <div id="dashSlabTableContainer" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm"></div>
+            </div>
+
+        </section>
+
+        <!-- ==================== TAB 2: HISTORY & ARCHIVED BI-MONTHS ==================== -->
+        <section id="view-history" class="view-section hidden space-y-4">
+
+            <!-- Daily / Check Pace Chart Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Daily Unit Trend</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Units/day between readings in current cycle</p>
+                    </div>
+                    <span class="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1 rounded-full">kWh / day</span>
+                </div>
+                <div class="h-44 w-full relative">
+                    <canvas id="paceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Archived Bi-Month Cycles (28th to 27th) -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                <div class="flex items-center justify-between gap-2 mb-3">
+                    <div class="min-w-0">
+                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Archived Bi-Month Cycles</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Past 28th → 27th records for this meter</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="downloadBiMonthPDF()" class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200/70 dark:border-emerald-800/60 px-2.5 py-1.5 rounded-xl transition active:scale-95">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span>PDF</span>
+                        </button>
+                        <button onclick="openResetModal()" class="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 px-2.5 py-1.5 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/60 transition active:scale-95">
+                            + Reset
+                        </button>
+                    </div>
+                </div>
+                <div id="pastCyclesHistoryContainer" class="space-y-3"></div>
+            </div>
+
+            <!-- Current Cycle Readings Timeline -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Current Cycle Reading Log</h2>
+                        <p id="historyCountLabel" class="text-xs text-slate-500 dark:text-slate-400">0 checks logged</p>
+                    </div>
+                    <button onclick="openReadingModal()" class="text-xs font-bold bg-emerald-600 text-white px-3 py-1.5 rounded-xl hover:bg-emerald-700 transition active:scale-95">
+                        + Add Check
+                    </button>
+                </div>
+                <div id="readingsTimelineContainer" class="space-y-2.5"></div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: TNEB SLABS & SIMULATOR ==================== -->
+        <section id="view-slabs" class="view-section hidden space-y-4">
+
+            <!-- Interactive Quick Bill Estimator -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                <div class="flex items-start justify-between gap-2 mb-3">
+                    <div>
+                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white mb-0.5">Bi-Monthly Bill Calculator</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Test any bi-monthly kWh unit total under TNEB tariffs</p>
+                    </div>
+                    <span id="simTierBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 shrink-0">&gt;500 Slab</span>
+                </div>
+
+                <!-- Tariff Switcher inside Calculator -->
+                <div class="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 mb-3.5">
+                    <button type="button" id="simTariffDomesticBtn" onclick="setSimTariff('domestic')" class="py-2 px-3 rounded-xl text-xs font-extrabold transition bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs">
+                        Domestic LT-IA
+                    </button>
+                    <button type="button" id="simTariffCommonBtn" onclick="setSimTariff('common')" class="py-2 px-3 rounded-xl text-xs font-bold transition text-slate-600 dark:text-slate-300">
+                        Common LT-ID (₹8.40)
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-2xl border border-slate-200/70 dark:border-slate-700/70 mb-4">
+                    <div class="flex-1">
+                        <label for="simUnitsInput" class="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400 block mb-1">Test Units (kWh)</label>
+                        <input type="number" id="simUnitsInput" value="590" min="0" max="10000" oninput="updateSimulator()" class="w-full text-2xl font-extrabold text-slate-900 dark:text-white bg-transparent focus:outline-none">
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[11px] font-bold uppercase text-emerald-700 dark:text-emerald-400 block mb-1">Estimated Bill</span>
+                        <span id="simBillOutput" class="text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">₹2,796</span>
+                    </div>
+                </div>
+
+                <input type="range" id="simUnitsSlider" min="0" max="1200" step="10" value="590" oninput="syncSimSlider(this.value)" class="w-full accent-emerald-600 mb-2 cursor-pointer">
+                <div class="flex justify-between text-[11px] font-semibold text-slate-400">
+                    <span>200 u (Free)</span>
+                    <span>400 u</span>
+                    <span>500 u</span>
+                    <span>800 u</span>
+                    <span>1200 u</span>
+                </div>
+
+                <div id="simBreakdownList" class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs"></div>
+            </div>
+
+            <!-- Official TNEB Tariff Reference Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-4">
+                <div>
+                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">TNEB Domestic Tariff (LT-IA · 2026)</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Bi-monthly slab structure (28th → 27th cycle)</p>
+                </div>
+
+                <div class="rounded-2xl border border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50/40 dark:bg-emerald-950/30 p-3.5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-emerald-900 dark:text-emerald-300">Up to 500 Units (Subsidized)</span>
+                        <span class="text-[11px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-md">200 Free</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-700 dark:text-slate-300 pt-1">
+                        <div>0 – 200 units:</div><div class="font-bold text-right text-emerald-700 dark:text-emerald-400">₹0.00 / unit</div>
+                        <div>201 – 400 units:</div><div class="font-bold text-right">₹4.70 / unit</div>
+                        <div>401 – 500 units:</div><div class="font-bold text-right">₹6.30 / unit</div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl border border-amber-200/80 dark:border-amber-800/60 bg-amber-50/40 dark:bg-amber-950/30 p-3.5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-amber-950 dark:text-amber-300">Above 500 Units (Non-Subsidized)</span>
+                        <span class="text-[11px] font-bold bg-amber-600 text-white px-2 py-0.5 rounded-md">100 Free</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-700 dark:text-slate-300 pt-1">
+                        <div>0 – 100 units:</div><div class="font-bold text-right text-emerald-700 dark:text-emerald-400">₹0.00 / unit</div>
+                        <div>101 – 400 units:</div><div class="font-bold text-right">₹4.70 / unit</div>
+                        <div>401 – 500 units:</div><div class="font-bold text-right">₹6.30 / unit</div>
+                        <div>501 – 600 units:</div><div class="font-bold text-right">₹8.40 / unit</div>
+                        <div>601 – 800 units:</div><div class="font-bold text-right">₹9.45 / unit</div>
+                        <div>801 – 1000 units:</div><div class="font-bold text-right">₹10.50 / unit</div>
+                        <div>Above 1000 units:</div><div class="font-bold text-right">₹11.55 / unit</div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/60 p-3.5 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-extrabold text-slate-900 dark:text-white block">Common / Apartment Meter (LT-ID)</span>
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400">Flat tariff without 100-unit free subsidy</span>
+                    </div>
+                    <span class="text-xs font-extrabold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">₹8.40 / u</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Floating Pill Navigation Bar -->
+    <nav class="fixed inset-x-0 pb-safe-nav z-30 px-4 pointer-events-none">
+        <div class="max-w-md mx-auto bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 rounded-full p-1.5 flex items-center justify-between gap-1.5 nav-shadow pointer-events-auto">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold transition bg-emerald-600 text-white shadow-sm">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span>Home</span>
+            </button>
+            <button onclick="switchTab('history')" id="nav-history" class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i data-lucide="history" class="w-4 h-4"></i>
+                <span>History</span>
+            </button>
+            <button onclick="switchTab('slabs')" id="nav-slabs" class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i data-lucide="percent" class="w-4 h-4"></i>
+                <span>Slabs</span>
+            </button>
+            <button onclick="openReadingModal()" title="Quick Log Reading" class="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-md transition active:scale-95 shrink-0">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ==================== MODAL 1: LOG METER READING ==================== -->
+    <div id="readingModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Log Meter Reading</h3>
+                    <p id="readingModalMeterSubtitle" class="text-xs text-slate-500 dark:text-slate-400">Main Meter · 28th Cycle</p>
+                </div>
+                <button onclick="closeModal('readingModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-3 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between text-xs">
+                <span class="text-slate-500 dark:text-slate-400">Previous Reading:</span>
+                <span id="modalPrevReadingHint" class="font-extrabold text-slate-900 dark:text-white">0 kWh</span>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label for="inputNewReading" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Current Meter Reading (kWh)</label>
+                    <input type="number" id="inputNewReading" step="0.1" placeholder="e.g. 4250" oninput="updateLiveEntryPreview()" class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-lg font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                </div>
+                <div class="grid grid-cols-2 gap-3 items-end">
+                    <div class="min-w-0">
+                        <label for="inputReadingDate" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Check Date</label>
+                        <input type="date" id="inputReadingDate" onchange="updateLiveEntryPreview()" class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    </div>
+                    <div class="min-w-0">
+                        <label for="inputReadingNote" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Note (Optional)</label>
+                        <input type="text" id="inputReadingNote" placeholder="e.g. Week 2" class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Delta Preview -->
+            <div id="liveEntryPreview" class="hidden rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 p-3 text-xs space-y-1">
+                <div class="flex justify-between font-bold text-emerald-900 dark:text-emerald-300">
+                    <span>Units Added Since Last Check:</span>
+                    <span id="previewDeltaUnits">+0 kWh</span>
+                </div>
+                <div class="flex justify-between text-emerald-800 dark:text-emerald-400">
+                    <span>Updated Bi-Month Total & Bill:</span>
+                    <span id="previewTotalBill" class="font-extrabold">0 kWh · ₹0</span>
+                </div>
+            </div>
+
+            <button onclick="saveNewReading()" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+                Save Meter Reading
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 2: BI-MONTH UNIT RESET (28TH CYCLE) ==================== -->
+    <div id="resetModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Reset Bi-Month Units (28th)</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Archive current 28th → 27th record & start fresh at 0 units</p>
+                </div>
+                <button onclick="closeModal('resetModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Current Cycle Summary Before Archiving -->
+            <div class="rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 p-3.5 space-y-1.5 text-xs">
+                <div class="font-extrabold text-amber-950 dark:text-amber-300 flex items-center gap-1.5">
+                    <i data-lucide="archive" class="w-3.5 h-3.5"></i>
+                    <span>Current Bi-Month to Save in History:</span>
+                </div>
+                <div class="flex justify-between text-amber-900 dark:text-amber-300/90">
+                    <span>Window:</span>
+                    <span id="resetArchiveWindow" class="font-bold">28 Oct → 27 Dec</span>
+                </div>
+                <div class="flex justify-between text-amber-900 dark:text-amber-300/90">
+                    <span>Total Units & Final Bill:</span>
+                    <span id="resetArchiveStats" class="font-extrabold">0 kWh · ₹0</span>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label for="inputResetOpeningKwh" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Closing / New Opening Meter Reading (kWh)</label>
+                    <input type="number" id="inputResetOpeningKwh" step="0.1" class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-base font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Closes the old bi-month at this reading and starts the new cycle at 0 units used.</p>
+                </div>
+                <div>
+                    <label for="inputResetNewStartDate" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">New Bi-Month Start Date (28th)</label>
+                    <input type="date" id="inputResetNewStartDate" class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                </div>
+            </div>
+
+            <button onclick="executeCycleReset()" class="w-full py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+                Archive Record & Start New 28th Cycle
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 3: MANAGE INDIVIDUAL METERS ==================== -->
+    <div id="metersModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Individual Meters</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Each meter tracks its own 28th → 27th bi-month</p>
+                </div>
+                <button onclick="closeModal('metersModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- List of Configured Meters -->
+            <div id="metersListContainer" class="space-y-2.5"></div>
+
+            <button onclick="openMeterFormModal()" class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Add New Individual Meter</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 4: ADD / EDIT METER FORM ==================== -->
+    <div id="meterFormModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 id="meterFormTitle" class="text-base font-extrabold text-slate-900 dark:text-white">Add Individual Meter</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Configure meter details & 28th cycle start</p>
+                </div>
+                <button onclick="closeModal('meterFormModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <input type="hidden" id="editMeterId">
+
+            <div class="space-y-3">
+                <div>
+                    <label for="inputMeterName" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Meter Name</label>
+                    <input type="text" id="inputMeterName" placeholder="e.g. Ground Floor, House, Shop" class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                </div>
+
+                <div>
+                    <label for="inputServiceNo" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">TNEB Service No. (Optional)</label>
+                    <input type="text" id="inputServiceNo" placeholder="e.g. 09-123-456-789" class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 items-end">
+                    <div class="min-w-0">
+                        <label for="inputCycleStartDate" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Cycle Start (28th)</label>
+                        <input type="date" id="inputCycleStartDate" onchange="previewCycleWindowInForm()" class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    </div>
+                    <div class="min-w-0">
+                        <label for="inputOpeningReading" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Opening kWh</label>
+                        <input type="number" id="inputOpeningReading" step="0.1" placeholder="0" class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                    </div>
+                </div>
+
+                <div id="formCyclePreviewBanner" class="rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/70 dark:border-emerald-800/60 px-3 py-2 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                    Bi-Month Window: 28th → 27th
+                </div>
+
+                <div>
+                    <label for="inputMeterTariff" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">TNEB Tariff / Subsidy Slab</label>
+                    <select id="inputMeterTariff" class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:outline-none focus:border-emerald-600">
+                        <option value="domestic">Domestic LT-IA (200 Units Free ≤500u)</option>
+                        <option value="common">Common / Apartment LT-ID (₹8.40 Flat)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="saveMeterForm()" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+                Save Meter
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 5: BACKUP & EXPORT ==================== -->
+    <div id="backupModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Backup & Data</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Export PDF statement or backup meter data</p>
+                </div>
+                <button onclick="closeModal('backupModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="space-y-2.5">
+                <button onclick="installPWA()" id="installPwaBtn" class="w-full py-3.5 px-4 rounded-2xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-sm flex items-center justify-center gap-2 border border-slate-700/60 shadow-sm transition active:scale-95">
+                    <i data-lucide="smartphone" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Add App to Home Screen</span>
+                </button>
+
+                <button onclick="downloadBiMonthPDF()" class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                    <span>Download Bi-Month PDF Statement</span>
+                </button>
+
+                <button onclick="exportBackupJSON()" class="w-full py-3.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Download JSON Backup</span>
+                </button>
+
+                <label class="w-full py-3.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition active:scale-95">
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    <span>Restore From Backup File</span>
+                    <input type="file" id="importFileInput" accept=".json" onchange="importBackupJSON(event)" class="hidden">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 6: WEEKLY READING REMINDERS ==================== -->
+    <div id="reminderModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Weekly Reading Reminder</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Get notified every week to log your kWh reading</p>
+                </div>
+                <button onclick="closeModal('reminderModal')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Enable Toggle Card -->
+            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-3">
+                <div>
+                    <span class="text-sm font-extrabold text-slate-900 dark:text-white block">Weekly Check Alert</span>
+                    <span id="reminderStatusLabel" class="text-xs text-slate-500 dark:text-slate-400">Every Sunday at 09:00 AM</span>
+                </div>
+                <button type="button" id="reminderToggleSwitch" onclick="toggleWeeklyReminder()" class="w-12 h-7 rounded-full bg-slate-300 dark:bg-slate-700 p-1 transition-colors relative shrink-0">
+                    <span id="reminderToggleKnob" class="block w-5 h-5 rounded-full bg-white shadow-sm transition-transform translate-x-0"></span>
+                </button>
+            </div>
+
+            <!-- Day & Time Pickers -->
+            <div class="grid grid-cols-2 gap-3 items-end">
+                <div class="min-w-0">
+                    <label for="inputReminderDay" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Day of Week</label>
+                    <select id="inputReminderDay" onchange="saveReminderPrefs()" class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        <option value="0">Sunday</option>
+                        <option value="1">Monday</option>
+                        <option value="2">Tuesday</option>
+                        <option value="3">Wednesday</option>
+                        <option value="4">Thursday</option>
+                        <option value="5">Friday</option>
+                        <option value="6">Saturday</option>
+                    </select>
+                </div>
+                <div class="min-w-0">
+                    <label for="inputReminderTime" class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Reminder Time</label>
+                    <input type="time" id="inputReminderTime" value="09:00" onchange="saveReminderPrefs()" class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                </div>
+            </div>
+
+            <!-- System Calendar & Test Notification Actions -->
+            <div class="space-y-2 pt-1">
+                <button onclick="downloadWeeklyCalendarICS()" class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                    <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+                    <span>Add Weekly Alert to Phone Calendar (.ics)</span>
+                </button>
+                <button onclick="sendTestReminderNotification()" class="w-full py-3 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95">
+                    <i data-lucide="bell" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                    <span>Send Test Notification Now</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== APPLICATION LOGIC ==================== -->
+    <script>
+        const STORAGE_KEY = 'tneb_smart_tracker_v2';
+        const THEME_KEY = 'tneb_theme_pref';
+        const REMINDER_KEY = 'tneb_weekly_reminder_v1';
+        let paceChartInstance = null;
+
+        // ==================== iOS & MOBILE HAPTIC ENGINE ====================
+        function triggerHaptic(style = 'light') {
+            try {
+                if (navigator.vibrate) {
+                    if (style === 'error') navigator.vibrate([30, 40, 30]);
+                    else if (style === 'success') navigator.vibrate([15, 30, 20]);
+                    else navigator.vibrate(10);
+                }
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                if (isIOS) {
+                    const label = document.createElement('label');
+                    label.style.position = 'fixed';
+                    label.style.opacity = '0';
+                    label.style.pointerEvents = 'none';
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.setAttribute('switch', '');
+                    label.appendChild(checkbox);
+                    document.body.appendChild(label);
+                    label.click();
+                    label.remove();
+                }
+            } catch (e) {}
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('button, label[for], a')) {
+                triggerHaptic('light');
+            }
+        }, { passive: true });
+
+        // ==================== SYSTEM & MANUAL THEME CONTROLLER ====================
+        let currentThemePref = localStorage.getItem(THEME_KEY) || 'system';
+
+        function applyTheme() {
+            const root = document.documentElement;
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const useDark = currentThemePref === 'dark' || (currentThemePref === 'system' && prefersDark);
+
+            if (useDark) {
+                root.classList.add('dark');
+            } else {
+                root.classList.remove('dark');
+            }
+
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) {
+                const iconName = currentThemePref === 'system' ? 'monitor' : (currentThemePref === 'dark' ? 'moon' : 'sun');
+                btn.innerHTML = `<i data-lucide="${iconName}" class="w-4 h-4"></i>`;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+
+            if (paceChartInstance && typeof renderAll === 'function') {
+                renderAll();
+            }
+        }
+
+        function cycleTheme() {
+            const order = ['system', 'light', 'dark'];
+            currentThemePref = order[(order.indexOf(currentThemePref) + 1) % order.length];
+            localStorage.setItem(THEME_KEY, currentThemePref);
+            applyTheme();
+            const label = currentThemePref === 'system' ? 'Auto (System Theme)' : (currentThemePref === 'dark' ? 'Dark Mode' : 'Light Mode');
+            showToast(`Theme: ${label}`);
+        }
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if (currentThemePref === 'system') applyTheme();
+        });
+
+        // ==================== DATE & 28TH -> 27TH CYCLE HELPERS ====================
+        function getTodayStr() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function getDefault28thStartStr() {
+            const now = new Date();
+            let year = now.getFullYear();
+            let month = now.getMonth();
+            if (now.getDate() < 28) {
+                month -= 1;
+                if (month < 0) {
+                    month = 11;
+                    year -= 1;
+                }
+            }
+            return `${year}-${String(month + 1).padStart(2, '0')}-28`;
+        }
+
+        function parseLocalDate(dateStr) {
+            if (!dateStr || typeof dateStr !== 'string') return new Date();
+            const parts = dateStr.split('-').map(Number);
+            if (parts.length !== 3 || parts.some(isNaN)) return new Date();
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        function getCycleEndDateStr(startDateStr) {
+            const start = parseLocalDate(startDateStr);
+            const endYear = start.getMonth() >= 10 ? start.getFullYear() + 1 : start.getFullYear();
+            const endMonth = (start.getMonth() + 2) % 12;
+            const endDay = start.getDate() === 28 ? 27 : start.getDate();
+            return `${endYear}-${String(endMonth + 1).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+        }
+
+        function formatDisplayDate(dateStr) {
+            if (!dateStr) return '';
+            const d = parseLocalDate(dateStr);
+            return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+        }
+
+        function formatFullDate(dateStr) {
+            if (!dateStr) return '';
+            const d = parseLocalDate(dateStr);
+            return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function diffDays(startStr, endStr) {
+            const s = parseLocalDate(startStr);
+            const e = parseLocalDate(endStr);
+            return Math.max(0, Math.round((e - s) / (1000 * 60 * 60 * 24)));
+        }
+
+        // ==================== OFFICIAL TNEB BI-MONTHLY CALCULATOR (2026 G.O. 50) ====================
+        function calculateTNEBBill(unitsInput, tariffType = 'domestic') {
+            const units = Math.max(0, Math.round(Number(unitsInput) || 0));
+            const breakdown = [];
+            let total = 0;
+
+            if (units === 0) {
+                return { total: 0, tierLabel: tariffType === 'common' ? 'Common LT-ID' : '200 Free Tier', breakdown: [] };
+            }
+
+            if (tariffType === 'common') {
+                total = units * 8.40;
+                breakdown.push({ range: `1 – ${units} units`, units, rate: 8.40, amount: total, isFree: false });
+                return { total: Math.round(total), tierLabel: 'Common LT-ID', breakdown };
+            }
+
+            if (units <= 500) {
+                const s1 = Math.min(units, 200);
+                breakdown.push({ range: '0 – 200 units (Free)', units: s1, rate: 0, amount: 0, isFree: true });
+
+                if (units > 200) {
+                    const s2 = Math.min(units - 200, 200);
+                    const a2 = s2 * 4.70;
+                    total += a2;
+                    breakdown.push({ range: '201 – 400 units', units: s2, rate: 4.70, amount: a2, isFree: false });
+                }
+                if (units > 400) {
+                    const s3 = Math.min(units - 400, 100);
+                    const a3 = s3 * 6.30;
+                    total += a3;
+                    breakdown.push({ range: '401 – 500 units', units: s3, rate: 6.30, amount: a3, isFree: false });
+                }
+                return { total: Math.round(total), tierLabel: '≤500 (200 Free)', breakdown };
+            } else {
+                breakdown.push({ range: '0 – 100 units (Free)', units: 100, rate: 0, amount: 0, isFree: true });
+
+                const s2 = 300;
+                const a2 = s2 * 4.70;
+                total += a2;
+                breakdown.push({ range: '101 – 400 units', units: s2, rate: 4.70, amount: a2, isFree: false });
+
+                const s3 = 100;
+                const a3 = s3 * 6.30;
+                total += a3;
+                breakdown.push({ range: '401 – 500 units', units: s3, rate: 6.30, amount: a3, isFree: false });
+
+                const s4 = Math.min(units - 500, 100);
+                const a4 = s4 * 8.40;
+                total += a4;
+                breakdown.push({ range: '501 – 600 units', units: s4, rate: 8.40, amount: a4, isFree: false });
+
+                if (units > 600) {
+                    const s5 = Math.min(units - 600, 200);
+                    const a5 = s5 * 9.45;
+                    total += a5;
+                    breakdown.push({ range: '601 – 800 units', units: s5, rate: 9.45, amount: a5, isFree: false });
+                }
+                if (units > 800) {
+                    const s6 = Math.min(units - 800, 200);
+                    const a6 = s6 * 10.50;
+                    total += a6;
+                    breakdown.push({ range: '801 – 1000 units', units: s6, rate: 10.50, amount: a6, isFree: false });
+                }
+                if (units > 1000) {
+                    const s7 = units - 1000;
+                    const a7 = s7 * 11.55;
+                    total += a7;
+                    breakdown.push({ range: 'Above 1000 units', units: s7, rate: 11.55, amount: a7, isFree: false });
+                }
+                return { total: Math.round(total), tierLabel: '>500 (100 Free)', breakdown };
+            }
+        }
+
+        // ==================== STATE MANAGEMENT ====================
+        function getDefaultState() {
+            const start28 = getDefault28thStartStr();
+            return {
+                activeMeterId: 'default-home',
+                meters: [
+                    {
+                        id: 'default-home',
+                        name: 'Main Meter',
+                        serviceNo: '',
+                        tariff: 'domestic',
+                        cycleStartDate: start28,
+                        openingReading: 0,
+                        readings: [],
+                        pastCycles: []
+                    }
+                ]
+            };
+        }
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return getDefaultState();
+                const parsed = JSON.parse(raw);
+                if (!parsed || !Array.isArray(parsed.meters) || parsed.meters.length === 0) return getDefaultState();
+                parsed.meters.forEach(m => {
+                    if (!m.id) m.id = 'meter-' + Date.now();
+                    if (!m.name) m.name = 'Main Meter';
+                    if (!m.tariff) m.tariff = 'domestic';
+                    if (!m.cycleStartDate) m.cycleStartDate = getDefault28thStartStr();
+                    if (typeof m.openingReading !== 'number' || isNaN(m.openingReading)) m.openingReading = 0;
+                    if (!Array.isArray(m.readings)) m.readings = [];
+                    if (!Array.isArray(m.pastCycles)) m.pastCycles = [];
+                });
+                if (!parsed.meters.some(m => m.id === parsed.activeMeterId)) {
+                    parsed.activeMeterId = parsed.meters[0].id;
+                }
+                return parsed;
+            } catch (e) {
+                return getDefaultState();
+            }
+        }
+
+        let appState = loadState();
+        let pendingDeleteMeterId = null;
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+            } catch (e) {}
+        }
+
+        function getActiveMeter() {
+            let meter = appState.meters.find(m => m.id === appState.activeMeterId);
+            if (!meter) {
+                meter = appState.meters[0];
+                appState.activeMeterId = meter.id;
+            }
+            return meter;
+        }
+
+        // ==================== METER ANALYTICS ENGINE ====================
+        function getMeterMetrics(meter) {
+            const startStr = meter.cycleStartDate || getDefault28thStartStr();
+            const endStr = getCycleEndDateStr(startStr);
+            const totalCycleDays = Math.max(1, diffDays(startStr, endStr));
+            const todayStr = getTodayStr();
+
+            const sortedReadings = [...(meter.readings || [])].sort((a, b) => a.date.localeCompare(b.date));
+            const openingKwh = Number(meter.openingReading) || 0;
+            const latestEntry = sortedReadings.length > 0 ? sortedReadings[sortedReadings.length - 1] : null;
+            const currentKwh = latestEntry ? Number(latestEntry.reading) : openingKwh;
+            const latestDateStr = latestEntry ? latestEntry.date : startStr;
+
+            const actualUnits = Math.max(0, +(currentKwh - openingKwh).toFixed(1));
+            const actualBillObj = calculateTNEBBill(actualUnits, meter.tariff);
+
+            const refDateForElapsed = latestEntry ? latestDateStr : todayStr;
+            const rawElapsed = diffDays(startStr, refDateForElapsed);
+            const elapsedDays = Math.min(totalCycleDays, Math.max(0, rawElapsed));
+
+            const overallDailyAvg = elapsedDays > 0 ? +(actualUnits / elapsedDays).toFixed(1) : 0;
+
+            let recentDailyAvg = overallDailyAvg;
+            if (sortedReadings.length >= 2) {
+                const prev = sortedReadings[sortedReadings.length - 2];
+                const last = sortedReadings[sortedReadings.length - 1];
+                const dUnits = Math.max(0, last.reading - prev.reading);
+                const dDays = Math.max(1, diffDays(prev.date, last.date));
+                recentDailyAvg = +(dUnits / dDays).toFixed(1);
+            } else if (sortedReadings.length === 1) {
+                const last = sortedReadings[0];
+                const dUnits = Math.max(0, last.reading - openingKwh);
+                const dDays = Math.max(1, diffDays(startStr, last.date));
+                recentDailyAvg = +(dUnits / dDays).toFixed(1);
+            }
+
+            const unitsLeft500 = Math.max(0, Math.round(500 - actualUnits));
+
+            return {
+                startStr,
+                endStr,
+                totalCycleDays,
+                elapsedDays,
+                openingKwh,
+                currentKwh,
+                latestDateStr,
+                sortedReadings,
+                actualUnits,
+                actualBillObj,
+                overallDailyAvg,
+                recentDailyAvg,
+                unitsLeft500
+            };
+        }
+
+        // ==================== UI RENDERING ====================
+        function renderAll() {
+            const meter = getActiveMeter();
+            const m = getMeterMetrics(meter);
+
+            const headerTariffBadge = document.getElementById('headerTariffBadge');
+            if (headerTariffBadge) {
+                headerTariffBadge.textContent = meter.tariff === 'common' ? 'LT-ID' : 'LT-IA';
+            }
+
+            // 1. Meter Switcher Pills
+            const pillsContainer = document.getElementById('meterPillsContainer');
+            if (pillsContainer) {
+                pillsContainer.innerHTML = appState.meters.map(item => {
+                    const isActive = item.id === meter.id;
+                    const itemMetrics = getMeterMetrics(item);
+                    const activeClasses = isActive
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+                    const badgeClasses = isActive
+                        ? 'bg-white/20 text-white'
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300';
+                    return `
+                        <button onclick="selectMeter('${item.id}')" class="shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${activeClasses}">
+                            <span>${escapeHTML(item.name)}</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded-md ${badgeClasses}">${Math.round(itemMetrics.actualUnits)}u</span>
+                        </button>
+                    `;
+                }).join('');
+            }
+
+            // 2. Active Meter Banner
+            const tariffShort = meter.tariff === 'common' ? 'Common LT-ID' : 'Domestic LT-IA (200 Free ≤500u)';
+            const serviceText = meter.serviceNo ? ` · SC: ${escapeHTML(meter.serviceNo)}` : '';
+            const bannerEl = document.getElementById('activeMeterBanner');
+            if (bannerEl) {
+                bannerEl.innerHTML = `
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">${escapeHTML(meter.name)}</h2>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 shrink-0">${tariffShort}</span>
+                        </div>
+                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                            ${formatDisplayDate(m.startStr)} → ${formatDisplayDate(m.endStr)} (${m.totalCycleDays}d)${serviceText}
+                        </p>
+                    </div>
+                    <button onclick="openMeterFormModal('${meter.id}')" title="Edit Meter Settings" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition shrink-0">
+                        <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+                    </button>
+                `;
+            }
+
+            // 3. Dashboard Primary Figures
+            document.getElementById('dashDaysBadge').textContent = `${m.elapsedDays} / ${m.totalCycleDays}d`;
+            document.getElementById('dashActualUnits').textContent = Math.round(m.actualUnits).toLocaleString('en-IN');
+            document.getElementById('dashActualBill').textContent = `₹${m.actualBillObj.total.toLocaleString('en-IN')}`;
+            document.getElementById('dashCycleDates').innerHTML = `
+                <span>Open: <strong class="text-slate-800 dark:text-slate-200">${m.openingKwh}</strong></span>
+                <span>Latest: <strong class="text-slate-800 dark:text-slate-200">${m.currentKwh} kWh</strong> (${formatDisplayDate(m.latestDateStr)})</span>
+            `;
+
+            // 4. Pace & 500-Unit Limit
+            document.getElementById('dashSubsidyBadge').textContent = meter.tariff === 'common' ? 'Flat ₹8.40' : (m.actualUnits > 500 ? '100 Free (>500u)' : '200 Free ≤500u');
+            document.getElementById('dashOverallAvg').textContent = m.overallDailyAvg.toFixed(1);
+            document.getElementById('dashRecentAvg').textContent = m.recentDailyAvg.toFixed(1);
+            document.getElementById('dashUnitsLeft500').textContent = m.unitsLeft500;
+
+            const pct500 = Math.min(100, Math.round((m.actualUnits / 500) * 100));
+            const bar = document.getElementById('dash500ProgressBar');
+            bar.style.width = `${pct500}%`;
+            if (m.actualUnits > 500) {
+                bar.className = 'h-full bg-rose-500 rounded-full transition-all duration-300';
+                document.getElementById('dashPaceNote').textContent = 'Above 500 units: free subsidy drops from 200u to 100u & upper slabs apply.';
+            } else if (m.actualUnits > 400) {
+                bar.className = 'h-full bg-amber-500 rounded-full transition-all duration-300';
+                document.getElementById('dashPaceNote').textContent = `Caution: Only ${m.unitsLeft500} kWh left before losing the 200-unit free tier.`;
+            } else {
+                bar.className = 'h-full bg-emerald-500 rounded-full transition-all duration-300';
+                document.getElementById('dashPaceNote').textContent = m.sortedReadings.length > 0
+                    ? `Safe zone: ${m.unitsLeft500} kWh remaining inside the 200-unit free tier (≤500u).`
+                    : 'Log a meter reading to track your daily unit pace.';
+            }
+            document.getElementById('dash500ProgressText').textContent = `${Math.round(m.actualUnits)} / 500 kWh`;
+
+            // 5. Previous Bi-Month Records Summary
+            renderPastCycles(meter);
+
+            // 6. Slab Breakdown Table
+            document.getElementById('dashSlabTierBadge').textContent = m.actualBillObj.tierLabel;
+            const slabContainer = document.getElementById('dashSlabTableContainer');
+            if (m.actualBillObj.breakdown.length === 0) {
+                slabContainer.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">Log a reading to see slab-by-slab TNEB charges.</p>`;
+            } else {
+                slabContainer.innerHTML = m.actualBillObj.breakdown.map(row => `
+                    <div class="py-2.5 flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-slate-800 dark:text-slate-200 text-xs block">${row.range}</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">${row.units} u × ₹${row.rate.toFixed(2)}</span>
+                        </div>
+                        <span class="font-extrabold text-xs ${row.isFree ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white'}">
+                            ${row.isFree ? 'FREE' : '₹' + row.amount.toFixed(2)}
+                        </span>
+                    </div>
+                `).join('') + `
+                    <div class="pt-3 flex items-center justify-between">
+                        <span class="text-xs font-extrabold uppercase text-slate-500 dark:text-slate-400">Total Bi-Month Bill</span>
+                        <span class="text-base font-extrabold text-emerald-700 dark:text-emerald-400">₹${m.actualBillObj.total.toLocaleString('en-IN')}</span>
+                    </div>
+                `;
+            }
+
+            // 7. History Timeline & Chart
+            renderHistoryTimeline(meter, m);
+            renderPaceChart(meter, m);
+            updateReminderUI(meter, m);
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function renderPastCycles(meter) {
+            const pastCycles = [...(meter.pastCycles || [])].reverse();
+            const dashList = document.getElementById('dashPastCyclesList');
+            const histList = document.getElementById('pastCyclesHistoryContainer');
+
+            if (pastCycles.length === 0) {
+                dashList.innerHTML = `<p class="text-xs text-slate-400 py-2">No archived bi-month cycles yet. Tap "Unit Reset" on the 28th to save a completed cycle.</p>`;
+                histList.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">Completed 28th → 27th bi-month cycles will appear here after you reset units.</p>`;
+                return;
+            }
+
+            dashList.innerHTML = pastCycles.slice(0, 2).map(c => `
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/70">
+                    <div>
+                        <span class="text-xs font-extrabold text-slate-900 dark:text-white block">${formatDisplayDate(c.startDate)} → ${formatDisplayDate(c.endDate)}</span>
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400">${c.openingReading} → ${c.closingReading} kWh</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-extrabold text-emerald-700 dark:text-emerald-400 block">₹${Number(c.billAmount).toLocaleString('en-IN')}</span>
+                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300">${c.unitsUsed} kWh</span>
+                    </div>
+                </div>
+            `).join('');
+
+            histList.innerHTML = pastCycles.map(c => `
+                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-extrabold text-slate-900 dark:text-white">${formatFullDate(c.startDate)} → ${formatFullDate(c.endDate)}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Meter: ${c.openingReading} → ${c.closingReading} kWh</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-extrabold text-emerald-700 dark:text-emerald-400 block">₹${Number(c.billAmount).toLocaleString('en-IN')}</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${c.unitsUsed} units</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderHistoryTimeline(meter, m) {
+            const container = document.getElementById('readingsTimelineContainer');
+            document.getElementById('historyCountLabel').textContent = `${m.sortedReadings.length} check${m.sortedReadings.length === 1 ? '' : 's'} logged`;
+
+            if (m.sortedReadings.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-6 space-y-2">
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Starting reading: ${m.openingKwh} kWh on ${formatFullDate(m.startStr)}</p>
+                        <p class="text-[11px] text-slate-400">Tap "+ Add Check" whenever you inspect your meter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const entriesWithDelta = [];
+            let prevVal = m.openingKwh;
+            let prevDate = m.startStr;
+            for (const r of m.sortedReadings) {
+                const delta = +(r.reading - prevVal).toFixed(1);
+                const days = Math.max(1, diffDays(prevDate, r.date));
+                const avg = +(delta / days).toFixed(1);
+                entriesWithDelta.push({ ...r, delta, days, avg });
+                prevVal = r.reading;
+                prevDate = r.date;
+            }
+
+            container.innerHTML = [...entriesWithDelta].reverse().map(item => `
+                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-2">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-extrabold text-slate-900 dark:text-white">${item.reading} kWh</span>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-100/80 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">+${item.delta} u</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                            ${formatFullDate(item.date)} · ${item.avg} u/day${item.note ? ' · ' + escapeHTML(item.note) : ''}
+                        </p>
+                    </div>
+                    <button onclick="deleteReading('${item.id}')" title="Delete Entry" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderPaceChart(meter, m) {
+            const canvas = document.getElementById('paceChart');
+            if (!canvas || typeof Chart === 'undefined') return;
+
+            const labels = [];
+            const dataPoints = [];
+            let prevVal = m.openingKwh;
+            let prevDate = m.startStr;
+
+            for (const r of m.sortedReadings) {
+                const delta = Math.max(0, r.reading - prevVal);
+                const days = Math.max(1, diffDays(prevDate, r.date));
+                labels.push(formatDisplayDate(r.date));
+                dataPoints.push(+(delta / days).toFixed(1));
+                prevVal = r.reading;
+                prevDate = r.date;
+            }
+
+            if (labels.length === 0) {
+                labels.push(formatDisplayDate(m.startStr));
+                dataPoints.push(0);
+            }
+
+            if (paceChartInstance) {
+                paceChartInstance.destroy();
+            }
+
+            const isDark = document.documentElement.classList.contains('dark');
+            const tickColor = isDark ? '#94a3b8' : '#64748b';
+            const gridColor = isDark ? 'rgba(51, 65, 85, 0.5)' : '#f1f5f9';
+
+            paceChartInstance = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Units / Day',
+                        data: dataPoints,
+                        backgroundColor: '#059669',
+                        borderRadius: 8,
+                        maxBarThickness: 32
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: gridColor },
+                            ticks: { font: { size: 11 }, color: tickColor }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 }, color: tickColor }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==================== MODAL & ACTION HANDLERS ====================
+        function switchTab(tabName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = 'nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
+            });
+            const activeBtn = document.getElementById(`nav-${tabName}`);
+            if (activeBtn) {
+                activeBtn.className = 'nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold transition bg-emerald-600 text-white shadow-sm';
+            }
+
+            if (tabName === 'history') {
+                const meter = getActiveMeter();
+                renderPaceChart(meter, getMeterMetrics(meter));
+            }
+        }
+
+        function selectMeter(meterId) {
+            appState.activeMeterId = meterId;
+            saveState();
+            renderAll();
+        }
+
+        function closeModal(modalId) {
+            const el = document.getElementById(modalId);
+            if (el) el.classList.add('hidden');
+        }
+
+        function openBackupModal() {
+            triggerHaptic('light');
+            const modal = document.getElementById('backupModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        }
+
+        // --- Reading Modal ---
+        function openReadingModal() {
+            const meter = getActiveMeter();
+            const m = getMeterMetrics(meter);
+            document.getElementById('readingModalMeterSubtitle').textContent = `${meter.name} · ${formatDisplayDate(m.startStr)} → ${formatDisplayDate(m.endStr)}`;
+            document.getElementById('modalPrevReadingHint').textContent = `${m.currentKwh} kWh (${formatDisplayDate(m.latestDateStr)})`;
+            document.getElementById('inputNewReading').value = '';
+            document.getElementById('inputReadingDate').value = getTodayStr();
+            document.getElementById('inputReadingNote').value = '';
+            document.getElementById('liveEntryPreview').classList.add('hidden');
+            document.getElementById('readingModal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('inputNewReading').focus(), 100);
+        }
+
+        function updateLiveEntryPreview() {
+            const meter = getActiveMeter();
+            const m = getMeterMetrics(meter);
+            const val = parseFloat(document.getElementById('inputNewReading').value);
+            const previewBox = document.getElementById('liveEntryPreview');
+
+            if (isNaN(val) || val < m.currentKwh) {
+                previewBox.classList.add('hidden');
+                return;
+            }
+            const delta = +(val - m.currentKwh).toFixed(1);
+            const totalUnits = +(val - m.openingKwh).toFixed(1);
+            const bill = calculateTNEBBill(totalUnits, meter.tariff);
+
+            document.getElementById('previewDeltaUnits').textContent = `+${delta} kWh`;
+            document.getElementById('previewTotalBill').textContent = `${Math.round(totalUnits)} kWh · ₹${bill.total.toLocaleString('en-IN')}`;
+            previewBox.classList.remove('hidden');
+        }
+
+        function saveNewReading() {
+            const meter = getActiveMeter();
+            const m = getMeterMetrics(meter);
+            const val = parseFloat(document.getElementById('inputNewReading').value);
+            const dateVal = document.getElementById('inputReadingDate').value || getTodayStr();
+            const noteVal = document.getElementById('inputReadingNote').value.trim();
+
+            if (isNaN(val)) {
+                showToast('Please enter a valid kWh reading', 'error');
+                return;
+            }
+            if (val < m.currentKwh) {
+                showToast(`Reading cannot be less than previous (${m.currentKwh} kWh)`, 'error');
+                return;
+            }
+
+            meter.readings.push({
+                id: 'r-' + Date.now(),
+                date: dateVal,
+                reading: val,
+                note: noteVal
+            });
+            saveState();
+            closeModal('readingModal');
+            renderAll();
+            triggerHaptic('success');
+            showToast(`Saved ${val} kWh reading`);
+        }
+
+        function deleteReading(readingId) {
+            const meter = getActiveMeter();
+            meter.readings = meter.readings.filter(r => r.id !== readingId);
+            saveState();
+            renderAll();
+            showToast('Reading entry removed');
+        }
+
+        // --- Reset Cycle Modal ---
+        function openResetModal() {
+            const meter = getActiveMeter();
+            const m = getMeterMetrics(meter);
+            document.getElementById('resetArchiveWindow').textContent = `${formatDisplayDate(m.startStr)} → ${formatDisplayDate(m.endStr)}`;
+            document.getElementById('resetArchiveStats').textContent = `${Math.round(m.actualUnits)} kWh · ₹${m.actualBillObj.total.toLocaleString('en-IN')}`;
+            document.getElementById('inputResetOpeningKwh').value = m.currentKwh;
+            document.getElementById('inputResetNewStartDate').value = getDefault28thStartStr();
+            document.getElementById('resetModal').classList.remove('hidden');
+        }
+
+        function executeCycleReset() {
+            const meter = getActiveMeter();
+            const m = getMeterMetrics(meter);
+            const closingKwh = parseFloat(document.getElementById('inputResetOpeningKwh').value);
+            const newStart = document.getElementById('inputResetNewStartDate').value || getDefault28thStartStr();
+
+            if (isNaN(closingKwh) || closingKwh < m.openingKwh) {
+                showToast('Closing kWh must be ≥ opening kWh', 'error');
+                return;
+            }
+
+            const finalUnits = Math.round(closingKwh - m.openingKwh);
+            const finalBill = calculateTNEBBill(finalUnits, meter.tariff).total;
+
+            meter.pastCycles.push({
+                id: 'c-' + Date.now(),
+                startDate: m.startStr,
+                endDate: m.endStr,
+                openingReading: m.openingKwh,
+                closingReading: closingKwh,
+                unitsUsed: finalUnits,
+                billAmount: finalBill
+            });
+
+            meter.cycleStartDate = newStart;
+            meter.openingReading = closingKwh;
+            meter.readings = [];
+
+            saveState();
+            closeModal('resetModal');
+            renderAll();
+            triggerHaptic('success');
+            showToast('Bi-month record saved & units reset to 0');
+        }
+
+        // --- Manage Individual Meters ---
+        function openMetersModal() {
+            renderMetersListModal();
+            document.getElementById('metersModal').classList.remove('hidden');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function renderMetersListModal() {
+            const container = document.getElementById('metersListContainer');
+            container.innerHTML = appState.meters.map(item => {
+                const m = getMeterMetrics(item);
+                const isActive = item.id === appState.activeMeterId;
+                const deleteBtn = appState.meters.length > 1
+                    ? `<button onclick="deleteMeter('${item.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold ${pendingDeleteMeterId === item.id ? 'bg-rose-600 text-white' : 'bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400'}">${pendingDeleteMeterId === item.id ? 'Confirm?' : 'Delete'}</button>`
+                    : '';
+                return `
+                    <div class="p-3.5 rounded-2xl border ${isActive ? 'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/30' : 'border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70'} flex items-center justify-between gap-2">
+                        <div onclick="selectMeter('${item.id}'); closeModal('metersModal')" class="cursor-pointer flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-extrabold text-slate-900 dark:text-white">${escapeHTML(item.name)}</span>
+                                ${isActive ? '<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white">Active</span>' : ''}
+                            </div>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">${Math.round(m.actualUnits)} kWh · ₹${m.actualBillObj.total} · ${formatDisplayDate(m.startStr)}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="openMeterFormModal('${item.id}')" class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                            </button>
+                            ${deleteBtn}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function openMeterFormModal(meterId = null) {
+            closeModal('metersModal');
+            const isEdit = Boolean(meterId);
+            document.getElementById('meterFormTitle').textContent = isEdit ? 'Edit Individual Meter' : 'Add Individual Meter';
+            document.getElementById('editMeterId').value = meterId || '';
+
+            if (isEdit) {
+                const meter = appState.meters.find(m => m.id === meterId);
+                document.getElementById('inputMeterName').value = meter.name;
+                document.getElementById('inputServiceNo').value = meter.serviceNo || '';
+                document.getElementById('inputCycleStartDate').value = meter.cycleStartDate;
+                document.getElementById('inputOpeningReading').value = meter.openingReading;
+                document.getElementById('inputMeterTariff').value = meter.tariff;
+            } else {
+                document.getElementById('inputMeterName').value = '';
+                document.getElementById('inputServiceNo').value = '';
+                document.getElementById('inputCycleStartDate').value = getDefault28thStartStr();
+                document.getElementById('inputOpeningReading').value = '0';
+                document.getElementById('inputMeterTariff').value = 'domestic';
+            }
+            previewCycleWindowInForm();
+            document.getElementById('meterFormModal').classList.remove('hidden');
+        }
+
+        function previewCycleWindowInForm() {
+            const start = document.getElementById('inputCycleStartDate').value || getDefault28thStartStr();
+            const end = getCycleEndDateStr(start);
+            const days = diffDays(start, end);
+            document.getElementById('formCyclePreviewBanner').textContent = `Bi-Month Window: ${formatFullDate(start)} → ${formatFullDate(end)} (${days} days)`;
+        }
+
+        function saveMeterForm() {
+            const editId = document.getElementById('editMeterId').value;
+            const name = document.getElementById('inputMeterName').value.trim();
+            const serviceNo = document.getElementById('inputServiceNo').value.trim();
+            const cycleStartDate = document.getElementById('inputCycleStartDate').value || getDefault28thStartStr();
+            const openingReading = parseFloat(document.getElementById('inputOpeningReading').value) || 0;
+            const tariff = document.getElementById('inputMeterTariff').value;
+
+            if (!name) {
+                showToast('Please enter a meter name', 'error');
+                return;
+            }
+
+            if (editId) {
+                const meter = appState.meters.find(m => m.id === editId);
+                if (meter) {
+                    meter.name = name;
+                    meter.serviceNo = serviceNo;
+                    meter.cycleStartDate = cycleStartDate;
+                    meter.openingReading = openingReading;
+                    meter.tariff = tariff;
+                }
+                showToast('Meter updated');
+            } else {
+                const newId = 'meter-' + Date.now();
+                appState.meters.push({
+                    id: newId,
+                    name,
+                    serviceNo,
+                    tariff,
+                    cycleStartDate,
+                    openingReading,
+                    readings: [],
+                    pastCycles: []
+                });
+                appState.activeMeterId = newId;
+                showToast(`Added "${name}"`);
+            }
+
+            saveState();
+            closeModal('meterFormModal');
+            renderAll();
+        }
+
+        function deleteMeter(id) {
+            if (appState.meters.length <= 1) return;
+            if (pendingDeleteMeterId !== id) {
+                pendingDeleteMeterId = id;
+                renderMetersListModal();
+                showToast('Tap delete again to confirm removal', 'error');
+                setTimeout(() => { if (pendingDeleteMeterId === id) { pendingDeleteMeterId = null; renderMetersListModal(); } }, 3500);
+                return;
+            }
+            pendingDeleteMeterId = null;
+            appState.meters = appState.meters.filter(m => m.id !== id);
+            if (appState.activeMeterId === id) {
+                appState.activeMeterId = appState.meters[0].id;
+            }
+            saveState();
+            renderAll();
+            renderMetersListModal();
+            showToast('Meter deleted');
+        }
+
+        // ==================== SLAB SIMULATOR ====================
+        let simTariffOverride = null;
+
+        function setSimTariff(tariff) {
+            simTariffOverride = tariff;
+            updateSimulator();
+        }
+
+        function syncSimSlider(val) {
+            document.getElementById('simUnitsInput').value = val;
+            updateSimulator();
+        }
+
+        function updateSimulator() {
+            const units = Math.max(0, parseInt(document.getElementById('simUnitsInput').value) || 0);
+            document.getElementById('simUnitsSlider').value = Math.min(1200, units);
+            const activeTariff = simTariffOverride || getActiveMeter().tariff;
+            const res = calculateTNEBBill(units, activeTariff);
+            document.getElementById('simBillOutput').textContent = `₹${res.total.toLocaleString('en-IN')}`;
+
+            const tierBadge = document.getElementById('simTierBadge');
+            if (tierBadge) {
+                tierBadge.textContent = res.tierLabel;
+                tierBadge.className = activeTariff === 'common'
+                    ? 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0'
+                    : (units > 500
+                        ? 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 shrink-0'
+                        : 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 shrink-0');
+            }
+
+            const domBtn = document.getElementById('simTariffDomesticBtn');
+            const comBtn = document.getElementById('simTariffCommonBtn');
+            if (domBtn && comBtn) {
+                const activeCls = 'py-2 px-3 rounded-xl text-xs font-extrabold transition bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs';
+                const inactiveCls = 'py-2 px-3 rounded-xl text-xs font-bold transition text-slate-600 dark:text-slate-300';
+                domBtn.className = activeTariff === 'domestic' ? activeCls : inactiveCls;
+                comBtn.className = activeTariff === 'common' ? activeCls : inactiveCls;
+            }
+
+            const list = document.getElementById('simBreakdownList');
+            if (res.breakdown.length === 0) {
+                list.innerHTML = `<p class="text-slate-400 text-center py-1">Enter units above 0 to see slab breakdown.</p>`;
+                return;
+            }
+            list.innerHTML = res.breakdown.map(b => `
+                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                    <div>
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">${b.range}</span>
+                        <span class="text-[11px] text-slate-400 block">${b.units} u × ₹${b.rate.toFixed(2)}/u</span>
+                    </div>
+                    <span class="font-extrabold ${b.isFree ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white'}">${b.isFree ? 'FREE' : '₹' + b.amount.toFixed(2)}</span>
+                </div>
+            `).join('');
+        }
+
+        // ==================== PDF STATEMENT GENERATOR ====================
+        function downloadBiMonthPDF() {
+            try {
+                if (!window.jspdf || !window.jspdf.jsPDF) {
+                    showToast('PDF library still loading, try again', 'error');
+                    return;
+                }
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+                const meter = getActiveMeter();
+                const m = getMeterMetrics(meter);
+                const tariffName = meter.tariff === 'common' ? 'Common / Apartment LT-ID' : 'Domestic LT-IA (200 Free ≤500u)';
+
+                doc.setFillColor(5, 150, 105);
+                doc.rect(0, 0, 210, 32, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(17);
+                doc.setFont('helvetica', 'bold');
+                doc.text('TNEB Bi-Monthly Meter Statement', 14, 15);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Generated on ${formatFullDate(getTodayStr())}  |  28th -> 27th Billing Cycle`, 14, 23);
+
+                let y = 42;
+                doc.setTextColor(15, 23, 42);
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`Meter: ${meter.name}`, 14, y);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(71, 85, 105);
+                doc.text(`Tariff: ${tariffName}${meter.serviceNo ? '   |   Service No: ' + meter.serviceNo : ''}`, 14, y + 6);
+
+                y += 16;
+                doc.setFillColor(248, 250, 252);
+                doc.setDrawColor(203, 213, 225);
+                doc.roundedRect(14, y, 182, 26, 3, 3, 'FD');
+
+                doc.setTextColor(5, 150, 105);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text('ACTIVE BI-MONTH CYCLE', 18, y + 7);
+
+                doc.setTextColor(15, 23, 42);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Window: ${formatFullDate(m.startStr)} to ${formatFullDate(m.endStr)} (${m.elapsedDays}/${m.totalCycleDays} days)`, 18, y + 14);
+                doc.text(`Readings: Open ${m.openingKwh} kWh  ->  Latest ${m.currentKwh} kWh`, 18, y + 20);
+
+                doc.setFont('helvetica', 'bold');
+                doc.text(`Units: ${Math.round(m.actualUnits)} kWh`, 142, y + 14);
+                doc.text(`Est. Bill: Rs. ${m.actualBillObj.total.toLocaleString('en-IN')}`, 142, y + 20);
+
+                y += 36;
+                doc.setTextColor(15, 23, 42);
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Completed Bi-Month Records (28th -> 27th)', 14, y);
+                y += 6;
+
+                const pastCycles = [...(meter.pastCycles || [])].reverse();
+                if (pastCycles.length === 0) {
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'italic');
+                    doc.setTextColor(100, 116, 139);
+                    doc.text('No archived bi-month cycles recorded yet.', 14, y + 6);
+                } else {
+                    doc.setFillColor(241, 245, 249);
+                    doc.rect(14, y, 182, 9, 'F');
+                    doc.setTextColor(51, 65, 85);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Cycle Window (28th -> 27th)', 18, y + 6);
+                    doc.text('Opening', 92, y + 6);
+                    doc.text('Closing', 120, y + 6);
+                    doc.text('Units Used', 148, y + 6);
+                    doc.text('TNEB Bill', 176, y + 6);
+                    y += 14;
+
+                    doc.setFont('helvetica', 'normal');
+                    pastCycles.forEach((c) => {
+                        if (y > 275) {
+                            doc.addPage();
+                            y = 20;
+                        }
+                        doc.setTextColor(15, 23, 42);
+                        doc.text(`${formatFullDate(c.startDate)} - ${formatFullDate(c.endDate)}`, 18, y);
+                        doc.text(`${c.openingReading}`, 92, y);
+                        doc.text(`${c.closingReading}`, 120, y);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text(`${c.unitsUsed} kWh`, 148, y);
+                        doc.setTextColor(5, 150, 105);
+                        doc.text(`Rs. ${Number(c.billAmount).toLocaleString('en-IN')}`, 176, y);
+                        doc.setFont('helvetica', 'normal');
+                        doc.setDrawColor(226, 232, 240);
+                        doc.line(14, y + 3, 196, y + 3);
+                        y += 9;
+                    });
+                }
+
+                const safeName = meter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                doc.save(`tneb-bi-month-${safeName}-${getTodayStr()}.pdf`);
+                triggerHaptic('success');
+                showToast('Bi-month PDF downloaded');
+            } catch (e) {
+                triggerHaptic('error');
+                showToast('Unable to generate PDF', 'error');
+            }
+        }
+
+        // ==================== BACKUP & RESTORE ====================
+        function exportBackupJSON() {
+            const dataStr = JSON.stringify(appState, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tneb-tracker-backup-${getTodayStr()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            triggerHaptic('success');
+            showToast('Backup file downloaded');
+        }
+
+        function importBackupJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed && Array.isArray(parsed.meters) && parsed.meters.length > 0) {
+                        appState = parsed;
+                        saveState();
+                        renderAll();
+                        closeModal('backupModal');
+                        triggerHaptic('success');
+                        showToast('Meter data restored');
+                    } else {
+                        triggerHaptic('error');
+                        showToast('Invalid backup format', 'error');
+                    }
+                } catch (err) {
+                    triggerHaptic('error');
+                    showToast('Could not read backup file', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ==================== BOTTOM TOAST NOTIFICATIONS & UTILITIES ====================
+        function showToast(msg, type = 'success') {
+            if (type === 'error') triggerHaptic('error');
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bgClass = type === 'error'
+                ? 'bg-rose-600 text-white border-rose-500'
+                : 'bg-slate-900 dark:bg-slate-800 text-white border-slate-700/80';
+            toast.className = `toast-bottom px-4 py-2.5 rounded-2xl text-xs font-bold shadow-xl border ${bgClass} text-center max-w-full`;
+            toast.textContent = msg;
+            container.innerHTML = '';
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.2s ease';
+                setTimeout(() => toast.remove(), 220);
+            }, 2600);
+        }
+
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>"']/g, s => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[s]));
+        }
+
+        function initApp() {
+            setupPWA();
+            applyTheme();
+            renderAll();
+            updateSimulator();
+            initWeeklyReminderScheduler();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // ==================== WEEKLY READING NOTIFICATIONS & CALENDAR ALERTS ====================
+        const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        function getReminderPrefs() {
+            try {
+                const raw = localStorage.getItem(REMINDER_KEY);
+                if (raw) return JSON.parse(raw);
+            } catch (e) {}
+            return { enabled: true, dayOfWeek: 0, time: '09:00', lastNotifiedDate: '' };
+        }
+
+        function setReminderPrefs(prefs) {
+            try {
+                localStorage.setItem(REMINDER_KEY, JSON.stringify(prefs));
+            } catch (e) {}
+        }
+
+        function openReminderModal() {
+            triggerHaptic('light');
+            const prefs = getReminderPrefs();
+            document.getElementById('inputReminderDay').value = String(prefs.dayOfWeek);
+            document.getElementById('inputReminderTime').value = prefs.time || '09:00';
+            syncReminderModalControls(prefs);
+            document.getElementById('reminderModal').classList.remove('hidden');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function syncReminderModalControls(prefs) {
+            const toggleBtn = document.getElementById('reminderToggleSwitch');
+            const knob = document.getElementById('reminderToggleKnob');
+            const statusLabel = document.getElementById('reminderStatusLabel');
+            if (toggleBtn && knob) {
+                toggleBtn.className = prefs.enabled
+                    ? 'w-12 h-7 rounded-full bg-emerald-600 p-1 transition-colors relative shrink-0'
+                    : 'w-12 h-7 rounded-full bg-slate-300 dark:bg-slate-700 p-1 transition-colors relative shrink-0';
+                knob.className = prefs.enabled
+                    ? 'block w-5 h-5 rounded-full bg-white shadow-sm transition-transform translate-x-5'
+                    : 'block w-5 h-5 rounded-full bg-white shadow-sm transition-transform translate-x-0';
+            }
+            if (statusLabel) {
+                const dayLabel = DAY_NAMES[prefs.dayOfWeek] || 'Sunday';
+                statusLabel.textContent = prefs.enabled
+                    ? `Active · Every ${dayLabel} at ${prefs.time || '09:00'}`
+                    : 'Paused · Tap switch to enable';
+            }
+        }
+
+        async function toggleWeeklyReminder() {
+            const prefs = getReminderPrefs();
+            prefs.enabled = !prefs.enabled;
+
+            if (prefs.enabled && 'Notification' in window && Notification.permission === 'default') {
+                try {
+                    await Notification.requestPermission();
+                } catch (e) {}
+            }
+
+            setReminderPrefs(prefs);
+            syncReminderModalControls(prefs);
+            renderAll();
+            triggerHaptic('success');
+            showToast(prefs.enabled ? `Weekly reminder set for ${DAY_NAMES[prefs.dayOfWeek]}s` : 'Weekly reminder paused');
+        }
+
+        function saveReminderPrefs() {
+            const prefs = getReminderPrefs();
+            prefs.dayOfWeek = parseInt(document.getElementById('inputReminderDay').value, 10) || 0;
+            prefs.time = document.getElementById('inputReminderTime').value || '09:00';
+            setReminderPrefs(prefs);
+            syncReminderModalControls(prefs);
+            renderAll();
+            showToast(`Reminder updated: ${DAY_NAMES[prefs.dayOfWeek]} at ${prefs.time}`);
+        }
+
+        function updateReminderUI(meter, m) {
+            const prefs = getReminderPrefs();
+            const bellDot = document.getElementById('bellActiveDot');
+            if (bellDot) {
+                bellDot.classList.toggle('hidden', !prefs.enabled);
+            }
+
+            const dueBanner = document.getElementById('weeklyReminderDueBanner');
+            const dueSub = document.getElementById('weeklyReminderDueSub');
+            if (!dueBanner) return;
+
+            const daysSinceLastCheck = diffDays(m.latestDateStr, getTodayStr());
+            if (prefs.enabled && daysSinceLastCheck >= 7) {
+                dueBanner.classList.remove('hidden');
+                if (dueSub) {
+                    const lastDateFormatted = formatFullDate(m.latestDateStr);
+                    dueSub.textContent = m.sortedReadings.length > 0
+                        ? `Last reading: ${lastDateFormatted} (${daysSinceLastCheck}d ago)`
+                        : `Cycle started ${lastDateFormatted} (${daysSinceLastCheck}d ago)`;
+                }
+            } else {
+                dueBanner.classList.add('hidden');
+            }
+        }
+
+        function fireReadingReminderNotification(isTest = false) {
+            const meter = getActiveMeter();
+            const m = getMeterMetrics(meter);
+            const title = isTest ? 'TNEB Tracker · Test Weekly Alert' : `TNEB Meter Check Due (${meter.name})`;
+            const body = `Current usage: ${Math.round(m.actualUnits)} kWh (Est. ₹${m.actualBillObj.total}). Tap to log this week's meter reading.`;
+
+            if ('Notification' in window && Notification.permission === 'granted') {
+                try {
+                    const n = new Notification(title, { body });
+                    n.onclick = () => {
+                        window.focus();
+                        openReadingModal();
+                    };
+                    return true;
+                } catch (e) {}
+            }
+            return false;
+        }
+
+        async function sendTestReminderNotification() {
+            if ('Notification' in window && Notification.permission !== 'granted') {
+                try {
+                    const perm = await Notification.requestPermission();
+                    if (perm !== 'granted') {
+                        showToast('In-app banner active (browser notifications blocked)', 'error');
+                        return;
+                    }
+                } catch (e) {}
+            }
+            const sent = fireReadingReminderNotification(true);
+            triggerHaptic('success');
+            showToast(sent ? 'Test notification sent!' : 'Weekly reminder preview triggered');
+        }
+
+        function downloadWeeklyCalendarICS() {
+            const prefs = getReminderPrefs();
+            const meter = getActiveMeter();
+            const [hh, mm] = (prefs.time || '09:00').split(':').map(Number);
+
+            const now = new Date();
+            const targetDay = prefs.dayOfWeek;
+            const daysUntil = (targetDay - now.getDay() + 7) % 7 || 7;
+            const nextDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntil, hh || 9, mm || 0, 0);
+
+            const pad = n => String(n).padStart(2, '0');
+            const dtStart = `${nextDate.getFullYear()}${pad(nextDate.getMonth() + 1)}${pad(nextDate.getDate())}T${pad(hh || 9)}${pad(mm || 0)}00`;
+            const dtEnd = `${nextDate.getFullYear()}${pad(nextDate.getMonth() + 1)}${pad(nextDate.getDate())}T${pad(hh || 9)}${pad(Math.min(59, (mm || 0) + 15))}00`;
+            const icsDays = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+            const byDay = icsDays[targetDay] || 'SU';
+
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//TNEB Smart Meter Tracker//Weekly Reminder//EN',
+                'BEGIN:VEVENT',
+                `UID:tneb-weekly-${Date.now()}@tnebtracker.local`,
+                `DTSTAMP:${dtStart}`,
+                `DTSTART:${dtStart}`,
+                `DTEND:${dtEnd}`,
+                `RRULE:FREQ=WEEKLY;BYDAY=${byDay}`,
+                `SUMMARY:Log TNEB Meter Reading (${meter.name})`,
+                'DESCRIPTION:Weekly kWh check to track TNEB bi-monthly units and stay inside the 500-unit subsidy slab.',
+                'BEGIN:VALARM',
+                'TRIGGER:-PT0M',
+                'ACTION:DISPLAY',
+                'DESCRIPTION:Time to log your weekly TNEB meter reading!',
+                'END:VALARM',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tneb-weekly-meter-reminder.ics';
+            a.click();
+            URL.revokeObjectURL(url);
+            triggerHaptic('success');
+            showToast('Calendar reminder (.ics) downloaded');
+        }
+
+        function initWeeklyReminderScheduler() {
+            const checkSchedule = () => {
+                const prefs = getReminderPrefs();
+                if (!prefs.enabled) return;
+
+                const now = new Date();
+                const todayStr = getTodayStr();
+                if (prefs.lastNotifiedDate === todayStr) return;
+
+                if (now.getDay() === prefs.dayOfWeek) {
+                    const [hh, mm] = (prefs.time || '09:00').split(':').map(Number);
+                    const nowMins = now.getHours() * 60 + now.getMinutes();
+                    const targetMins = (hh || 9) * 60 + (mm || 0);
+                    if (nowMins >= targetMins) {
+                        prefs.lastNotifiedDate = todayStr;
+                        setReminderPrefs(prefs);
+                        fireReadingReminderNotification(false);
+                    }
+                }
+            };
+            checkSchedule();
+            setInterval(checkSchedule, 60000);
+        }
+
+        // ==================== PWA / ADD TO HOME SCREEN SETUP ====================
+        let deferredInstallPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+        });
+
+        function setupPWA() {
+            try {
+                const iconCanvas = document.createElement('canvas');
+                iconCanvas.width = 512;
+                iconCanvas.height = 512;
+                const ctx = iconCanvas.getContext('2d');
+                if (ctx) {
+                    const grad = ctx.createLinearGradient(0, 0, 512, 512);
+                    grad.addColorStop(0, '#059669');
+                    grad.addColorStop(1, '#0f766e');
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(0, 0, 512, 512);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.moveTo(285, 96);
+                    ctx.lineTo(154, 282);
+                    ctx.lineTo(248, 282);
+                    ctx.lineTo(222, 416);
+                    ctx.lineTo(358, 226);
+                    ctx.lineTo(264, 226);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    const iconDataUrl = iconCanvas.toDataURL('image/png');
+                    const appleIcon = document.getElementById('appleTouchIcon');
+                    if (appleIcon) appleIcon.href = iconDataUrl;
+
+                    const manifestObj = {
+                        name: 'TNEB Smart Meter & Bill Tracker',
+                        short_name: 'TNEB Tracker',
+                        description: 'Bi-monthly TNEB kWh & bill tracker (28th to 27th cycle)',
+                        start_url: window.location.href,
+                        display: 'standalone',
+                        background_color: '#020617',
+                        theme_color: '#059669',
+                        icons: [
+                            { src: iconDataUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+                        ]
+                    };
+                    const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+                    const manifestLink = document.getElementById('pwaManifestLink');
+                    if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
+                }
+            } catch (e) {}
+        }
+
+        async function installPWA() {
+            triggerHaptic('light');
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                const choice = await deferredInstallPrompt.userChoice;
+                if (choice && choice.outcome === 'accepted') {
+                    showToast('Installing TNEB Tracker to Home Screen...');
+                }
+                deferredInstallPrompt = null;
+                closeModal('backupModal');
+                return;
+            }
+
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            closeModal('backupModal');
+            if (isIOS) {
+                showToast('iPhone: Tap Share (↑) at bottom → "Add to Home Screen"');
+            } else {
+                showToast('Browser Menu (⋮) → Tap "Add to Home screen" or "Install app"');
+            }
+        }
+
+        // Start App
+        initApp();
+    </script>
+</body>
+</html>
