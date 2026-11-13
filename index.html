@@ -146,7 +146,7 @@
         }
 
         .pt-safe-main {
-            padding-top: calc(env(safe-area-inset-top, 0px) + 6.75rem);
+            padding-top: calc(env(safe-area-inset-top, 0px) + 4.5rem);
         }
 
         @supports (-webkit-touch-callout: none) {
@@ -156,7 +156,7 @@
                 }
 
                 .pt-safe-main {
-                    padding-top: calc(max(env(safe-area-inset-top, 0px), 3.35rem) + 6.5rem);
+                    padding-top: calc(max(env(safe-area-inset-top, 0px), 3.35rem) + 4.25rem);
                 }
             }
         }
@@ -179,7 +179,7 @@
         class="fixed bottom-24 inset-x-0 z-[70] px-4 pointer-events-none flex flex-col items-center justify-center gap-2">
     </div>
 
-    <!-- Top Fixed App Header (iOS Safe-Area Aware) -->
+    <!-- Top Fixed App Header (Compact & Clean) -->
     <header
         class="fixed top-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors pt-safe-header">
         <div class="max-w-lg mx-auto px-4 pb-2.5">
@@ -190,18 +190,18 @@
                         <i data-lucide="zap" class="w-4 h-4"></i>
                     </div>
                     <div class="min-w-0">
-                        <div class="flex items-center gap-1">
+                        <div class="flex items-center gap-1.5">
                             <h1
-                                class="text-[15px] font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+                                class="text-[15px] font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
                                 TNEB Tracker</h1>
                             <span id="headerTariffBadge"
                                 class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">LT-IA</span>
                         </div>
-                        <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 leading-tight truncate">
+                        <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 leading-tight">
                             28th → 27th · 200u Free</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-1 shrink-0">
+                <div class="flex items-center gap-1.5 shrink-0">
                     <button onclick="cycleTheme()" id="themeToggleBtn" title="Switch Theme (Auto / Light / Dark)"
                         class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="monitor" class="w-4 h-4"></i>
@@ -216,21 +216,7 @@
                         class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="folder-down" class="w-4 h-4"></i>
                     </button>
-                    <button onclick="openMetersModal()"
-                        class="flex items-center gap-1 px-2.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm">
-                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-                        <span>Meters</span>
-                    </button>
                 </div>
-            </div>
-
-            <!-- Horizontal Individual Meter Switcher Pills -->
-            <div id="meterPillsContainer" class="flex items-center gap-2 overflow-x-auto no-scrollbar pt-2.5 pb-0.5">
-                <button onclick="selectMeter('default-home')"
-                    class="shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm">
-                    <span>Main Meter</span>
-                    <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-white/20 text-white">0u</span>
-                </button>
             </div>
         </div>
     </header>
@@ -238,22 +224,48 @@
     <!-- Main Content Container -->
     <main class="max-w-lg mx-auto px-4 pt-safe-main space-y-4">
 
-        <!-- ==================== TAB 1: DASHBOARD ==================== -->
-        <section id="view-dashboard" class="view-section space-y-4">
+        <!-- Convenient Meter Switcher & Active Meter Card (Always Easy to View) -->
+        <div
+            class="bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-3">
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="gauge" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">Your
+                        Meters</span>
+                </div>
+                <button onclick="openMetersModal()"
+                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/60 text-[11px] font-bold transition active:scale-95">
+                    <i data-lucide="layers" class="w-3 h-3"></i>
+                    <span>Manage / + Add</span>
+                </button>
+            </div>
 
-            <!-- Active Meter Header Card -->
+            <!-- Wrapped Grid/Pills of All Meters -->
+            <div id="meterPillsContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <button onclick="selectMeter('default-home')"
+                    class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl text-xs font-bold bg-emerald-600 text-white shadow-sm">
+                    <span class="truncate">Main Meter</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-white/20 text-white shrink-0">0u</span>
+                </button>
+            </div>
+
+            <!-- Active Meter Details Footer -->
             <div id="activeMeterBanner"
-                class="bg-white dark:bg-slate-900 rounded-2xl p-3.5 border border-slate-200/80 dark:border-slate-800 card-shadow flex items-center justify-between gap-3">
+                class="pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
                 <div class="min-w-0">
                     <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Main Meter</h2>
                     <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">28 Oct → 27
                         Dec (60d) · Domestic LT-IA (200 Free ≤500u)</p>
                 </div>
                 <button onclick="openMetersModal()" title="Configure Meter"
-                    class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition shrink-0">
+                    class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition shrink-0">
                     <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
                 </button>
             </div>
+        </div>
+
+        <!-- ==================== TAB 1: DASHBOARD ==================== -->
+        <section id="view-dashboard" class="view-section space-y-4">
 
             <!-- Weekly Reading Reminder Due Banner -->
             <div id="weeklyReminderDueBanner"
@@ -1343,22 +1355,22 @@
                 headerTariffBadge.textContent = meter.tariff === 'common' ? 'LT-ID' : 'LT-IA';
             }
 
-            // 1. Meter Switcher Pills
+            // 1. Convenient Wrapped Grid of All Meters
             const pillsContainer = document.getElementById('meterPillsContainer');
             if (pillsContainer) {
                 pillsContainer.innerHTML = appState.meters.map(item => {
                     const isActive = item.id === meter.id;
                     const itemMetrics = getMeterMetrics(item);
                     const activeClasses = isActive
-                        ? 'bg-emerald-600 text-white shadow-sm'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                        : 'bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800';
                     const badgeClasses = isActive
                         ? 'bg-white/20 text-white'
                         : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300';
                     return `
-                        <button onclick="selectMeter('${item.id}')" class="shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${activeClasses}">
-                            <span>${escapeHTML(item.name)}</span>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded-md ${badgeClasses}">${Math.round(itemMetrics.actualUnits)}u</span>
+                        <button onclick="selectMeter('${item.id}')" class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl border text-xs font-bold transition active:scale-95 min-w-0 ${activeClasses}">
+                            <span class="truncate">${escapeHTML(item.name)}</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded-md shrink-0 ${badgeClasses}">${Math.round(itemMetrics.actualUnits)}u</span>
                         </button>
                     `;
                 }).join('');
@@ -1379,7 +1391,7 @@
                             ${formatDisplayDate(m.startStr)} → ${formatDisplayDate(m.endStr)} (${m.totalCycleDays}d)${serviceText}
                         </p>
                     </div>
-                    <button onclick="openMeterFormModal('${meter.id}')" title="Edit Meter Settings" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition shrink-0">
+                    <button onclick="openMeterFormModal('${meter.id}')" title="Edit Meter Settings" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition shrink-0">
                         <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
                     </button>
                 `;
