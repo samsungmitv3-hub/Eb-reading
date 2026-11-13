@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TNEB Tracker">
     <meta name="application-name" content="TNEB Tracker">
-    <meta name="theme-color" content="#4f46e5" id="metaThemeColor">
+    <meta name="theme-color" content="#007AFF" id="metaThemeColor">
     <link rel="apple-touch-icon" id="appleTouchIcon">
     <link rel="manifest" id="pwaManifestLink">
 
@@ -25,16 +25,15 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'SF Pro Display', 'system-ui', 'sans-serif'],
+                        display: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'system-ui', 'sans-serif'],
+                        rounded: ['SF Pro Rounded', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        mono: ['SF Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
                     }
                 }
             }
         }
     </script>
-    <!-- Plus Jakarta Sans & Inter Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js for Visual Usage Pace -->
@@ -42,19 +41,64 @@
     <!-- jsPDF for Bi-Monthly PDF Statement Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
+        :root {
+            --apple-ease: cubic-bezier(0.28, 0.11, 0.32, 1);
+            --apple-spring: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        html {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            letter-spacing: -0.011em;
+        }
+
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif;
             -webkit-tap-highlight-color: transparent;
             overscroll-behavior-y: none;
+            font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+        }
+
+        /* Authentic Apple SF Pro Display Optical Tracking */
+        .sf-display-hero {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            letter-spacing: -0.032em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .sf-display-title {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            letter-spacing: -0.022em;
+        }
+
+        .sf-rounded-num {
+            font-family: 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            letter-spacing: -0.026em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .sf-caption-caps {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
         }
 
         /* Prevent iOS Safari auto-zoom when focusing inputs/selects */
         input,
         select,
         textarea {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
             font-size: 16px !important;
             max-width: 100%;
             box-sizing: border-box;
+            letter-spacing: -0.01em;
         }
 
         input[type="date"],
@@ -65,7 +109,7 @@
             align-items: center;
             width: 100%;
             min-width: 0;
-            height: 48px;
+            height: 46px;
             line-height: 1.2;
         }
 
@@ -90,20 +134,20 @@
             scrollbar-width: none;
         }
 
-        /* Smooth view transitions */
+        /* Smooth Apple Spring View Transitions */
         .view-section {
-            animation: fadeIn 0.2s ease-out;
+            animation: appleFade 0.3s var(--apple-spring);
         }
 
-        @keyframes fadeIn {
+        @keyframes appleFade {
             from {
                 opacity: 0;
-                transform: translateY(4px);
+                transform: scale(0.985) translateY(6px);
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: scale(1) translateY(0);
             }
         }
 
@@ -111,34 +155,166 @@
         @keyframes slideUpToast {
             from {
                 opacity: 0;
-                transform: translateY(16px);
+                transform: translateY(16px) scale(0.96);
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
         .toast-bottom {
-            animation: slideUpToast 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: slideUpToast 0.3s var(--apple-spring) forwards;
         }
 
-        /* Electric Indigo & Obsidian Elevation */
-        .card-shadow {
-            box-shadow: 0 4px 20px -4px rgba(79, 70, 229, 0.07), 0 1px 4px -1px rgba(15, 23, 42, 0.04);
+        /* ==================== APPLE iOS 26 LIQUID GLASS MATERIAL SYSTEM ==================== */
+        .liquid-wallpaper {
+            background-color: #f2f4f8;
+            background-image:
+                radial-gradient(at 12% 6%, rgba(0, 122, 255, 0.22) 0px, transparent 48%),
+                radial-gradient(at 90% 12%, rgba(52, 199, 89, 0.16) 0px, transparent 48%),
+                radial-gradient(at 84% 56%, rgba(88, 86, 214, 0.18) 0px, transparent 52%),
+                radial-gradient(at 14% 86%, rgba(90, 200, 250, 0.24) 0px, transparent 50%);
+            background-attachment: fixed;
         }
 
-        html.dark .card-shadow {
-            box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(129, 140, 248, 0.08);
+        html.dark .liquid-wallpaper {
+            background-color: #000000;
+            background-image:
+                radial-gradient(at 12% 8%, rgba(10, 132, 255, 0.24) 0px, transparent 48%),
+                radial-gradient(at 88% 16%, rgba(48, 209, 88, 0.14) 0px, transparent 46%),
+                radial-gradient(at 82% 60%, rgba(94, 92, 230, 0.20) 0px, transparent 52%),
+                radial-gradient(at 16% 86%, rgba(100, 210, 255, 0.14) 0px, transparent 50%);
+            background-attachment: fixed;
         }
 
-        .nav-shadow {
-            box-shadow: 0 12px 32px -4px rgba(49, 46, 129, 0.18), 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+        .liquid-glass {
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.76) 0%, rgba(255, 255, 255, 0.52) 100%);
+            backdrop-filter: blur(44px) saturate(210%);
+            -webkit-backdrop-filter: blur(44px) saturate(210%);
+            border: 0.5px solid rgba(255, 255, 255, 0.9);
+            box-shadow:
+                0 10px 30px -8px rgba(0, 0, 0, 0.08),
+                0 1px 3px 0 rgba(0, 0, 0, 0.03),
+                inset 0 1px 0.5px 0 rgba(255, 255, 255, 1),
+                inset 0 -0.5px 0.5px 0 rgba(0, 0, 0, 0.04);
         }
 
-        html.dark .nav-shadow {
-            box-shadow: 0 14px 36px -4px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(129, 140, 248, 0.16);
+        html.dark .liquid-glass {
+            background: linear-gradient(160deg, rgba(44, 44, 46, 0.58) 0%, rgba(28, 28, 30, 0.48) 100%);
+            backdrop-filter: blur(44px) saturate(210%);
+            -webkit-backdrop-filter: blur(44px) saturate(210%);
+            border: 0.5px solid rgba(255, 255, 255, 0.16);
+            box-shadow:
+                0 16px 36px -8px rgba(0, 0, 0, 0.72),
+                inset 0 0.75px 0.5px 0 rgba(255, 255, 255, 0.24),
+                inset 0 -0.5px 0.5px 0 rgba(0, 0, 0, 0.45);
+        }
+
+        .liquid-lens {
+            background: rgba(255, 255, 255, 0.54);
+            backdrop-filter: blur(22px) saturate(185%);
+            -webkit-backdrop-filter: blur(22px) saturate(185%);
+            border: 0.5px solid rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 1px 4px -1px rgba(0, 0, 0, 0.04);
+        }
+
+        html.dark .liquid-lens {
+            background: rgba(255, 255, 255, 0.065);
+            backdrop-filter: blur(22px) saturate(185%);
+            -webkit-backdrop-filter: blur(22px) saturate(185%);
+            border: 0.5px solid rgba(255, 255, 255, 0.11);
+            box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.14);
+        }
+
+        .liquid-header {
+            background: rgba(242, 244, 248, 0.65);
+            backdrop-filter: blur(38px) saturate(210%);
+            -webkit-backdrop-filter: blur(38px) saturate(210%);
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        html.dark .liquid-header {
+            background: rgba(18, 18, 20, 0.68);
+            backdrop-filter: blur(38px) saturate(210%);
+            -webkit-backdrop-filter: blur(38px) saturate(210%);
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.11);
+        }
+
+        .liquid-dock {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.62) 100%);
+            backdrop-filter: blur(46px) saturate(220%);
+            -webkit-backdrop-filter: blur(46px) saturate(220%);
+            border: 0.5px solid rgba(255, 255, 255, 0.95);
+            box-shadow:
+                0 14px 36px -6px rgba(0, 0, 0, 0.14),
+                0 2px 8px -2px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0.5px 0 rgba(255, 255, 255, 1);
+        }
+
+        html.dark .liquid-dock {
+            background: linear-gradient(180deg, rgba(50, 50, 54, 0.68) 0%, rgba(30, 30, 34, 0.58) 100%);
+            backdrop-filter: blur(46px) saturate(220%);
+            -webkit-backdrop-filter: blur(46px) saturate(220%);
+            border: 0.5px solid rgba(255, 255, 255, 0.22);
+            box-shadow:
+                0 18px 42px -6px rgba(0, 0, 0, 0.8),
+                inset 0 0.75px 0.5px 0 rgba(255, 255, 255, 0.30);
+        }
+
+        .liquid-capsule-active {
+            background: linear-gradient(180deg, #1e90ff 0%, #007AFF 100%);
+            box-shadow:
+                0 5px 16px -3px rgba(0, 122, 255, 0.42),
+                inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.55);
+            border: 0.5px solid rgba(255, 255, 255, 0.35);
+        }
+
+        html.dark .liquid-capsule-active {
+            background: linear-gradient(180deg, #1a8cff 0%, #0A84FF 100%);
+            box-shadow:
+                0 6px 18px -3px rgba(10, 132, 255, 0.48),
+                inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.42);
+            border: 0.5px solid rgba(255, 255, 255, 0.28);
+        }
+
+        /* Sliding Liquid Glass Navbar Pill Indicator */
+        #navActivePill {
+            transition: transform 0.38s cubic-bezier(0.22, 1.18, 0.36, 1), width 0.38s cubic-bezier(0.22, 1.18, 0.36, 1);
+            will-change: transform, width;
+        }
+
+        .nav-btn {
+            transition: color 0.24s ease, transform 0.18s var(--apple-spring);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.94);
+        }
+
+        .liquid-modal {
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 247, 252, 0.82) 100%);
+            backdrop-filter: blur(50px) saturate(220%);
+            -webkit-backdrop-filter: blur(50px) saturate(220%);
+            border: 0.5px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.22), inset 0 1px 0.5px rgba(255, 255, 255, 1);
+        }
+
+        html.dark .liquid-modal {
+            background: linear-gradient(165deg, rgba(42, 42, 46, 0.88) 0%, rgba(24, 24, 26, 0.84) 100%);
+            backdrop-filter: blur(50px) saturate(220%);
+            -webkit-backdrop-filter: blur(50px) saturate(220%);
+            border: 0.5px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 28px 64px -12px rgba(0, 0, 0, 0.88), inset 0 0.75px 0.5px rgba(255, 255, 255, 0.24);
+        }
+
+        .apple-tap {
+            transition: transform 0.18s var(--apple-spring), background-color 0.18s ease, opacity 0.18s ease;
+        }
+
+        .apple-tap:active {
+            transform: scale(0.965);
         }
 
         .pt-safe-header {
@@ -146,7 +322,7 @@
         }
 
         .pt-safe-main {
-            padding-top: calc(env(safe-area-inset-top, 0px) + 4.5rem);
+            padding-top: calc(env(safe-area-inset-top, 0px) + 4.65rem);
         }
 
         @supports (-webkit-touch-callout: none) {
@@ -156,7 +332,7 @@
                 }
 
                 .pt-safe-main {
-                    padding-top: calc(max(env(safe-area-inset-top, 0px), 3.35rem) + 4.25rem);
+                    padding-top: calc(max(env(safe-area-inset-top, 0px), 3.35rem) + 4.35rem);
                 }
             }
         }
@@ -172,50 +348,55 @@
 </head>
 
 <body
-    class="bg-indigo-50/40 dark:bg-[#090B14] text-slate-900 dark:text-slate-100 antialiased selection:bg-indigo-100 dark:selection:bg-indigo-900 selection:text-indigo-900 dark:selection:text-indigo-100 pb-28 transition-colors duration-200">
+    class="liquid-wallpaper text-slate-900 dark:text-white antialiased selection:bg-[#007AFF]/20 selection:text-[#007AFF] pb-28 min-h-screen transition-colors duration-300 relative overflow-x-hidden">
 
-    <!-- Bottom Toast Container -->
+    <!-- Bottom Floating Glass Toast Container -->
     <div id="toastContainer"
         class="fixed bottom-24 inset-x-0 z-[70] px-4 pointer-events-none flex flex-col items-center justify-center gap-2">
     </div>
 
-    <!-- Top Fixed App Header (Compact & Clean) -->
-    <header
-        class="fixed top-0 inset-x-0 z-30 bg-white/90 dark:bg-[#0E1220]/90 backdrop-blur-xl border-b border-indigo-100/80 dark:border-indigo-950/80 transition-colors pt-safe-header">
+    <!-- Top Fixed Apple Navigation Bar -->
+    <header class="fixed top-0 inset-x-0 z-30 liquid-header transition-colors pt-safe-header">
         <div class="max-w-lg mx-auto px-4 pb-2.5">
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div
-                        class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 flex items-center justify-center text-white shadow-sm shrink-0">
-                        <i data-lucide="zap" class="w-4 h-4"></i>
+                        class="w-9 h-9 rounded-full liquid-capsule-active flex items-center justify-center text-white shrink-0">
+                        <i data-lucide="zap" class="w-4 h-4 fill-white/25"></i>
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5">
                             <h1
-                                class="text-[15px] font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+                                class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white leading-tight">
                                 TNEB Tracker</h1>
                             <span id="headerTariffBadge"
-                                class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/90 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/70 shrink-0">LT-IA</span>
+                                class="text-[10px] font-semibold tracking-wide px-2 py-0.5 rounded-full bg-[#007AFF]/12 text-[#007AFF] dark:text-[#409CFF] border border-[#007AFF]/20 shrink-0">LT-IA</span>
                         </div>
-                        <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 leading-tight">
+                        <p class="text-[11px] font-normal text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
                             28th → 27th · 200u Free</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
                     <button onclick="cycleTheme()" id="themeToggleBtn" title="Switch Theme (Auto / Light / Dark)"
-                        class="p-2 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        class="w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
                         <i data-lucide="monitor" class="w-4 h-4"></i>
                     </button>
                     <button onclick="openReminderModal()" id="headerBellBtn" title="Weekly Reading Reminders"
-                        class="relative p-2 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        class="relative w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
                         <i data-lucide="bell" class="w-4 h-4"></i>
                         <span id="bellActiveDot"
-                            class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-500"></span>
+                            class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#007AFF]"></span>
                         <span id="bellUnreadBadge"
-                            class="hidden absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-rose-600 text-white text-[9px] font-extrabold flex items-center justify-center shadow-xs">1</span>
+                            class="hidden absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#FF3B30] text-white text-[10px] font-bold flex items-center justify-center shadow-sm ring-1 ring-white/70">1</span>
+                    </button>
+                    <button onclick="openRecycleBinModal()" id="headerTrashBtn" title="Recycle Bin"
+                        class="relative w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        <span id="trashCountBadge"
+                            class="hidden absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#FF9500] text-white text-[10px] font-bold flex items-center justify-center shadow-sm ring-1 ring-white/70">0</span>
                     </button>
                     <button onclick="openBackupModal()" title="Backup & Export Data"
-                        class="p-2 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        class="w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
                         <i data-lucide="folder-down" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -226,92 +407,89 @@
     <!-- Main Content Container -->
     <main class="max-w-lg mx-auto px-4 pt-safe-main space-y-3.5">
 
-        <!-- Compact EB Meter Dropdown & Multi-Select Combined Total Card (Hidden on Slabs tab) -->
-        <div id="yourMetersCard"
-            class="bg-white dark:bg-[#111629] rounded-2xl p-3 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow space-y-2.5 relative">
-            <div class="flex items-center justify-between gap-2">
+        <!-- Liquid Glass EB Meter Selector & Multi-Select Combined Total Card (Hidden on Slabs tab) -->
+        <div id="yourMetersCard" class="liquid-glass rounded-[28px] p-3.5 space-y-2.5 relative">
+            <div class="flex items-center justify-between gap-2 px-1">
                 <div class="flex items-center gap-1.5">
-                    <i data-lucide="gauge" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
-                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">EB
+                    <i data-lucide="gauge" class="w-3.5 h-3.5 text-[#007AFF] dark:text-[#409CFF]"></i>
+                    <span class="sf-caption-caps text-slate-500 dark:text-slate-400">EB
                         Meter</span>
                 </div>
                 <div class="flex items-center gap-1.5">
                     <button type="button" onclick="toggleSelectAllMeters()" id="selectAllMetersBtn"
-                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-bold transition active:scale-95">
+                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 text-[11px] font-medium apple-tap">
                         <span>Select All</span>
                     </button>
                     <button type="button" onclick="openMetersModal()"
-                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/70 text-[10px] font-bold transition active:scale-95">
-                        <i data-lucide="layers" class="w-3 h-3"></i>
-                        <span>Manage / + Add</span>
+                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#007AFF]/12 hover:bg-[#007AFF]/20 text-[#007AFF] dark:text-[#409CFF] border border-[#007AFF]/20 text-[11px] font-semibold apple-tap">
+                        <i data-lucide="plus" class="w-3 h-3"></i>
+                        <span>Manage</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Active EB Meter Dropdown Trigger -->
+            <!-- Active EB Meter Liquid Glass Pill Trigger -->
             <div class="relative" id="meterDropdownWrapper">
-                <div class="px-3 py-2.5 rounded-xl border border-indigo-400/50 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-700 text-white shadow-sm flex items-center justify-between gap-2">
+                <div class="px-3.5 py-2.5 rounded-[22px] liquid-capsule-active text-white flex items-center justify-between gap-2">
                     <button type="button" id="meterDropdownTrigger" onclick="toggleMeterDropdown()"
                         class="min-w-0 flex-1 text-left flex items-center justify-between gap-2 cursor-pointer focus:outline-none">
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <span id="dropdownActiveName" class="text-xs font-extrabold truncate">Main Meter</span>
+                                <span id="dropdownActiveName" class="sf-display-title text-[14px] font-semibold truncate">Main Meter</span>
                                 <span id="dropdownActiveSC"
-                                    class="hidden text-[10px] tracking-wide px-1.5 py-0.2 rounded bg-amber-300 text-slate-950 font-extrabold shrink-0"></span>
+                                    class="hidden text-[10px] tracking-wide px-2 py-0.2 rounded-full bg-[#FFD60A] text-slate-950 font-bold shrink-0"></span>
                                 <span id="dropdownActiveTariff"
-                                    class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-white/20 text-white shrink-0">LT-IA</span>
+                                    class="text-[10px] font-semibold px-2 py-0.2 rounded-full bg-white/22 backdrop-blur-md text-white shrink-0">LT-IA</span>
                             </div>
                             <p id="dropdownActiveSub"
-                                class="text-[10px] font-medium text-indigo-100 truncate leading-tight mt-0.5">
+                                class="text-[11px] font-normal text-white/85 truncate leading-tight mt-0.5 tabular-nums">
                                 28 Oct → 27 Dec (60d) · ₹0
                             </p>
                         </div>
                         <span id="dropdownActiveUnits"
-                            class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-white/20 text-white shrink-0">0u</span>
+                            class="text-[12px] font-semibold px-2.5 py-0.5 rounded-full bg-white/22 backdrop-blur-md text-white tabular-nums shrink-0">0u</span>
                     </button>
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button type="button" onclick="openActiveMeterForm()"
                             title="Edit Meter Settings"
-                            class="p-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white transition active:scale-95">
+                            class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center apple-tap">
                             <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
                         </button>
                         <button type="button" id="meterDropdownChevronBtn" onclick="toggleMeterDropdown()"
                             title="Toggle EB Meters List"
-                            class="w-7 h-7 rounded-lg bg-white/15 hover:bg-white/25 flex items-center justify-center transition-transform duration-200">
+                            class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-transform duration-200">
                             <i data-lucide="chevron-down" class="w-4 h-4 text-white"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Dropdown Menu List of All EB Meters -->
+                <!-- Liquid Glass Dropdown Menu List of All EB Meters -->
                 <div id="meterDropdownMenu"
-                    class="hidden mt-1.5 rounded-2xl border border-indigo-100 dark:border-indigo-900/70 bg-white dark:bg-[#151B30] shadow-xl p-1.5 space-y-1 max-h-64 overflow-y-auto">
+                    class="hidden mt-2 rounded-[22px] liquid-modal shadow-2xl p-1.5 space-y-1 max-h-64 overflow-y-auto">
                 </div>
             </div>
 
-            <!-- Selected Meters Combined Total Summary Bar -->
+            <!-- Selected Meters Combined Total Glass Strip -->
             <div id="selectedMetersTotalBar"
-                class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                class="pt-2.5 border-t border-slate-900/8 dark:border-white/10 flex items-center justify-between gap-2 px-1">
                 <div class="min-w-0">
                     <span id="selectedMetersCountLabel"
-                        class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Selected
+                        class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 block">Selected
                         Total (1 Meter)</span>
                     <span id="selectedMetersNamesHint"
-                        class="text-[10px] text-slate-400 dark:text-slate-500 truncate block">Open dropdown to combine
+                        class="text-[11px] text-slate-500 dark:text-slate-400 truncate block">Open dropdown to combine
                         meters</span>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <div class="text-right">
                         <span id="selectedTotalUnits"
-                            class="text-xs font-extrabold text-slate-900 dark:text-white block">0 kWh</span>
-                        <span class="text-[9px] font-semibold text-slate-400 block">Combined Units</span>
+                            class="text-[13px] font-semibold text-slate-900 dark:text-white tabular-nums block">0 kWh</span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 block">Combined</span>
                     </div>
                     <div
-                        class="px-2.5 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/90 border border-indigo-200/70 dark:border-indigo-800/70 text-right">
+                        class="px-3 py-1 rounded-full bg-[#007AFF]/12 dark:bg-[#0A84FF]/20 border border-[#007AFF]/20 text-right">
                         <span id="selectedTotalBill"
-                            class="text-sm font-extrabold text-indigo-700 dark:text-indigo-300 block leading-tight">₹0</span>
-                        <span class="text-[9px] font-bold text-indigo-700/80 dark:text-indigo-300/80 block">Total
-                            Bill</span>
+                            class="sf-rounded-num text-[15px] font-bold text-[#007AFF] dark:text-[#409CFF] block leading-tight">₹0</span>
                     </div>
                 </div>
             </div>
@@ -320,140 +498,134 @@
         <!-- ==================== TAB 1: DASHBOARD ==================== -->
         <section id="view-dashboard" class="view-section space-y-3.5">
 
-            <!-- Primary Bi-Month Cycle Status & Bill Card -->
-            <div
-                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow relative overflow-hidden">
+            <!-- Primary Apple Liquid Glass Bi-Month Cycle Card -->
+            <div class="liquid-glass rounded-[30px] p-5 relative overflow-hidden">
                 <!-- Top Cycle Window Bar -->
                 <div class="flex items-center justify-between gap-2 mb-4">
                     <div
-                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 border border-indigo-200/70 dark:border-indigo-800/60">
-                        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#34C759]/14 dark:bg-[#30D158]/18 border border-[#34C759]/25">
+                        <span class="w-2 h-2 rounded-full bg-[#34C759] dark:bg-[#30D158] animate-pulse"></span>
                         <span id="dashCycleLabel"
-                            class="text-[11px] font-bold text-indigo-800 dark:text-indigo-300">Active Bi-Month</span>
+                            class="text-[11px] font-semibold text-emerald-800 dark:text-[#30D158]">Active Bi-Month</span>
                     </div>
                     <span id="dashDaysBadge"
-                        class="text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/90 px-2.5 py-1 rounded-full">0
+                        class="text-[11px] font-medium text-slate-600 dark:text-slate-300 liquid-lens px-3 py-1 rounded-full tabular-nums">0
                         / 60d</span>
                 </div>
 
-                <!-- Main Consumption & Bill Figures -->
+                <!-- Main Consumption & Bill Glass Lenses -->
                 <div class="grid grid-cols-2 gap-3 mb-4">
-                    <div
-                        class="bg-slate-50/90 dark:bg-slate-800/60 rounded-2xl p-3.5 border border-slate-200/60 dark:border-slate-700/60">
+                    <div class="liquid-lens rounded-[22px] p-4">
                         <span
-                            class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">Units
+                            class="sf-caption-caps text-slate-500 dark:text-slate-400 block mb-1.5">Units
                             Used</span>
                         <div class="flex items-baseline gap-1">
                             <span id="dashActualUnits"
-                                class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">0</span>
-                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">kWh</span>
+                                class="sf-display-hero text-[34px] font-bold text-slate-900 dark:text-white leading-none">0</span>
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">kWh</span>
                         </div>
                     </div>
                     <div
-                        class="bg-gradient-to-br from-indigo-50 via-violet-50/80 to-purple-50/60 dark:from-indigo-950/70 dark:via-violet-950/50 dark:to-purple-950/40 rounded-2xl p-3.5 border border-indigo-200/70 dark:border-indigo-800/60">
+                        class="rounded-[22px] p-4 bg-gradient-to-br from-[#007AFF]/14 via-[#5AC8FA]/10 to-[#5856D6]/14 border border-[#007AFF]/20 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]">
                         <span
-                            class="text-[11px] font-semibold uppercase tracking-wider text-indigo-800/80 dark:text-indigo-300 block mb-1">TNEB
+                            class="sf-caption-caps text-[#007AFF] dark:text-[#5AC8FA] block mb-1.5">TNEB
                             Bill</span>
                         <div class="flex items-baseline gap-0.5">
                             <span id="dashActualBill"
-                                class="text-3xl font-extrabold text-indigo-700 dark:text-indigo-300 tracking-tight">₹0</span>
+                                class="sf-display-hero text-[34px] font-bold text-[#007AFF] dark:text-[#409CFF] leading-none">₹0</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Opening vs Latest Reading Strip -->
+                <!-- Opening vs Latest Reading Capsule -->
                 <div id="dashCycleDates"
-                    class="bg-slate-50/90 dark:bg-slate-800/50 rounded-xl px-3.5 py-2.5 border border-slate-200/60 dark:border-slate-700/50 flex items-center justify-between text-xs mb-4">
-                    <span>Open: <strong class="text-slate-800 dark:text-slate-200">0</strong></span>
-                    <span>Latest: <strong class="text-slate-800 dark:text-slate-200">0 kWh</strong></span>
+                    class="liquid-lens rounded-2xl px-3.5 py-2.5 flex items-center justify-between text-xs mb-4 tabular-nums">
+                    <span class="text-slate-500 dark:text-slate-400">Open: <strong class="font-semibold text-slate-900 dark:text-white">0</strong></span>
+                    <span class="text-slate-500 dark:text-slate-400">Latest: <strong class="font-semibold text-slate-900 dark:text-white">0 kWh</strong></span>
                 </div>
 
-                <!-- Quick Action Row: Log Reading & Reset Cycle -->
+                <!-- Apple Capsule Action Buttons -->
                 <div class="grid grid-cols-5 gap-2.5">
                     <button onclick="openReadingModal()"
-                        class="col-span-3 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-sm shadow-sm transition active:scale-95">
+                        class="col-span-3 flex items-center justify-center gap-2 py-3 px-4 rounded-full liquid-capsule-active text-white font-semibold text-[14px] apple-tap">
                         <i data-lucide="plus-circle" class="w-4 h-4"></i>
                         <span>Log Reading</span>
                     </button>
                     <button onclick="openResetModal()"
-                        class="col-span-2 flex items-center justify-center gap-1.5 py-3 px-3 rounded-2xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 font-bold text-xs transition active:scale-95">
+                        class="col-span-2 flex items-center justify-center gap-1.5 py-3 px-3 rounded-full bg-[#FF9500]/14 hover:bg-[#FF9500]/22 text-amber-800 dark:text-[#FF9F0A] border border-[#FF9500]/30 backdrop-blur-md font-semibold text-[13px] apple-tap">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                         <span>Unit Reset</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Usage Pace & 500-Unit Threshold Card -->
-            <div
-                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow space-y-4">
+            <!-- Usage Pace & 500-Unit Threshold Liquid Glass Card -->
+            <div class="liquid-glass rounded-[30px] p-5 space-y-4">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200">Usage
+                    <h2 class="sf-caption-caps text-slate-600 dark:text-slate-300">Usage
                         Pace & 500-Unit Limit</h2>
                     <span id="dashSubsidyBadge"
-                        class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300">200
+                        class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#34C759]/14 text-emerald-800 dark:text-[#30D158] border border-[#34C759]/25">200
                         Free ≤500u</span>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2.5 text-center">
-                    <div
-                        class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
-                        <span class="text-[10px] font-bold uppercase text-slate-400 block mb-0.5">Cycle Avg</span>
+                    <div class="p-3 rounded-[20px] liquid-lens">
+                        <span class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 block mb-0.5">Cycle Avg</span>
                         <span id="dashOverallAvg"
-                            class="text-base font-extrabold text-slate-900 dark:text-white">0.0</span>
+                            class="sf-rounded-num text-[17px] font-bold text-slate-900 dark:text-white">0.0</span>
                         <span class="text-[10px] text-slate-500 dark:text-slate-400 block">u / day</span>
                     </div>
-                    <div
-                        class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
-                        <span class="text-[10px] font-bold uppercase text-slate-400 block mb-0.5">Last Check</span>
+                    <div class="p-3 rounded-[20px] liquid-lens">
+                        <span class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 block mb-0.5">Last Check</span>
                         <span id="dashRecentAvg"
-                            class="text-base font-extrabold text-slate-900 dark:text-white">0.0</span>
+                            class="sf-rounded-num text-[17px] font-bold text-slate-900 dark:text-white">0.0</span>
                         <span class="text-[10px] text-slate-500 dark:text-slate-400 block">u / day</span>
                     </div>
                     <div
-                        class="p-3 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/60">
+                        class="p-3 rounded-[20px] bg-[#007AFF]/12 dark:bg-[#0A84FF]/18 border border-[#007AFF]/20 backdrop-blur-md">
                         <span
-                            class="text-[10px] font-bold uppercase text-indigo-700 dark:text-indigo-300 block mb-0.5">Left
+                            class="text-[10px] font-semibold uppercase tracking-wide text-[#007AFF] dark:text-[#5AC8FA] block mb-0.5">Left
                             ≤500</span>
                         <span id="dashUnitsLeft500"
-                            class="text-base font-extrabold text-indigo-700 dark:text-indigo-300">500</span>
-                        <span class="text-[10px] text-indigo-700/80 dark:text-indigo-300/80 block">kWh left</span>
+                            class="sf-rounded-num text-[17px] font-bold text-[#007AFF] dark:text-[#409CFF]">500</span>
+                        <span class="text-[10px] text-[#007AFF]/80 dark:text-[#5AC8FA]/80 block">kWh left</span>
                     </div>
                 </div>
 
                 <!-- 500-Unit Tier Progress Bar -->
                 <div class="space-y-1.5">
-                    <div class="flex justify-between text-xs font-semibold">
+                    <div class="flex justify-between text-xs font-medium">
                         <span class="text-slate-600 dark:text-slate-400">Subsidized Tier Progress</span>
-                        <span id="dash500ProgressText" class="text-slate-900 dark:text-slate-200 font-bold">0 / 500
+                        <span id="dash500ProgressText" class="text-slate-900 dark:text-white font-semibold tabular-nums">0 / 500
                             kWh</span>
                     </div>
-                    <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div class="w-full h-2.5 bg-slate-900/10 dark:bg-white/10 rounded-full overflow-hidden p-0.5">
                         <div id="dash500ProgressBar"
-                            class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width: 0%">
+                            class="h-full bg-gradient-to-r from-[#007AFF] to-[#5AC8FA] rounded-full transition-all duration-300" style="width: 0%">
                         </div>
                     </div>
-                    <p id="dashPaceNote" class="text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">Add your first
+                    <p id="dashPaceNote" class="text-[12px] text-slate-500 dark:text-slate-400 pt-0.5 leading-relaxed">Add your first
                         meter check to see daily unit pace.</p>
                 </div>
             </div>
 
-            <!-- Previous Bi-Month Records Summary Card -->
-            <div
-                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
+            <!-- Previous Bi-Month Records Summary Liquid Glass Card -->
+            <div class="liquid-glass rounded-[30px] p-5">
                 <div class="flex items-center justify-between gap-2 mb-3">
                     <div class="min-w-0">
-                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Previous Bi-Month
+                        <h2 class="sf-display-title text-[15px] font-bold text-slate-900 dark:text-white truncate">Previous Bi-Month
                             Records</h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Completed 28th → 27th cycles</p>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button onclick="downloadBiMonthPDF()" title="Download Bi-Month PDF"
-                            class="inline-flex items-center gap-1 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-xl transition active:scale-95">
-                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
+                            class="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 dark:text-slate-200 liquid-lens hover:bg-white/80 dark:hover:bg-white/15 px-3 py-1.5 rounded-full apple-tap">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#007AFF] dark:text-[#409CFF]"></i>
                             <span>PDF</span>
                         </button>
                         <button onclick="switchTab('history')"
-                            class="text-xs font-bold text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 bg-indigo-50 dark:bg-indigo-950/80 px-2.5 py-1.5 rounded-xl transition active:scale-95">
+                            class="text-xs font-semibold text-[#007AFF] dark:text-[#409CFF] bg-[#007AFF]/12 border border-[#007AFF]/20 px-3 py-1.5 rounded-full apple-tap">
                             All →
                         </button>
                     </div>
@@ -461,37 +633,35 @@
                 <div id="dashPastCyclesList" class="space-y-2"></div>
             </div>
 
-            <!-- Current Bi-Month Slab Breakdown Card -->
-            <div
-                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
+            <!-- Current Bi-Month Slab Breakdown Liquid Glass Card -->
+            <div class="liquid-glass rounded-[30px] p-5">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">TNEB Slab Breakdown</h2>
+                        <h2 class="sf-display-title text-[15px] font-bold text-slate-900 dark:text-white">TNEB Slab Breakdown</h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Current bi-month tariff calculation</p>
                     </div>
                     <span id="dashSlabTierBadge"
-                        class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300">≤500
+                        class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#007AFF]/12 text-[#007AFF] dark:text-[#409CFF] border border-[#007AFF]/20">≤500
                         Tier</span>
                 </div>
-                <div id="dashSlabTableContainer" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm"></div>
+                <div id="dashSlabTableContainer" class="divide-y divide-slate-900/8 dark:divide-white/10 text-sm"></div>
             </div>
 
         </section>
 
         <!-- ==================== TAB 2: HISTORY & ARCHIVED BI-MONTHS ==================== -->
-        <section id="view-history" class="view-section hidden space-y-4">
+        <section id="view-history" class="view-section hidden space-y-3.5">
 
-            <!-- Daily / Check Pace Chart Card -->
-            <div
-                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
+            <!-- Daily / Check Pace Chart Glass Card -->
+            <div class="liquid-glass rounded-[30px] p-5">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Daily Unit Trend</h2>
+                        <h2 class="sf-display-title text-[15px] font-bold text-slate-900 dark:text-white">Daily Unit Trend</h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Units/day between readings in current
                             cycle</p>
                     </div>
                     <span
-                        class="text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/80 px-2.5 py-1 rounded-full">kWh
+                        class="text-xs font-semibold text-[#007AFF] dark:text-[#409CFF] bg-[#007AFF]/12 border border-[#007AFF]/20 px-2.5 py-1 rounded-full">kWh
                         / day</span>
                 </div>
                 <div class="h-44 w-full relative">
@@ -500,99 +670,103 @@
             </div>
 
             <!-- Archived Bi-Month Cycles (28th to 27th) -->
-            <div
-                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
+            <div class="liquid-glass rounded-[30px] p-5">
                 <div class="flex items-center justify-between gap-2 mb-3">
                     <div class="min-w-0">
-                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Archived Bi-Month
+                        <h2 class="sf-display-title text-[15px] font-bold text-slate-900 dark:text-white truncate">Archived Bi-Month
                             Cycles</h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Past 28th → 27th records for this
                             meter</p>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button onclick="downloadBiMonthPDF()"
-                            class="inline-flex items-center gap-1 text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200/70 dark:border-indigo-800/60 px-2.5 py-1.5 rounded-xl transition active:scale-95">
+                            class="inline-flex items-center gap-1 text-xs font-semibold text-[#007AFF] dark:text-[#409CFF] bg-[#007AFF]/12 border border-[#007AFF]/20 px-3 py-1.5 rounded-full apple-tap">
                             <i data-lucide="download" class="w-3.5 h-3.5"></i>
                             <span>PDF</span>
                         </button>
                         <button onclick="openResetModal()"
-                            class="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 px-2.5 py-1.5 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/60 transition active:scale-95">
+                            class="text-xs font-semibold text-amber-800 dark:text-[#FF9F0A] bg-[#FF9500]/15 border border-[#FF9500]/30 px-3 py-1.5 rounded-full apple-tap">
                             + Reset
                         </button>
                     </div>
                 </div>
-                <div id="pastCyclesHistoryContainer" class="space-y-3"></div>
+                <div id="pastCyclesHistoryContainer" class="space-y-2.5"></div>
             </div>
 
             <!-- Current Cycle Readings Timeline -->
-            <div
-                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
+            <div class="liquid-glass rounded-[30px] p-5">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Current Cycle Reading Log</h2>
+                        <h2 class="sf-display-title text-[15px] font-bold text-slate-900 dark:text-white">Current Cycle Reading Log</h2>
                         <p id="historyCountLabel" class="text-xs text-slate-500 dark:text-slate-400">0 checks logged</p>
                     </div>
-                    <button onclick="openReadingModal()"
-                        class="text-xs font-bold bg-indigo-600 text-white px-3 py-1.5 rounded-xl hover:bg-indigo-700 transition active:scale-95">
-                        + Add Check
-                    </button>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="openRecycleBinModal()"
+                            class="text-xs font-semibold liquid-lens text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full apple-tap inline-flex items-center gap-1">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5 text-[#FF9500]"></i>
+                            <span>Bin</span>
+                        </button>
+                        <button onclick="openReadingModal()"
+                            class="text-xs font-semibold liquid-capsule-active text-white px-3.5 py-1.5 rounded-full apple-tap">
+                            + Add Check
+                        </button>
+                    </div>
                 </div>
-                <div id="readingsTimelineContainer" class="space-y-2.5"></div>
+                <div id="readingsTimelineContainer" class="space-y-2"></div>
             </div>
         </section>
 
         <!-- ==================== TAB 3: TNEB SLABS & SIMULATOR ==================== -->
-        <section id="view-slabs" class="view-section hidden space-y-4">
+        <section id="view-slabs" class="view-section hidden space-y-3.5">
 
             <!-- Interactive Quick Bill Estimator -->
-            <div
-                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
+            <div class="liquid-glass rounded-[30px] p-5">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <div>
-                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white mb-0.5">Bi-Monthly Bill
+                        <h2 class="sf-display-title text-[15px] font-bold text-slate-900 dark:text-white mb-0.5">Bi-Monthly Bill
                             Calculator</h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Test any bi-monthly kWh unit total under
                             TNEB tariffs</p>
                     </div>
                     <span id="simTierBadge"
-                        class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 shrink-0">&gt;500
+                        class="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-[#FF9500]/15 text-amber-800 dark:text-[#FF9F0A] border border-[#FF9500]/30 shrink-0">&gt;500
                         Slab</span>
                 </div>
 
-                <!-- Tariff Switcher inside Calculator -->
-                <div class="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/90 mb-3.5">
+                <!-- Apple iOS Segmented Control -->
+                <div class="grid grid-cols-2 gap-1 p-1 rounded-full liquid-lens mb-3.5">
                     <button type="button" id="simTariffDomesticBtn" onclick="setSimTariff('domestic')"
-                        class="py-2 px-3 rounded-xl text-xs font-extrabold transition bg-white dark:bg-[#111629] text-indigo-700 dark:text-indigo-300 shadow-xs">
+                        class="py-2 px-3 rounded-full text-xs font-semibold transition bg-white dark:bg-white/15 text-[#007AFF] dark:text-white shadow-xs">
                         Domestic LT-IA
                     </button>
                     <button type="button" id="simTariffCommonBtn" onclick="setSimTariff('common')"
-                        class="py-2 px-3 rounded-xl text-xs font-bold transition text-slate-600 dark:text-slate-300">
+                        class="py-2 px-3 rounded-full text-xs font-medium transition text-slate-600 dark:text-slate-300">
                         Common LT-ID (₹8.40)
                     </button>
                 </div>
 
                 <div
-                    class="flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200/70 dark:border-slate-700/70 mb-4">
+                    class="flex items-center justify-between gap-3 liquid-lens p-4 rounded-[22px] mb-4">
                     <div class="flex-1">
                         <label for="simUnitsInput"
-                            class="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400 block mb-1">Test
+                            class="sf-caption-caps text-slate-500 dark:text-slate-400 block mb-1">Test
                             Units (kWh)</label>
                         <input type="number" id="simUnitsInput" value="590" min="0" max="10000"
                             oninput="updateSimulator()"
-                            class="w-full text-2xl font-extrabold text-slate-900 dark:text-white bg-transparent focus:outline-none">
+                            class="sf-display-hero w-full text-[28px] font-bold text-slate-900 dark:text-white bg-transparent focus:outline-none">
                     </div>
                     <div class="text-right">
                         <span
-                            class="text-[11px] font-bold uppercase text-indigo-700 dark:text-indigo-300 block mb-1">Estimated
+                            class="sf-caption-caps text-[#007AFF] dark:text-[#5AC8FA] block mb-1">Estimated
                             Bill</span>
                         <span id="simBillOutput"
-                            class="text-2xl font-extrabold text-indigo-700 dark:text-indigo-300">₹2,796</span>
+                            class="sf-display-hero text-[28px] font-bold text-[#007AFF] dark:text-[#409CFF]">₹2,796</span>
                     </div>
                 </div>
 
                 <input type="range" id="simUnitsSlider" min="0" max="1200" step="10" value="590"
-                    oninput="syncSimSlider(this.value)" class="w-full accent-indigo-600 mb-2 cursor-pointer">
-                <div class="flex justify-between text-[11px] font-semibold text-slate-400">
+                    oninput="syncSimSlider(this.value)" class="w-full accent-[#007AFF] mb-2 cursor-pointer">
+                <div class="flex justify-between text-[11px] font-medium text-slate-500 dark:text-slate-400">
                     <span>200 u (Free)</span>
                     <span>400 u</span>
                     <span>500 u</span>
@@ -601,73 +775,72 @@
                 </div>
 
                 <div id="simBreakdownList"
-                    class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs"></div>
+                    class="mt-4 pt-3 border-t border-slate-900/8 dark:border-white/10 space-y-2 text-xs"></div>
             </div>
 
             <!-- Official TNEB Tariff Reference Card -->
-            <div
-                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow space-y-4">
+            <div class="liquid-glass rounded-[30px] p-5 space-y-3.5">
                 <div>
-                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">TNEB Domestic Tariff (LT-IA ·
+                    <h2 class="sf-display-title text-[15px] font-bold text-slate-900 dark:text-white">TNEB Domestic Tariff (LT-IA ·
                         2026)</h2>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Bi-monthly slab structure (28th → 27th cycle)
                     </p>
                 </div>
 
                 <div
-                    class="rounded-2xl border border-indigo-200/80 dark:border-indigo-800/60 bg-indigo-50/40 dark:bg-indigo-950/40 p-3.5 space-y-2">
+                    class="rounded-[22px] border border-[#007AFF]/20 bg-[#007AFF]/10 backdrop-blur-md p-3.5 space-y-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-indigo-900 dark:text-indigo-300">Up to 500 Units
+                        <span class="text-xs font-bold text-sky-900 dark:text-[#5AC8FA]">Up to 500 Units
                             (Subsidized)</span>
-                        <span class="text-[11px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded-md">200
+                        <span class="text-[11px] font-semibold bg-[#007AFF] text-white px-2.5 py-0.5 rounded-full">200
                             Free</span>
                     </div>
                     <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-700 dark:text-slate-300 pt-1">
                         <div>0 – 200 units:</div>
-                        <div class="font-bold text-right text-emerald-600 dark:text-emerald-400">₹0.00 / unit</div>
+                        <div class="font-semibold text-right text-[#34C759] dark:text-[#30D158]">₹0.00 / unit</div>
                         <div>201 – 400 units:</div>
-                        <div class="font-bold text-right">₹4.70 / unit</div>
+                        <div class="font-semibold text-right">₹4.70 / unit</div>
                         <div>401 – 500 units:</div>
-                        <div class="font-bold text-right">₹6.30 / unit</div>
+                        <div class="font-semibold text-right">₹6.30 / unit</div>
                     </div>
                 </div>
 
                 <div
-                    class="rounded-2xl border border-amber-200/80 dark:border-amber-800/60 bg-amber-50/40 dark:bg-amber-950/30 p-3.5 space-y-2">
+                    class="rounded-[22px] border border-[#FF9500]/25 bg-[#FF9500]/10 backdrop-blur-md p-3.5 space-y-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-amber-950 dark:text-amber-300">Above 500 Units
+                        <span class="text-xs font-bold text-amber-950 dark:text-[#FF9F0A]">Above 500 Units
                             (Non-Subsidized)</span>
-                        <span class="text-[11px] font-bold bg-amber-600 text-white px-2 py-0.5 rounded-md">100
+                        <span class="text-[11px] font-semibold bg-[#FF9500] text-white px-2.5 py-0.5 rounded-full">100
                             Free</span>
                     </div>
                     <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-700 dark:text-slate-300 pt-1">
                         <div>0 – 100 units:</div>
-                        <div class="font-bold text-right text-emerald-600 dark:text-emerald-400">₹0.00 / unit</div>
+                        <div class="font-semibold text-right text-[#34C759] dark:text-[#30D158]">₹0.00 / unit</div>
                         <div>101 – 400 units:</div>
-                        <div class="font-bold text-right">₹4.70 / unit</div>
+                        <div class="font-semibold text-right">₹4.70 / unit</div>
                         <div>401 – 500 units:</div>
-                        <div class="font-bold text-right">₹6.30 / unit</div>
+                        <div class="font-semibold text-right">₹6.30 / unit</div>
                         <div>501 – 600 units:</div>
-                        <div class="font-bold text-right">₹8.40 / unit</div>
+                        <div class="font-semibold text-right">₹8.40 / unit</div>
                         <div>601 – 800 units:</div>
-                        <div class="font-bold text-right">₹9.45 / unit</div>
+                        <div class="font-semibold text-right">₹9.45 / unit</div>
                         <div>801 – 1000 units:</div>
-                        <div class="font-bold text-right">₹10.50 / unit</div>
+                        <div class="font-semibold text-right">₹10.50 / unit</div>
                         <div>Above 1000 units:</div>
-                        <div class="font-bold text-right">₹11.55 / unit</div>
+                        <div class="font-semibold text-right">₹11.55 / unit</div>
                     </div>
                 </div>
 
                 <div
-                    class="rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/60 p-3.5 flex items-center justify-between">
+                    class="rounded-[22px] liquid-lens p-3.5 flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-extrabold text-slate-900 dark:text-white block">Common / Apartment
+                        <span class="text-xs font-bold text-slate-900 dark:text-white block">Common / Apartment
                             Meter (LT-ID)</span>
                         <span class="text-[11px] text-slate-500 dark:text-slate-400">Flat tariff without 100-unit free
                             subsidy</span>
                     </div>
                     <span
-                        class="text-xs font-extrabold text-slate-800 dark:text-slate-200 bg-white dark:bg-[#111629] px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">₹8.40
+                        class="text-xs font-bold text-slate-800 dark:text-[#5AC8FA] bg-white/80 dark:bg-white/10 px-3 py-1 rounded-full border border-white/60 dark:border-white/10">₹8.40
                         / u</span>
                 </div>
             </div>
@@ -675,27 +848,32 @@
 
     </main>
 
-    <!-- Bottom Floating Pill Navigation Bar -->
+    <!-- Floating Apple Liquid Glass Tab Bar with Sliding Active Pill -->
     <nav class="fixed inset-x-0 pb-safe-nav z-30 px-4 pointer-events-none">
         <div
-            class="max-w-md mx-auto bg-white/90 dark:bg-[#111629]/90 backdrop-blur-xl border border-indigo-200/80 dark:border-indigo-900/70 rounded-full p-1.5 flex items-center justify-between gap-1.5 nav-shadow pointer-events-auto">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard"
-                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold transition bg-indigo-600 text-white shadow-sm">
-                <i data-lucide="home" class="w-4 h-4"></i>
-                <span>Home</span>
-            </button>
-            <button onclick="switchTab('history')" id="nav-history"
-                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 transition">
-                <i data-lucide="history" class="w-4 h-4"></i>
-                <span>History</span>
-            </button>
-            <button onclick="switchTab('slabs')" id="nav-slabs"
-                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 transition">
-                <i data-lucide="percent" class="w-4 h-4"></i>
-                <span>Slabs</span>
-            </button>
+            class="max-w-md mx-auto liquid-dock rounded-full p-1.5 flex items-center justify-between gap-1.5 pointer-events-auto">
+            <div id="navTabsTrack" class="relative flex-1 flex items-center">
+                <div id="navActivePill"
+                    class="absolute inset-y-0 left-0 rounded-full liquid-capsule-active pointer-events-none"
+                    style="width: 33.333%; transform: translateX(0px);"></div>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard"
+                    class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-semibold text-white">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span>Home</span>
+                </button>
+                <button onclick="switchTab('history')" id="nav-history"
+                    class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300">
+                    <i data-lucide="history" class="w-4 h-4"></i>
+                    <span>History</span>
+                </button>
+                <button onclick="switchTab('slabs')" id="nav-slabs"
+                    class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300">
+                    <i data-lucide="percent" class="w-4 h-4"></i>
+                    <span>Slabs</span>
+                </button>
+            </div>
             <button onclick="openReadingModal()" title="Quick Log Reading"
-                class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white flex items-center justify-center shadow-md transition active:scale-95 shrink-0">
+                class="w-10 h-10 rounded-full liquid-capsule-active text-white flex items-center justify-center apple-tap shrink-0">
                 <i data-lucide="plus" class="w-5 h-5"></i>
             </button>
         </div>
@@ -703,68 +881,85 @@
 
     <!-- ==================== MODAL 1: LOG METER READING ==================== -->
     <div id="readingModal"
-        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/35 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 space-y-4">
+            class="liquid-modal w-full max-w-md rounded-t-[34px] sm:rounded-[34px] p-6 pb-safe-modal space-y-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Log Meter Reading</h3>
+                    <h3 class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white">Log Meter Reading</h3>
                     <p id="readingModalMeterSubtitle" class="text-xs text-slate-500 dark:text-slate-400">Main Meter ·
                         28th Cycle</p>
                 </div>
                 <button onclick="closeModal('readingModal')"
-                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
+            <!-- Select EB Meter Inside Log Meter Reading Modal -->
+            <div class="space-y-1.5">
+                <div class="flex items-center justify-between px-0.5">
+                    <label for="readingMeterSelect"
+                        class="text-xs font-semibold text-slate-700 dark:text-slate-300">Select EB Meter</label>
+                    <span id="readingModalMeterSC"
+                        class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFD60A]/30 text-amber-950 dark:text-[#FFD60A] border border-amber-400/40"></span>
+                </div>
+                <div class="relative">
+                    <select id="readingMeterSelect" onchange="onReadingModalMeterChange(this.value)"
+                        class="w-full h-12 pl-4 pr-10 rounded-2xl liquid-lens text-sm font-bold text-slate-900 dark:text-white dark:bg-slate-900 appearance-none focus:outline-none focus:border-[#007AFF]">
+                    </select>
+                    <i data-lucide="chevrons-up-down"
+                        class="w-4 h-4 text-slate-500 dark:text-slate-400 pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2"></i>
+                </div>
+            </div>
+
             <div
-                class="bg-slate-50 dark:bg-slate-800/70 rounded-2xl p-3 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between text-xs">
+                class="liquid-lens rounded-2xl p-3 flex items-center justify-between text-xs">
                 <span class="text-slate-500 dark:text-slate-400">Previous Reading:</span>
-                <span id="modalPrevReadingHint" class="font-extrabold text-slate-900 dark:text-white">0 kWh</span>
+                <span id="modalPrevReadingHint" class="font-semibold text-slate-900 dark:text-white tabular-nums">0 kWh</span>
             </div>
 
             <div class="space-y-3">
                 <div>
                     <label for="inputNewReading"
-                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Current Meter Reading
+                        class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Current Meter Reading
                         (kWh)</label>
                     <input type="number" id="inputNewReading" step="0.1" placeholder="e.g. 4250"
                         oninput="updateLiveEntryPreview()"
-                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-lg font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                        class="sf-display-title w-full px-4 py-3 rounded-2xl liquid-lens text-lg font-bold text-slate-900 dark:text-white focus:outline-none focus:border-[#007AFF]">
                 </div>
                 <div class="grid grid-cols-2 gap-3 items-end">
                     <div class="min-w-0">
                         <label for="inputReadingDate"
-                            class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Check Date</label>
+                            class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">Check Date</label>
                         <input type="date" id="inputReadingDate" onchange="updateLiveEntryPreview()"
-                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                            class="w-full h-12 px-3.5 rounded-2xl liquid-lens text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-[#007AFF]">
                     </div>
                     <div class="min-w-0">
                         <label for="inputReadingNote"
-                            class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Note
+                            class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">Note
                             (Optional)</label>
                         <input type="text" id="inputReadingNote" placeholder="e.g. Week 2"
-                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                            class="w-full h-12 px-3.5 rounded-2xl liquid-lens text-sm font-normal text-slate-900 dark:text-white focus:outline-none focus:border-[#007AFF]">
                     </div>
                 </div>
             </div>
 
             <!-- Live Delta Preview -->
             <div id="liveEntryPreview"
-                class="hidden rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 p-3 text-xs space-y-1">
-                <div class="flex justify-between font-bold text-indigo-900 dark:text-indigo-300">
+                class="hidden rounded-2xl bg-[#007AFF]/12 border border-[#007AFF]/25 p-3 text-xs space-y-1">
+                <div class="flex justify-between font-semibold text-[#007AFF] dark:text-[#5AC8FA]">
                     <span>Units Added Since Last Check:</span>
                     <span id="previewDeltaUnits">+0 kWh</span>
                 </div>
-                <div class="flex justify-between text-indigo-800 dark:text-indigo-300">
+                <div class="flex justify-between text-slate-800 dark:text-slate-200">
                     <span>Updated Bi-Month Total & Bill:</span>
-                    <span id="previewTotalBill" class="font-extrabold">0 kWh · ₹0</span>
+                    <span id="previewTotalBill" class="font-bold">0 kWh · ₹0</span>
                 </div>
             </div>
 
             <button onclick="saveNewReading()"
-                class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+                class="w-full py-3.5 rounded-full liquid-capsule-active text-white font-semibold text-[15px] apple-tap">
                 Save Meter Reading
             </button>
         </div>
@@ -772,59 +967,59 @@
 
     <!-- ==================== MODAL 2: BI-MONTH UNIT RESET (28TH CYCLE) ==================== -->
     <div id="resetModal"
-        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/35 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 space-y-4">
+            class="liquid-modal w-full max-w-md rounded-t-[34px] sm:rounded-[34px] p-6 pb-safe-modal space-y-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Reset Bi-Month Units (28th)</h3>
+                    <h3 class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white">Reset Bi-Month Units (28th)</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Archive current 28th → 27th record & start
                         fresh at 0 units</p>
                 </div>
                 <button onclick="closeModal('resetModal')"
-                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <!-- Current Cycle Summary Before Archiving -->
             <div
-                class="rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 p-3.5 space-y-1.5 text-xs">
-                <div class="font-extrabold text-amber-950 dark:text-amber-300 flex items-center gap-1.5">
+                class="rounded-2xl bg-[#FF9500]/14 border border-[#FF9500]/30 p-3.5 space-y-1.5 text-xs">
+                <div class="font-semibold text-amber-950 dark:text-[#FF9F0A] flex items-center gap-1.5">
                     <i data-lucide="archive" class="w-3.5 h-3.5"></i>
                     <span>Current Bi-Month to Save in History:</span>
                 </div>
-                <div class="flex justify-between text-amber-900 dark:text-amber-300/90">
+                <div class="flex justify-between text-amber-900 dark:text-amber-200">
                     <span>Window:</span>
-                    <span id="resetArchiveWindow" class="font-bold">28 Oct → 27 Dec</span>
+                    <span id="resetArchiveWindow" class="font-semibold">28 Oct → 27 Dec</span>
                 </div>
-                <div class="flex justify-between text-amber-900 dark:text-amber-300/90">
+                <div class="flex justify-between text-amber-900 dark:text-amber-200">
                     <span>Total Units & Final Bill:</span>
-                    <span id="resetArchiveStats" class="font-extrabold">0 kWh · ₹0</span>
+                    <span id="resetArchiveStats" class="font-bold">0 kWh · ₹0</span>
                 </div>
             </div>
 
             <div class="space-y-3">
                 <div>
                     <label for="inputResetOpeningKwh"
-                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Closing / New Opening
+                        class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Closing / New Opening
                         Meter Reading (kWh)</label>
                     <input type="number" id="inputResetOpeningKwh" step="0.1"
-                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-base font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                        class="w-full px-4 py-3 rounded-2xl liquid-lens text-base font-bold text-slate-900 dark:text-white focus:outline-none focus:border-[#007AFF]">
                     <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Closes the old bi-month at this
                         reading and starts the new cycle at 0 units used.</p>
                 </div>
                 <div>
                     <label for="inputResetNewStartDate"
-                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">New Bi-Month Start Date
+                        class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">New Bi-Month Start Date
                         (28th)</label>
                     <input type="date" id="inputResetNewStartDate"
-                        class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                        class="w-full px-3.5 py-2.5 rounded-2xl liquid-lens text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-[#007AFF]">
                 </div>
             </div>
 
             <button onclick="executeCycleReset()"
-                class="w-full py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+                class="w-full py-3.5 rounded-full bg-gradient-to-b from-[#FF9F0A] to-[#FF9500] text-white font-semibold text-[15px] shadow-lg shadow-amber-500/30 ring-1 ring-white/40 apple-tap">
                 Archive Record & Start New 28th Cycle
             </button>
         </div>
@@ -832,17 +1027,17 @@
 
     <!-- ==================== MODAL 3: MANAGE INDIVIDUAL METERS ==================== -->
     <div id="metersModal"
-        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/35 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 max-h-[90vh] overflow-y-auto space-y-4">
+            class="liquid-modal w-full max-w-md rounded-t-[34px] sm:rounded-[34px] p-6 pb-safe-modal max-h-[90vh] overflow-y-auto space-y-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Individual Meters</h3>
+                    <h3 class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white">Individual Meters</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Each meter tracks its own 28th → 27th bi-month
                     </p>
                 </div>
                 <button onclick="closeModal('metersModal')"
-                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -851,7 +1046,7 @@
             <div id="metersListContainer" class="space-y-2.5"></div>
 
             <button onclick="openMeterFormModal()"
-                class="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95">
+                class="w-full py-3.5 rounded-full liquid-capsule-active text-white font-semibold text-[15px] flex items-center justify-center gap-2 apple-tap">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span>Add New Individual Meter</span>
             </button>
@@ -860,17 +1055,17 @@
 
     <!-- ==================== MODAL 4: ADD / EDIT METER FORM ==================== -->
     <div id="meterFormModal"
-        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/35 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 space-y-4">
+            class="liquid-modal w-full max-w-md rounded-t-[34px] sm:rounded-[34px] p-6 pb-safe-modal space-y-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 id="meterFormTitle" class="text-base font-extrabold text-slate-900 dark:text-white">Add
+                    <h3 id="meterFormTitle" class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white">Add
                         Individual Meter</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Configure meter details & 28th cycle start</p>
                 </div>
                 <button onclick="closeModal('meterFormModal')"
-                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -880,47 +1075,47 @@
             <div class="space-y-3">
                 <div>
                     <label for="inputMeterName"
-                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Meter Name</label>
+                        class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Meter Name</label>
                     <input type="text" id="inputMeterName" placeholder="e.g. Ground Floor, House, Shop"
-                        class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                        class="w-full px-4 py-2.5 rounded-2xl liquid-lens text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#007AFF]">
                 </div>
 
                 <div>
                     <label for="inputServiceNo"
-                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">TNEB Consumer / Service No.
+                        class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">TNEB Consumer / Service No.
                         (Optional)</label>
                     <input type="text" id="inputServiceNo" placeholder="e.g. 09-123-456-789"
-                        class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                        class="w-full px-4 py-2.5 rounded-2xl liquid-lens text-sm font-normal text-slate-900 dark:text-white focus:outline-none focus:border-[#007AFF]">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 items-end">
                     <div class="min-w-0">
                         <label for="inputCycleStartDate"
-                            class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Cycle Start
+                            class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">Cycle Start
                             (28th)</label>
                         <input type="date" id="inputCycleStartDate" onchange="previewCycleWindowInForm()"
-                            class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                            class="w-full h-12 px-3 rounded-2xl liquid-lens text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-[#007AFF]">
                     </div>
                     <div class="min-w-0">
                         <label for="inputOpeningReading"
-                            class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Opening
+                            class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">Opening
                             kWh</label>
                         <input type="number" id="inputOpeningReading" step="0.1" placeholder="0"
-                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                            class="w-full h-12 px-3.5 rounded-2xl liquid-lens text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-[#007AFF]">
                     </div>
                 </div>
 
                 <div id="formCyclePreviewBanner"
-                    class="rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/70 dark:border-indigo-800/60 px-3 py-2 text-xs font-semibold text-indigo-800 dark:text-indigo-300">
+                    class="rounded-2xl bg-[#007AFF]/12 border border-[#007AFF]/25 px-3 py-2 text-xs font-medium text-sky-900 dark:text-[#5AC8FA]">
                     Bi-Month Window: 28th → 27th
                 </div>
 
                 <div>
                     <label for="inputMeterTariff"
-                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">TNEB Tariff / Subsidy
+                        class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">TNEB Tariff / Subsidy
                         Slab</label>
                     <select id="inputMeterTariff"
-                        class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-800/90 focus:outline-none focus:border-indigo-600">
+                        class="w-full px-3.5 py-2.5 rounded-2xl liquid-lens text-sm font-semibold text-slate-900 dark:text-white dark:bg-slate-900 focus:outline-none focus:border-[#007AFF]">
                         <option value="domestic">Domestic LT-IA (200 Units Free ≤500u)</option>
                         <option value="common">Common / Apartment LT-ID (₹8.40 Flat)</option>
                     </select>
@@ -928,7 +1123,7 @@
             </div>
 
             <button onclick="saveMeterForm()"
-                class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+                class="w-full py-3.5 rounded-full liquid-capsule-active text-white font-semibold text-[15px] apple-tap">
                 Save Meter
             </button>
         </div>
@@ -936,41 +1131,41 @@
 
     <!-- ==================== MODAL 5: BACKUP & EXPORT ==================== -->
     <div id="backupModal"
-        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/35 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 space-y-4">
+            class="liquid-modal w-full max-w-md rounded-t-[34px] sm:rounded-[34px] p-6 pb-safe-modal space-y-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Backup & Data</h3>
+                    <h3 class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white">Backup & Data</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Export PDF statement or backup meter data</p>
                 </div>
                 <button onclick="closeModal('backupModal')"
-                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <div class="space-y-2.5">
                 <button onclick="installPWA()" id="installPwaBtn"
-                    class="w-full py-3.5 px-4 rounded-2xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-sm flex items-center justify-center gap-2 border border-slate-700/60 shadow-sm transition active:scale-95">
-                    <i data-lucide="smartphone" class="w-4 h-4 text-indigo-400"></i>
+                    class="w-full py-3.5 px-4 rounded-full bg-slate-900/90 dark:bg-white/15 hover:bg-slate-800 text-white font-semibold text-sm flex items-center justify-center gap-2 border border-white/20 shadow-sm apple-tap">
+                    <i data-lucide="smartphone" class="w-4 h-4 text-[#5AC8FA]"></i>
                     <span>Add App to Home Screen</span>
                 </button>
 
                 <button onclick="downloadBiMonthPDF()"
-                    class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                    class="w-full py-3.5 px-4 rounded-full liquid-capsule-active text-white font-semibold text-sm flex items-center justify-center gap-2 apple-tap">
                     <i data-lucide="file-text" class="w-4 h-4"></i>
                     <span>Download Bi-Month PDF Statement</span>
                 </button>
 
                 <button onclick="exportBackupJSON()"
-                    class="w-full py-3.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95">
+                    class="w-full py-3.5 px-4 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 font-semibold text-sm flex items-center justify-center gap-2 apple-tap">
                     <i data-lucide="download" class="w-4 h-4"></i>
                     <span>Download JSON Backup</span>
                 </button>
 
                 <label
-                    class="w-full py-3.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition active:scale-95">
+                    class="w-full py-3.5 px-4 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer apple-tap">
                     <i data-lucide="upload" class="w-4 h-4"></i>
                     <span>Restore From Backup File</span>
                     <input type="file" id="importFileInput" accept=".json" onchange="importBackupJSON(event)"
@@ -982,31 +1177,31 @@
 
     <!-- ==================== MODAL 6: WEEKLY READING REMINDERS ==================== -->
     <div id="reminderModal"
-        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/35 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 space-y-4">
+            class="liquid-modal w-full max-w-md rounded-t-[34px] sm:rounded-[34px] p-6 pb-safe-modal space-y-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Weekly Reading Reminder</h3>
+                    <h3 class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white">Weekly Reading Reminder</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Get notified every week to log your kWh
                         reading</p>
                 </div>
                 <button onclick="closeModal('reminderModal')"
-                    class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <!-- iOS Notification Status Helper -->
             <div id="iosNotificationHelpBanner"
-                class="hidden rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 p-3 text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed">
+                class="hidden rounded-2xl bg-[#FF9500]/14 border border-[#FF9500]/30 p-3 text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed">
             </div>
 
             <!-- Enable Toggle Card -->
             <div
-                class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-3">
+                class="p-3.5 rounded-2xl liquid-lens flex items-center justify-between gap-3">
                 <div>
-                    <span class="text-sm font-extrabold text-slate-900 dark:text-white block">Weekly Check Alert</span>
+                    <span class="text-sm font-bold text-slate-900 dark:text-white block">Weekly Check Alert</span>
                     <span id="reminderStatusLabel" class="text-xs text-slate-500 dark:text-slate-400">Every Sunday at
                         09:00 AM</span>
                 </div>
@@ -1021,9 +1216,9 @@
             <div class="grid grid-cols-2 gap-3 items-end">
                 <div class="min-w-0 overflow-hidden">
                     <label for="inputReminderDay"
-                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Day of Week</label>
+                        class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">Day of Week</label>
                     <select id="inputReminderDay" onchange="saveReminderPrefs()"
-                        class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                        class="w-full h-12 px-3 rounded-2xl liquid-lens text-sm font-semibold text-slate-900 dark:text-white dark:bg-slate-900 focus:outline-none focus:border-[#007AFF]">
                         <option value="0">Sunday</option>
                         <option value="1">Monday</option>
                         <option value="2">Tuesday</option>
@@ -1035,25 +1230,53 @@
                 </div>
                 <div class="min-w-0 overflow-hidden">
                     <label for="inputReminderTime"
-                        class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Reminder Time</label>
+                        class="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">Reminder Time</label>
                     <input type="time" id="inputReminderTime" value="09:00" onchange="saveReminderPrefs()"
-                        class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
+                        class="w-full h-12 px-3.5 rounded-2xl liquid-lens text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#007AFF]">
                 </div>
             </div>
 
             <!-- System Calendar & Test Notification Actions -->
             <div class="space-y-2 pt-1">
                 <button onclick="downloadWeeklyCalendarICS()"
-                    class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                    class="w-full py-3.5 px-4 rounded-full liquid-capsule-active text-white font-semibold text-sm flex items-center justify-center gap-2 apple-tap">
                     <i data-lucide="calendar-plus" class="w-4 h-4"></i>
                     <span>Add Weekly Alert to Phone Calendar (.ics)</span>
                 </button>
                 <button onclick="sendTestReminderNotification()"
-                    class="w-full py-3 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95">
-                    <i data-lucide="bell" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
+                    class="w-full py-3 px-4 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 font-semibold text-xs flex items-center justify-center gap-2 apple-tap">
+                    <i data-lucide="bell" class="w-3.5 h-3.5 text-[#007AFF] dark:text-[#409CFF]"></i>
                     <span>Send Test Notification Now</span>
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 7: RECYCLE BIN ==================== -->
+    <div id="recycleBinModal"
+        class="fixed inset-0 z-50 hidden bg-slate-950/35 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div
+            class="liquid-modal w-full max-w-md rounded-t-[34px] sm:rounded-[34px] p-6 pb-safe-modal max-h-[90vh] overflow-y-auto space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white">Recycle Bin</h3>
+                    <p id="recycleBinSubtitle" class="text-xs text-slate-500 dark:text-slate-400">Deleted readings & meters</p>
+                </div>
+                <button onclick="closeModal('recycleBinModal')"
+                    class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Recycle Bin Items List -->
+            <div id="recycleBinListContainer" class="space-y-2.5"></div>
+
+            <!-- Empty Bin Button -->
+            <button id="emptyRecycleBinBtn" onclick="emptyRecycleBin()"
+                class="hidden w-full py-3 rounded-full bg-[#FF3B30]/15 hover:bg-[#FF3B30]/25 text-[#FF3B30] border border-[#FF3B30]/30 font-semibold text-xs flex items-center justify-center gap-1.5 apple-tap">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <span>Empty Recycle Bin Permanently</span>
+            </button>
         </div>
     </div>
 
@@ -1066,6 +1289,8 @@
         let paceChartInstance = null;
         let swRegistration = null;
         let isMeterDropdownOpen = false;
+        let activeTabName = 'dashboard';
+        let pendingEmptyBinConfirm = false;
 
         // ==================== SERVICE WORKER FOR iOS & MOBILE NOTIFICATIONS ====================
         async function registerInlineServiceWorker() {
@@ -1368,6 +1593,7 @@
             return {
                 activeMeterId: 'default-home',
                 selectedMeterIds: ['default-home'],
+                recycleBin: [],
                 meters: [
                     {
                         id: 'default-home',
@@ -1408,6 +1634,9 @@
                     if (parsed.selectedMeterIds.length === 0) {
                         parsed.selectedMeterIds = [parsed.activeMeterId];
                     }
+                }
+                if (!Array.isArray(parsed.recycleBin)) {
+                    parsed.recycleBin = [];
                 }
                 return parsed;
             } catch (e) {
@@ -1623,33 +1852,33 @@
                     const tariffShort = item.tariff === 'common' ? 'LT-ID' : 'LT-IA';
 
                     const rowClasses = isActive
-                        ? 'bg-indigo-50 dark:bg-indigo-950/70 text-slate-900 dark:text-white border-indigo-300 dark:border-indigo-700'
-                        : 'bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-900 dark:text-white border-transparent';
+                        ? 'bg-[#007AFF]/14 text-slate-900 dark:text-white border-[#007AFF]/30'
+                        : 'bg-transparent hover:bg-white/60 dark:hover:bg-white/10 text-slate-900 dark:text-white border-transparent';
                     const consumerBadgeHTML = item.serviceNo
-                        ? `<span class="text-[10px] tracking-wide px-1.5 py-0.2 rounded shrink-0 bg-amber-100 dark:bg-amber-950/90 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/70 font-extrabold">SC ${escapeHTML(item.serviceNo)}</span>`
+                        ? `<span class="text-[10px] tracking-wide px-2 py-0.2 rounded-full shrink-0 bg-[#FFD60A]/30 text-amber-950 dark:text-[#FFD60A] border border-amber-400/40 font-bold">SC ${escapeHTML(item.serviceNo)}</span>`
                         : '';
                     const checkBtnClasses = isChecked
-                        ? 'bg-indigo-600 text-white border-indigo-600'
-                        : 'bg-white dark:bg-slate-900 text-transparent border-slate-300 dark:border-slate-600';
+                        ? 'bg-[#007AFF] text-white border-[#007AFF]'
+                        : 'bg-white/75 dark:bg-white/10 text-transparent border-slate-300 dark:border-white/25';
 
                     return `
-                        <div class="px-2.5 py-2 rounded-xl border transition flex items-center justify-between gap-2 ${rowClasses}">
-                            <button type="button" onclick="toggleMeterSelection('${item.id}')" title="Include in Combined Total" class="w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition active:scale-90 ${checkBtnClasses}">
+                        <div class="px-2.5 py-2 rounded-2xl border transition flex items-center justify-between gap-2 ${rowClasses}">
+                            <button type="button" onclick="toggleMeterSelection('${item.id}')" title="Include in Combined Total" class="w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition active:scale-90 ${checkBtnClasses}">
                                 <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>
                             </button>
                             <button type="button" onclick="selectMeter('${item.id}'); setMeterDropdownOpen(false);" class="min-w-0 flex-1 text-left cursor-pointer focus:outline-none">
                                 <div class="flex items-center gap-1.5 flex-wrap">
-                                    <span class="text-xs font-extrabold truncate">${escapeHTML(item.name)}</span>
+                                    <span class="text-xs font-semibold truncate">${escapeHTML(item.name)}</span>
                                     ${consumerBadgeHTML}
-                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0 bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300">${tariffShort}</span>
+                                    <span class="text-[9px] font-semibold px-2 py-0.2 rounded-full shrink-0 bg-slate-500/15 text-slate-700 dark:text-slate-300">${tariffShort}</span>
                                 </div>
-                                <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate leading-tight mt-0.5">
+                                <p class="text-[10px] font-normal text-slate-500 dark:text-slate-400 truncate leading-tight mt-0.5 tabular-nums">
                                     ${formatDisplayDate(itemMetrics.startStr)} → ${formatDisplayDate(itemMetrics.endStr)} · ₹${itemMetrics.actualBillObj.total.toLocaleString('en-IN')}
                                 </p>
                             </button>
                             <div class="flex items-center gap-1.5 shrink-0">
-                                <span class="text-[11px] font-extrabold px-1.5 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200">${Math.round(itemMetrics.actualUnits)}u</span>
-                                <button type="button" onclick="setMeterDropdownOpen(false); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="p-1.5 rounded-lg bg-white dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700 transition active:scale-95">
+                                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full liquid-lens text-slate-700 dark:text-slate-200 tabular-nums">${Math.round(itemMetrics.actualUnits)}u</span>
+                                <button type="button" onclick="setMeterDropdownOpen(false); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="w-7 h-7 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-600 dark:text-slate-300 flex items-center justify-center apple-tap">
                                     <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
@@ -1665,8 +1894,8 @@
             document.getElementById('dashActualUnits').textContent = Math.round(m.actualUnits).toLocaleString('en-IN');
             document.getElementById('dashActualBill').textContent = `₹${m.actualBillObj.total.toLocaleString('en-IN')}`;
             document.getElementById('dashCycleDates').innerHTML = `
-                <span>Open: <strong class="text-slate-800 dark:text-slate-200">${m.openingKwh}</strong></span>
-                <span>Latest: <strong class="text-slate-800 dark:text-slate-200">${m.currentKwh} kWh</strong> (${formatDisplayDate(m.latestDateStr)})</span>
+                <span class="text-slate-500 dark:text-slate-400">Open: <strong class="font-semibold text-slate-900 dark:text-white">${m.openingKwh}</strong></span>
+                <span class="text-slate-500 dark:text-slate-400">Latest: <strong class="font-semibold text-slate-900 dark:text-white">${m.currentKwh} kWh</strong> (${formatDisplayDate(m.latestDateStr)})</span>
             `;
 
             // 3. Pace & 500-Unit Limit
@@ -1679,13 +1908,13 @@
             const bar = document.getElementById('dash500ProgressBar');
             bar.style.width = `${pct500}%`;
             if (m.actualUnits > 500) {
-                bar.className = 'h-full bg-rose-500 rounded-full transition-all duration-300';
+                bar.className = 'h-full bg-[#FF3B30] rounded-full transition-all duration-300';
                 document.getElementById('dashPaceNote').textContent = 'Above 500 units: free subsidy drops from 200u to 100u & upper slabs apply.';
             } else if (m.actualUnits > 400) {
-                bar.className = 'h-full bg-amber-500 rounded-full transition-all duration-300';
+                bar.className = 'h-full bg-[#FF9500] rounded-full transition-all duration-300';
                 document.getElementById('dashPaceNote').textContent = `Caution: Only ${m.unitsLeft500} kWh left before losing the 200-unit free tier.`;
             } else {
-                bar.className = 'h-full bg-indigo-500 rounded-full transition-all duration-300';
+                bar.className = 'h-full bg-gradient-to-r from-[#007AFF] to-[#5AC8FA] rounded-full transition-all duration-300';
                 document.getElementById('dashPaceNote').textContent = m.sortedReadings.length > 0
                     ? `Safe zone: ${m.unitsLeft500} kWh remaining inside the 200-unit free tier (≤500u).`
                     : 'Log a meter reading to track your daily unit pace.';
@@ -1704,17 +1933,17 @@
                 slabContainer.innerHTML = m.actualBillObj.breakdown.map(row => `
                     <div class="py-2.5 flex items-center justify-between">
                         <div>
-                            <span class="font-bold text-slate-800 dark:text-slate-200 text-xs block">${row.range}</span>
+                            <span class="font-semibold text-slate-800 dark:text-slate-200 text-xs block">${row.range}</span>
                             <span class="text-[11px] text-slate-500 dark:text-slate-400">${row.units} u × ₹${row.rate.toFixed(2)}</span>
                         </div>
-                        <span class="font-extrabold text-xs ${row.isFree ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white'}">
+                        <span class="font-bold text-xs tabular-nums ${row.isFree ? 'text-[#34C759] dark:text-[#30D158]' : 'text-slate-900 dark:text-white'}">
                             ${row.isFree ? 'FREE' : '₹' + row.amount.toFixed(2)}
                         </span>
                     </div>
                 `).join('') + `
                     <div class="pt-3 flex items-center justify-between">
-                        <span class="text-xs font-extrabold uppercase text-slate-500 dark:text-slate-400">Total Bi-Month Bill</span>
-                        <span class="text-base font-extrabold text-indigo-700 dark:text-indigo-300">₹${m.actualBillObj.total.toLocaleString('en-IN')}</span>
+                        <span class="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Total Bi-Month Bill</span>
+                        <span class="sf-rounded-num text-base font-bold text-[#007AFF] dark:text-[#409CFF]">₹${m.actualBillObj.total.toLocaleString('en-IN')}</span>
                     </div>
                 `;
             }
@@ -1723,6 +1952,8 @@
             renderHistoryTimeline(meter, m);
             renderPaceChart(meter, m);
             updateReminderUI(meter, m);
+            updateRecycleBinBadge();
+            updateNavPillPosition(activeTabName);
 
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
@@ -1733,35 +1964,35 @@
             const histList = document.getElementById('pastCyclesHistoryContainer');
 
             if (pastCycles.length === 0) {
-                dashList.innerHTML = `<p class="text-xs text-slate-400 py-2">No archived bi-month cycles yet. Tap "Unit Reset" on the 28th to save a completed cycle.</p>`;
-                histList.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">Completed 28th → 27th bi-month cycles will appear here after you reset units.</p>`;
+                dashList.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400 py-2">No archived bi-month cycles yet. Tap "Unit Reset" on the 28th to save a completed cycle.</p>`;
+                histList.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">Completed 28th → 27th bi-month cycles will appear here after you reset units.</p>`;
                 return;
             }
 
             dashList.innerHTML = pastCycles.slice(0, 2).map(c => `
-                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+                <div class="flex items-center justify-between p-3 rounded-[20px] liquid-lens">
                     <div>
-                        <span class="text-xs font-extrabold text-slate-900 dark:text-white block">${formatDisplayDate(c.startDate)} → ${formatDisplayDate(c.endDate)}</span>
+                        <span class="text-xs font-semibold text-slate-900 dark:text-white block">${formatDisplayDate(c.startDate)} → ${formatDisplayDate(c.endDate)}</span>
                         <span class="text-[11px] text-slate-500 dark:text-slate-400">${c.openingReading} → ${c.closingReading} kWh</span>
                     </div>
-                    <div class="text-right">
-                        <span class="text-xs font-extrabold text-indigo-700 dark:text-indigo-300 block">₹${Number(c.billAmount).toLocaleString('en-IN')}</span>
-                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300">${c.unitsUsed} kWh</span>
+                    <div class="text-right tabular-nums">
+                        <span class="text-xs font-bold text-[#007AFF] dark:text-[#409CFF] block">₹${Number(c.billAmount).toLocaleString('en-IN')}</span>
+                        <span class="text-[11px] font-medium text-slate-600 dark:text-slate-300">${c.unitsUsed} kWh</span>
                     </div>
                 </div>
             `).join('');
 
             histList.innerHTML = pastCycles.map(c => `
-                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between">
+                <div class="p-3.5 rounded-[22px] liquid-lens flex items-center justify-between">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-extrabold text-slate-900 dark:text-white">${formatFullDate(c.startDate)} → ${formatFullDate(c.endDate)}</span>
+                            <span class="text-xs font-semibold text-slate-900 dark:text-white">${formatFullDate(c.startDate)} → ${formatFullDate(c.endDate)}</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Meter: ${c.openingReading} → ${c.closingReading} kWh</p>
                     </div>
-                    <div class="text-right">
-                        <span class="text-sm font-extrabold text-indigo-700 dark:text-indigo-300 block">₹${Number(c.billAmount).toLocaleString('en-IN')}</span>
-                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${c.unitsUsed} units</span>
+                    <div class="text-right tabular-nums">
+                        <span class="text-sm font-bold text-[#007AFF] dark:text-[#409CFF] block">₹${Number(c.billAmount).toLocaleString('en-IN')}</span>
+                        <span class="text-xs font-medium text-slate-700 dark:text-slate-300">${c.unitsUsed} units</span>
                     </div>
                 </div>
             `).join('');
@@ -1774,7 +2005,7 @@
             if (m.sortedReadings.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-6 space-y-2">
-                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Starting reading: ${m.openingKwh} kWh on ${formatFullDate(m.startStr)}</p>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Starting reading: ${m.openingKwh} kWh on ${formatFullDate(m.startStr)}</p>
                         <p class="text-[11px] text-slate-400">Tap "+ Add Check" whenever you inspect your meter.</p>
                     </div>
                 `;
@@ -1794,17 +2025,17 @@
             }
 
             container.innerHTML = [...entriesWithDelta].reverse().map(item => `
-                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-2">
+                <div class="p-3.5 rounded-[22px] liquid-lens flex items-center justify-between gap-2">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-extrabold text-slate-900 dark:text-white">${item.reading} kWh</span>
-                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-100/80 dark:bg-indigo-950/90 text-indigo-800 dark:text-indigo-300">+${item.delta} u</span>
+                            <span class="text-sm font-bold text-slate-900 dark:text-white tabular-nums">${item.reading} kWh</span>
+                            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#007AFF]/12 text-[#007AFF] dark:text-[#5AC8FA] border border-[#007AFF]/20">+${item.delta} u</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                             ${formatFullDate(item.date)} · ${item.avg} u/day${item.note ? ' · ' + escapeHTML(item.note) : ''}
                         </p>
                     </div>
-                    <button onclick="deleteReading('${item.id}')" title="Delete Entry" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition">
+                    <button onclick="deleteReading('${item.id}')" title="Move to Recycle Bin" class="w-8 h-8 rounded-full text-slate-400 hover:text-[#FF3B30] hover:bg-[#FF3B30]/10 flex items-center justify-center transition">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -1840,7 +2071,7 @@
 
             const isDark = document.documentElement.classList.contains('dark');
             const tickColor = isDark ? '#94a3b8' : '#64748b';
-            const gridColor = isDark ? 'rgba(51, 65, 85, 0.45)' : '#eef2ff';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.07)';
 
             paceChartInstance = new Chart(canvas, {
                 type: 'bar',
@@ -1849,8 +2080,8 @@
                     datasets: [{
                         label: 'Units / Day',
                         data: dataPoints,
-                        backgroundColor: '#4f46e5',
-                        borderRadius: 8,
+                        backgroundColor: '#007AFF',
+                        borderRadius: 12,
                         maxBarThickness: 32
                     }]
                 },
@@ -1875,8 +2106,184 @@
             });
         }
 
+        // ==================== RECYCLE BIN ENGINE ====================
+        function updateRecycleBinBadge() {
+            const bin = appState.recycleBin || [];
+            const badge = document.getElementById('trashCountBadge');
+            if (badge) {
+                badge.textContent = bin.length > 9 ? '9+' : String(bin.length);
+                badge.classList.toggle('hidden', bin.length <= 0);
+            }
+        }
+
+        function openRecycleBinModal() {
+            setMeterDropdownOpen(false);
+            pendingEmptyBinConfirm = false;
+            renderRecycleBinModal();
+            document.getElementById('recycleBinModal').classList.remove('hidden');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function renderRecycleBinModal() {
+            const bin = appState.recycleBin || [];
+            const container = document.getElementById('recycleBinListContainer');
+            const emptyBtn = document.getElementById('emptyRecycleBinBtn');
+            const subtitle = document.getElementById('recycleBinSubtitle');
+
+            if (subtitle) {
+                subtitle.textContent = bin.length === 0
+                    ? 'Trash is empty'
+                    : `${bin.length} deleted item${bin.length === 1 ? '' : 's'} · Restore or delete permanently`;
+            }
+
+            if (emptyBtn) {
+                emptyBtn.classList.toggle('hidden', bin.length === 0);
+                emptyBtn.innerHTML = `<i data-lucide="trash-2" class="w-3.5 h-3.5"></i><span>${pendingEmptyBinConfirm ? 'Tap Again to Permanently Clear All' : 'Empty Recycle Bin Permanently'}</span>`;
+            }
+
+            if (bin.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 space-y-1.5">
+                        <div class="w-11 h-11 rounded-full liquid-lens mx-auto flex items-center justify-center text-slate-400">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </div>
+                        <p class="text-xs font-semibold text-slate-600 dark:text-slate-300">No deleted items</p>
+                        <p class="text-[11px] text-slate-400">Deleted readings and EB meters appear here so you can restore them anytime.</p>
+                    </div>
+                `;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = [...bin].reverse().map(entry => {
+                const deletedOn = formatDisplayDate(entry.deletedAt || getTodayStr());
+                if (entry.type === 'meter') {
+                    const mObj = entry.data || {};
+                    const scChip = mObj.serviceNo ? ` · SC ${escapeHTML(mObj.serviceNo)}` : '';
+                    return `
+                        <div class="p-3.5 rounded-[22px] liquid-lens flex items-center justify-between gap-2">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#5856D6]/15 text-[#5856D6] dark:text-[#5E5CE6]">Meter</span>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white truncate">${escapeHTML(mObj.name || 'Meter')}</span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                                    Open ${mObj.openingReading || 0} kWh${scChip} · Deleted ${deletedOn}
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button onclick="restoreFromRecycleBin('${entry.id}')" title="Restore Meter"
+                                    class="px-2.5 py-1.5 rounded-full bg-[#34C759]/15 text-emerald-800 dark:text-[#30D158] border border-[#34C759]/30 text-[11px] font-semibold apple-tap">
+                                    Restore
+                                </button>
+                                <button onclick="permanentlyDeleteBinItem('${entry.id}')" title="Delete Forever"
+                                    class="w-8 h-8 rounded-full bg-[#FF3B30]/15 text-[#FF3B30] flex items-center justify-center apple-tap">
+                                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const rObj = entry.data || {};
+                    return `
+                        <div class="p-3.5 rounded-[22px] liquid-lens flex items-center justify-between gap-2">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#007AFF]/15 text-[#007AFF] dark:text-[#5AC8FA]">Reading</span>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white tabular-nums">${rObj.reading} kWh</span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                                    ${escapeHTML(entry.meterName || 'Meter')} · ${formatFullDate(rObj.date)} · Deleted ${deletedOn}
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button onclick="restoreFromRecycleBin('${entry.id}')" title="Restore Reading"
+                                    class="px-2.5 py-1.5 rounded-full bg-[#34C759]/15 text-emerald-800 dark:text-[#30D158] border border-[#34C759]/30 text-[11px] font-semibold apple-tap">
+                                    Restore
+                                </button>
+                                <button onclick="permanentlyDeleteBinItem('${entry.id}')" title="Delete Forever"
+                                    class="w-8 h-8 rounded-full bg-[#FF3B30]/15 text-[#FF3B30] flex items-center justify-center apple-tap">
+                                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function restoreFromRecycleBin(binId) {
+            const bin = appState.recycleBin || [];
+            const item = bin.find(b => b.id === binId);
+            if (!item) return;
+
+            if (item.type === 'meter' && item.data) {
+                appState.meters.push(item.data);
+                appState.activeMeterId = item.data.id;
+                if (!appState.selectedMeterIds.includes(item.data.id)) {
+                    appState.selectedMeterIds.push(item.data.id);
+                }
+                showToast(`Restored meter "${item.data.name}"`);
+            } else if (item.type === 'reading' && item.data) {
+                const targetMeter = appState.meters.find(m => m.id === item.meterId) || getActiveMeter();
+                targetMeter.readings.push(item.data);
+                showToast(`Restored ${item.data.reading} kWh to ${targetMeter.name}`);
+            }
+
+            appState.recycleBin = bin.filter(b => b.id !== binId);
+            saveState();
+            renderAll();
+            renderRecycleBinModal();
+            triggerHaptic('success');
+        }
+
+        function permanentlyDeleteBinItem(binId) {
+            appState.recycleBin = (appState.recycleBin || []).filter(b => b.id !== binId);
+            saveState();
+            renderAll();
+            renderRecycleBinModal();
+            showToast('Permanently deleted');
+        }
+
+        function emptyRecycleBin() {
+            if (!pendingEmptyBinConfirm) {
+                pendingEmptyBinConfirm = true;
+                renderRecycleBinModal();
+                showToast('Tap again to permanently clear Recycle Bin', 'error');
+                setTimeout(() => {
+                    if (pendingEmptyBinConfirm) {
+                        pendingEmptyBinConfirm = false;
+                        renderRecycleBinModal();
+                    }
+                }, 3500);
+                return;
+            }
+            pendingEmptyBinConfirm = false;
+            appState.recycleBin = [];
+            saveState();
+            renderAll();
+            renderRecycleBinModal();
+            showToast('Recycle Bin emptied');
+        }
+
         // ==================== MODAL & ACTION HANDLERS ====================
+        function updateNavPillPosition(tabName) {
+            const activeBtn = document.getElementById(`nav-${tabName}`);
+            const pill = document.getElementById('navActivePill');
+            if (!activeBtn || !pill) return;
+
+            pill.style.width = `${activeBtn.offsetWidth}px`;
+            pill.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+        }
+
+        window.addEventListener('resize', () => {
+            updateNavPillPosition(activeTabName);
+        });
+
         function switchTab(tabName) {
+            activeTabName = tabName;
             setMeterDropdownOpen(false);
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
             document.getElementById(`view-${tabName}`).classList.remove('hidden');
@@ -1887,12 +2294,14 @@
             }
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = 'nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 transition';
+                btn.className = 'nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300';
             });
             const activeBtn = document.getElementById(`nav-${tabName}`);
             if (activeBtn) {
-                activeBtn.className = 'nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold transition bg-indigo-600 text-white shadow-sm';
+                activeBtn.className = 'nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-semibold text-white';
             }
+
+            updateNavPillPosition(tabName);
 
             if (tabName === 'history') {
                 const meter = getActiveMeter();
@@ -1924,19 +2333,53 @@
             }
         }
 
-        // --- Reading Modal ---
+        // --- Reading Modal with Integrated EB Meter Selector ---
+        function populateReadingModalMeterSelector(selectedId) {
+            const selectEl = document.getElementById('readingMeterSelect');
+            if (!selectEl) return;
+            selectEl.innerHTML = appState.meters.map(item => {
+                const itemMetrics = getMeterMetrics(item);
+                const scPart = item.serviceNo ? ` (SC ${item.serviceNo})` : '';
+                return `<option value="${item.id}" ${item.id === selectedId ? 'selected' : ''}>${escapeHTML(item.name)}${escapeHTML(scPart)} · ${Math.round(itemMetrics.actualUnits)}u</option>`;
+            }).join('');
+        }
+
+        function syncReadingModalMeterContext(meter) {
+            const m = getMeterMetrics(meter);
+            document.getElementById('readingModalMeterSubtitle').textContent = `${meter.name} · ${formatDisplayDate(m.startStr)} → ${formatDisplayDate(m.endStr)}`;
+            document.getElementById('modalPrevReadingHint').textContent = `${m.currentKwh} kWh (${formatDisplayDate(m.latestDateStr)})`;
+
+            const scBadge = document.getElementById('readingModalMeterSC');
+            if (scBadge) {
+                if (meter.serviceNo) {
+                    scBadge.textContent = `SC ${meter.serviceNo}`;
+                    scBadge.classList.remove('hidden');
+                } else {
+                    scBadge.classList.add('hidden');
+                }
+            }
+        }
+
+        function onReadingModalMeterChange(newMeterId) {
+            selectMeter(newMeterId);
+            const meter = getActiveMeter();
+            syncReadingModalMeterContext(meter);
+            updateLiveEntryPreview();
+            triggerHaptic('light');
+        }
+
         function openReadingModal() {
             setMeterDropdownOpen(false);
             clearUnreadNotificationBadge();
             const meter = getActiveMeter();
-            const m = getMeterMetrics(meter);
-            document.getElementById('readingModalMeterSubtitle').textContent = `${meter.name} · ${formatDisplayDate(m.startStr)} → ${formatDisplayDate(m.endStr)}`;
-            document.getElementById('modalPrevReadingHint').textContent = `${m.currentKwh} kWh (${formatDisplayDate(m.latestDateStr)})`;
+            populateReadingModalMeterSelector(meter.id);
+            syncReadingModalMeterContext(meter);
             document.getElementById('inputNewReading').value = '';
             document.getElementById('inputReadingDate').value = getTodayStr();
             document.getElementById('inputReadingNote').value = '';
             document.getElementById('liveEntryPreview').classList.add('hidden');
             document.getElementById('readingModal').classList.remove('hidden');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
             setTimeout(() => document.getElementById('inputNewReading').focus(), 100);
         }
 
@@ -1960,6 +2403,10 @@
         }
 
         function saveNewReading() {
+            const selectEl = document.getElementById('readingMeterSelect');
+            if (selectEl && selectEl.value && selectEl.value !== appState.activeMeterId) {
+                selectMeter(selectEl.value);
+            }
             const meter = getActiveMeter();
             const m = getMeterMetrics(meter);
             const val = parseFloat(document.getElementById('inputNewReading').value);
@@ -1986,15 +2433,27 @@
             closeModal('readingModal');
             renderAll();
             triggerHaptic('success');
-            showToast(`Saved ${val} kWh reading`);
+            showToast(`Saved ${val} kWh to ${meter.name}`);
         }
 
         function deleteReading(readingId) {
             const meter = getActiveMeter();
+            const target = meter.readings.find(r => r.id === readingId);
+            if (target) {
+                if (!Array.isArray(appState.recycleBin)) appState.recycleBin = [];
+                appState.recycleBin.push({
+                    id: 'bin-' + Date.now(),
+                    type: 'reading',
+                    meterId: meter.id,
+                    meterName: meter.name,
+                    deletedAt: getTodayStr(),
+                    data: target
+                });
+            }
             meter.readings = meter.readings.filter(r => r.id !== readingId);
             saveState();
             renderAll();
-            showToast('Reading entry removed');
+            showToast('Moved reading to Recycle Bin');
         }
 
         // --- Reset Cycle Modal ---
@@ -2058,23 +2517,23 @@
                 const m = getMeterMetrics(item);
                 const isActive = item.id === appState.activeMeterId;
                 const deleteBtn = appState.meters.length > 1
-                    ? `<button onclick="deleteMeter('${item.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold ${pendingDeleteMeterId === item.id ? 'bg-rose-600 text-white' : 'bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400'}">${pendingDeleteMeterId === item.id ? 'Confirm?' : 'Delete'}</button>`
+                    ? `<button onclick="deleteMeter('${item.id}')" class="px-2.5 py-1.5 rounded-full text-xs font-semibold ${pendingDeleteMeterId === item.id ? 'bg-[#FF3B30] text-white' : 'bg-[#FF3B30]/15 text-[#FF3B30]'}">${pendingDeleteMeterId === item.id ? 'Confirm?' : 'Delete'}</button>`
                     : '';
                 const consumerChip = item.serviceNo
-                    ? `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/90 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/70">SC ${escapeHTML(item.serviceNo)}</span>`
+                    ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFD60A]/30 text-amber-950 dark:text-[#FFD60A] border border-amber-400/40">SC ${escapeHTML(item.serviceNo)}</span>`
                     : '';
                 return `
-                    <div class="p-3.5 rounded-2xl border ${isActive ? 'border-indigo-500 bg-indigo-50/40 dark:bg-indigo-950/40' : 'border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70'} flex items-center justify-between gap-2">
+                    <div class="p-3.5 rounded-[22px] border ${isActive ? 'border-[#007AFF]/40 bg-[#007AFF]/12' : 'liquid-lens'} flex items-center justify-between gap-2">
                         <div onclick="selectMeter('${item.id}'); closeModal('metersModal')" class="cursor-pointer flex-1 min-w-0">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="text-sm font-extrabold text-slate-900 dark:text-white truncate">${escapeHTML(item.name)}</span>
+                                <span class="text-sm font-bold text-slate-900 dark:text-white truncate">${escapeHTML(item.name)}</span>
                                 ${consumerChip}
-                                ${isActive ? '<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-600 text-white">Active</span>' : ''}
+                                ${isActive ? '<span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#007AFF] text-white">Active</span>' : ''}
                             </div>
                             <span class="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">${Math.round(m.actualUnits)} kWh · ₹${m.actualBillObj.total} · ${formatDisplayDate(m.startStr)}</span>
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0">
-                            <button onclick="openMeterFormModal('${item.id}')" class="p-2 rounded-xl bg-white dark:bg-[#111629] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <button onclick="openMeterFormModal('${item.id}')" class="w-8 h-8 rounded-full liquid-lens text-slate-600 dark:text-slate-300 flex items-center justify-center">
                                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                             </button>
                             ${deleteBtn}
@@ -2167,11 +2626,21 @@
             if (pendingDeleteMeterId !== id) {
                 pendingDeleteMeterId = id;
                 renderMetersListModal();
-                showToast('Tap delete again to confirm removal', 'error');
+                showToast('Tap delete again to move to Recycle Bin', 'error');
                 setTimeout(() => { if (pendingDeleteMeterId === id) { pendingDeleteMeterId = null; renderMetersListModal(); } }, 3500);
                 return;
             }
             pendingDeleteMeterId = null;
+            const targetMeter = appState.meters.find(m => m.id === id);
+            if (targetMeter) {
+                if (!Array.isArray(appState.recycleBin)) appState.recycleBin = [];
+                appState.recycleBin.push({
+                    id: 'bin-' + Date.now(),
+                    type: 'meter',
+                    deletedAt: getTodayStr(),
+                    data: targetMeter
+                });
+            }
             appState.meters = appState.meters.filter(m => m.id !== id);
             appState.selectedMeterIds = (appState.selectedMeterIds || []).filter(sid => sid !== id);
             if (appState.activeMeterId === id) {
@@ -2183,7 +2652,7 @@
             saveState();
             renderAll();
             renderMetersListModal();
-            showToast('Meter deleted');
+            showToast('Moved meter to Recycle Bin');
         }
 
         // ==================== SLAB SIMULATOR ====================
@@ -2210,17 +2679,17 @@
             if (tierBadge) {
                 tierBadge.textContent = res.tierLabel;
                 tierBadge.className = activeTariff === 'common'
-                    ? 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0'
+                    ? 'text-[10px] font-semibold px-2.5 py-1 rounded-full liquid-lens text-slate-700 dark:text-slate-300 shrink-0'
                     : (units > 500
-                        ? 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 shrink-0'
-                        : 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 shrink-0');
+                        ? 'text-[10px] font-semibold px-2.5 py-1 rounded-full bg-[#FF9500]/15 text-amber-800 dark:text-[#FF9F0A] border border-[#FF9500]/30 shrink-0'
+                        : 'text-[10px] font-semibold px-2.5 py-1 rounded-full bg-[#007AFF]/12 text-[#007AFF] dark:text-[#409CFF] border border-[#007AFF]/20 shrink-0');
             }
 
             const domBtn = document.getElementById('simTariffDomesticBtn');
             const comBtn = document.getElementById('simTariffCommonBtn');
             if (domBtn && comBtn) {
-                const activeCls = 'py-2 px-3 rounded-xl text-xs font-extrabold transition bg-white dark:bg-[#111629] text-indigo-700 dark:text-indigo-300 shadow-xs';
-                const inactiveCls = 'py-2 px-3 rounded-xl text-xs font-bold transition text-slate-600 dark:text-slate-300';
+                const activeCls = 'py-2 px-3 rounded-full text-xs font-semibold transition bg-white dark:bg-white/15 text-[#007AFF] dark:text-white shadow-xs';
+                const inactiveCls = 'py-2 px-3 rounded-full text-xs font-medium transition text-slate-600 dark:text-slate-300';
                 domBtn.className = activeTariff === 'domestic' ? activeCls : inactiveCls;
                 comBtn.className = activeTariff === 'common' ? activeCls : inactiveCls;
             }
@@ -2236,7 +2705,7 @@
                         <span class="font-semibold text-slate-800 dark:text-slate-200">${b.range}</span>
                         <span class="text-[11px] text-slate-400 block">${b.units} u × ₹${b.rate.toFixed(2)}/u</span>
                     </div>
-                    <span class="font-extrabold ${b.isFree ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white'}">${b.isFree ? 'FREE' : '₹' + b.amount.toFixed(2)}</span>
+                    <span class="font-bold tabular-nums ${b.isFree ? 'text-[#34C759] dark:text-[#30D158]' : 'text-slate-900 dark:text-white'}">${b.isFree ? 'FREE' : '₹' + b.amount.toFixed(2)}</span>
                 </div>
             `).join('');
         }
@@ -2254,7 +2723,7 @@
                 const m = getMeterMetrics(meter);
                 const tariffName = meter.tariff === 'common' ? 'Common / Apartment LT-ID' : 'Domestic LT-IA (200 Free ≤500u)';
 
-                doc.setFillColor(79, 70, 229);
+                doc.setFillColor(0, 122, 255);
                 doc.rect(0, 0, 210, 32, 'F');
                 doc.setTextColor(255, 255, 255);
                 doc.setFontSize(17);
@@ -2275,11 +2744,11 @@
                 doc.text(`Tariff: ${tariffName}${meter.serviceNo ? '   |   Consumer No: ' + meter.serviceNo : ''}`, 14, y + 6);
 
                 y += 16;
-                doc.setFillColor(238, 242, 255);
-                doc.setDrawColor(199, 210, 254);
+                doc.setFillColor(240, 248, 255);
+                doc.setDrawColor(191, 219, 254);
                 doc.roundedRect(14, y, 182, 26, 3, 3, 'FD');
 
-                doc.setTextColor(79, 70, 229);
+                doc.setTextColor(0, 122, 255);
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'bold');
                 doc.text('ACTIVE BI-MONTH CYCLE', 18, y + 7);
@@ -2332,7 +2801,7 @@
                         doc.text(`${c.closingReading}`, 120, y);
                         doc.setFont('helvetica', 'bold');
                         doc.text(`${c.unitsUsed} kWh`, 148, y);
-                        doc.setTextColor(79, 70, 229);
+                        doc.setTextColor(0, 122, 255);
                         doc.text(`Rs. ${Number(c.billAmount).toLocaleString('en-IN')}`, 176, y);
                         doc.setFont('helvetica', 'normal');
                         doc.setDrawColor(226, 232, 240);
@@ -2377,6 +2846,9 @@
                         if (!Array.isArray(appState.selectedMeterIds) || appState.selectedMeterIds.length === 0) {
                             appState.selectedMeterIds = [appState.activeMeterId || appState.meters[0].id];
                         }
+                        if (!Array.isArray(appState.recycleBin)) {
+                            appState.recycleBin = [];
+                        }
                         saveState();
                         renderAll();
                         closeModal('backupModal');
@@ -2400,9 +2872,9 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             const bgClass = type === 'error'
-                ? 'bg-rose-600 text-white border-rose-500'
-                : 'bg-slate-900 dark:bg-indigo-950 text-white border-indigo-700/70';
-            toast.className = `toast-bottom px-4 py-2.5 rounded-2xl text-xs font-bold shadow-xl border ${bgClass} text-center max-w-full`;
+                ? 'bg-[#FF3B30]/90 text-white border-white/30 backdrop-blur-2xl'
+                : 'bg-slate-900/80 dark:bg-white/15 text-white border-white/25 backdrop-blur-2xl';
+            toast.className = `toast-bottom px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl border ${bgClass} text-center max-w-full`;
             toast.textContent = msg;
             container.innerHTML = '';
             container.appendChild(toast);
@@ -2425,6 +2897,7 @@
             applyTheme();
             renderAll();
             updateSimulator();
+            updateNavPillPosition(activeTabName);
             await registerInlineServiceWorker();
             initWeeklyReminderScheduler();
             const prefs = getReminderPrefs();
@@ -2503,7 +2976,7 @@
             const statusLabel = document.getElementById('reminderStatusLabel');
             if (toggleBtn && knob) {
                 toggleBtn.className = prefs.enabled
-                    ? 'w-12 h-7 rounded-full bg-indigo-600 p-1 transition-colors relative shrink-0'
+                    ? 'w-12 h-7 rounded-full bg-[#34C759] p-1 transition-colors relative shrink-0'
                     : 'w-12 h-7 rounded-full bg-slate-300 dark:bg-slate-700 p-1 transition-colors relative shrink-0';
                 knob.className = prefs.enabled
                     ? 'block w-5 h-5 rounded-full bg-white shadow-sm transition-transform translate-x-5'
@@ -2721,8 +3194,8 @@
             if (!ctx) return '';
 
             const grad = ctx.createLinearGradient(0, 0, 512, 512);
-            grad.addColorStop(0, '#4f46e5');
-            grad.addColorStop(1, '#7c3aed');
+            grad.addColorStop(0, '#1e90ff');
+            grad.addColorStop(1, '#007AFF');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, 512, 512);
 
@@ -2741,7 +3214,7 @@
                 const cx = 408;
                 const cy = 104;
                 const r = 74;
-                ctx.fillStyle = '#ef4444';
+                ctx.fillStyle = '#FF3B30';
                 ctx.beginPath();
                 ctx.arc(cx, cy, r, 0, Math.PI * 2);
                 ctx.fill();
@@ -2751,7 +3224,7 @@
                 ctx.stroke();
 
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '800 76px Plus Jakarta Sans, Inter, -apple-system, sans-serif';
+                ctx.font = '700 76px -apple-system, BlinkMacSystemFont, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(badgeCount > 9 ? '9+' : String(badgeCount), cx, cy + 4);
@@ -2774,8 +3247,8 @@
                     description: 'Bi-monthly TNEB kWh & bill tracker (28th to 27th cycle)',
                     start_url: window.location.href,
                     display: 'standalone',
-                    background_color: '#090B14',
-                    theme_color: '#4f46e5',
+                    background_color: '#000000',
+                    theme_color: '#007AFF',
                     icons: [
                         { src: iconDataUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
                     ]
