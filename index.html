@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TNEB Tracker">
     <meta name="application-name" content="TNEB Tracker">
-    <meta name="theme-color" content="#059669" id="metaThemeColor">
+    <meta name="theme-color" content="#4f46e5" id="metaThemeColor">
     <link rel="apple-touch-icon" id="appleTouchIcon">
     <link rel="manifest" id="pwaManifestLink">
 
@@ -25,16 +25,16 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
-    <!-- Inter Font -->
+    <!-- Plus Jakarta Sans & Inter Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js for Visual Usage Pace -->
@@ -43,7 +43,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             -webkit-tap-highlight-color: transparent;
             overscroll-behavior-y: none;
         }
@@ -124,21 +124,21 @@
             animation: slideUpToast 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Custom subtle shadows */
+        /* Electric Indigo & Obsidian Elevation */
         .card-shadow {
-            box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.05), 0 1px 3px -1px rgba(15, 23, 42, 0.03);
+            box-shadow: 0 4px 20px -4px rgba(79, 70, 229, 0.07), 0 1px 4px -1px rgba(15, 23, 42, 0.04);
         }
 
         html.dark .card-shadow {
-            box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(129, 140, 248, 0.08);
         }
 
         .nav-shadow {
-            box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.14), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+            box-shadow: 0 12px 32px -4px rgba(49, 46, 129, 0.18), 0 4px 12px -2px rgba(15, 23, 42, 0.08);
         }
 
         html.dark .nav-shadow {
-            box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            box-shadow: 0 14px 36px -4px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(129, 140, 248, 0.16);
         }
 
         .pt-safe-header {
@@ -172,7 +172,7 @@
 </head>
 
 <body
-    class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-emerald-100 dark:selection:bg-emerald-900 selection:text-emerald-900 dark:selection:text-emerald-100 pb-28 transition-colors duration-200">
+    class="bg-indigo-50/40 dark:bg-[#090B14] text-slate-900 dark:text-slate-100 antialiased selection:bg-indigo-100 dark:selection:bg-indigo-900 selection:text-indigo-900 dark:selection:text-indigo-100 pb-28 transition-colors duration-200">
 
     <!-- Bottom Toast Container -->
     <div id="toastContainer"
@@ -181,12 +181,12 @@
 
     <!-- Top Fixed App Header (Compact & Clean) -->
     <header
-        class="fixed top-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors pt-safe-header">
+        class="fixed top-0 inset-x-0 z-30 bg-white/90 dark:bg-[#0E1220]/90 backdrop-blur-xl border-b border-indigo-100/80 dark:border-indigo-950/80 transition-colors pt-safe-header">
         <div class="max-w-lg mx-auto px-4 pb-2.5">
             <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-2 min-w-0">
+                <div class="flex items-center gap-2.5 min-w-0">
                     <div
-                        class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-sm shrink-0">
+                        class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 flex items-center justify-center text-white shadow-sm shrink-0">
                         <i data-lucide="zap" class="w-4 h-4"></i>
                     </div>
                     <div class="min-w-0">
@@ -195,7 +195,7 @@
                                 class="text-[15px] font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
                                 TNEB Tracker</h1>
                             <span id="headerTariffBadge"
-                                class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">LT-IA</span>
+                                class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/90 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/70 shrink-0">LT-IA</span>
                         </div>
                         <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 leading-tight">
                             28th → 27th · 200u Free</p>
@@ -203,19 +203,19 @@
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
                     <button onclick="cycleTheme()" id="themeToggleBtn" title="Switch Theme (Auto / Light / Dark)"
-                        class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        class="p-2 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="monitor" class="w-4 h-4"></i>
                     </button>
                     <button onclick="openReminderModal()" id="headerBellBtn" title="Weekly Reading Reminders"
-                        class="relative p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        class="relative p-2 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="bell" class="w-4 h-4"></i>
                         <span id="bellActiveDot"
-                            class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500"></span>
+                            class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-500"></span>
                         <span id="bellUnreadBadge"
                             class="hidden absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-rose-600 text-white text-[9px] font-extrabold flex items-center justify-center shadow-xs">1</span>
                     </button>
                     <button onclick="openBackupModal()" title="Backup & Export Data"
-                        class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        class="p-2 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="folder-down" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -228,10 +228,10 @@
 
         <!-- Compact EB Meter Dropdown & Multi-Select Combined Total Card (Hidden on Slabs tab) -->
         <div id="yourMetersCard"
-            class="bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-2.5 relative">
+            class="bg-white dark:bg-[#111629] rounded-2xl p-3 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow space-y-2.5 relative">
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-1.5">
-                    <i data-lucide="gauge" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                    <i data-lucide="gauge" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
                     <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">EB
                         Meter</span>
                 </div>
@@ -241,7 +241,7 @@
                         <span>Select All</span>
                     </button>
                     <button type="button" onclick="openMetersModal()"
-                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/60 text-[10px] font-bold transition active:scale-95">
+                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/70 text-[10px] font-bold transition active:scale-95">
                         <i data-lucide="layers" class="w-3 h-3"></i>
                         <span>Manage / + Add</span>
                     </button>
@@ -250,7 +250,7 @@
 
             <!-- Active EB Meter Dropdown Trigger -->
             <div class="relative" id="meterDropdownWrapper">
-                <div class="px-3 py-2.5 rounded-xl border border-emerald-500 bg-emerald-600 text-white shadow-xs flex items-center justify-between gap-2">
+                <div class="px-3 py-2.5 rounded-xl border border-indigo-400/50 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-700 text-white shadow-sm flex items-center justify-between gap-2">
                     <button type="button" id="meterDropdownTrigger" onclick="toggleMeterDropdown()"
                         class="min-w-0 flex-1 text-left flex items-center justify-between gap-2 cursor-pointer focus:outline-none">
                         <div class="min-w-0 flex-1">
@@ -262,7 +262,7 @@
                                     class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-white/20 text-white shrink-0">LT-IA</span>
                             </div>
                             <p id="dropdownActiveSub"
-                                class="text-[10px] font-medium text-emerald-100 truncate leading-tight mt-0.5">
+                                class="text-[10px] font-medium text-indigo-100 truncate leading-tight mt-0.5">
                                 28 Oct → 27 Dec (60d) · ₹0
                             </p>
                         </div>
@@ -285,13 +285,13 @@
 
                 <!-- Dropdown Menu List of All EB Meters -->
                 <div id="meterDropdownMenu"
-                    class="hidden mt-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-1.5 space-y-1 max-h-64 overflow-y-auto">
+                    class="hidden mt-1.5 rounded-2xl border border-indigo-100 dark:border-indigo-900/70 bg-white dark:bg-[#151B30] shadow-xl p-1.5 space-y-1 max-h-64 overflow-y-auto">
                 </div>
             </div>
 
             <!-- Selected Meters Combined Total Summary Bar -->
             <div id="selectedMetersTotalBar"
-                class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
                 <div class="min-w-0">
                     <span id="selectedMetersCountLabel"
                         class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Selected
@@ -307,10 +307,10 @@
                         <span class="text-[9px] font-semibold text-slate-400 block">Combined Units</span>
                     </div>
                     <div
-                        class="px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200/70 dark:border-emerald-800/70 text-right">
+                        class="px-2.5 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/90 border border-indigo-200/70 dark:border-indigo-800/70 text-right">
                         <span id="selectedTotalBill"
-                            class="text-sm font-extrabold text-emerald-700 dark:text-emerald-400 block leading-tight">₹0</span>
-                        <span class="text-[9px] font-bold text-emerald-700/80 dark:text-emerald-400/80 block">Total
+                            class="text-sm font-extrabold text-indigo-700 dark:text-indigo-300 block leading-tight">₹0</span>
+                        <span class="text-[9px] font-bold text-indigo-700/80 dark:text-indigo-300/80 block">Total
                             Bill</span>
                     </div>
                 </div>
@@ -322,24 +322,24 @@
 
             <!-- Primary Bi-Month Cycle Status & Bill Card -->
             <div
-                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow relative overflow-hidden">
+                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow relative overflow-hidden">
                 <!-- Top Cycle Window Bar -->
                 <div class="flex items-center justify-between gap-2 mb-4">
                     <div
-                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/70 dark:border-emerald-800/60">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 border border-indigo-200/70 dark:border-indigo-800/60">
+                        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
                         <span id="dashCycleLabel"
-                            class="text-[11px] font-bold text-emerald-800 dark:text-emerald-300">Active Bi-Month</span>
+                            class="text-[11px] font-bold text-indigo-800 dark:text-indigo-300">Active Bi-Month</span>
                     </div>
                     <span id="dashDaysBadge"
-                        class="text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full">0
+                        class="text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/90 px-2.5 py-1 rounded-full">0
                         / 60d</span>
                 </div>
 
                 <!-- Main Consumption & Bill Figures -->
                 <div class="grid grid-cols-2 gap-3 mb-4">
                     <div
-                        class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-3.5 border border-slate-100 dark:border-slate-700/70">
+                        class="bg-slate-50/90 dark:bg-slate-800/60 rounded-2xl p-3.5 border border-slate-200/60 dark:border-slate-700/60">
                         <span
                             class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">Units
                             Used</span>
@@ -350,20 +350,20 @@
                         </div>
                     </div>
                     <div
-                        class="bg-gradient-to-br from-emerald-50 to-teal-50/70 dark:from-emerald-950/50 dark:to-teal-950/40 rounded-2xl p-3.5 border border-emerald-200/60 dark:border-emerald-800/60">
+                        class="bg-gradient-to-br from-indigo-50 via-violet-50/80 to-purple-50/60 dark:from-indigo-950/70 dark:via-violet-950/50 dark:to-purple-950/40 rounded-2xl p-3.5 border border-indigo-200/70 dark:border-indigo-800/60">
                         <span
-                            class="text-[11px] font-semibold uppercase tracking-wider text-emerald-800/80 dark:text-emerald-400 block mb-1">TNEB
+                            class="text-[11px] font-semibold uppercase tracking-wider text-indigo-800/80 dark:text-indigo-300 block mb-1">TNEB
                             Bill</span>
                         <div class="flex items-baseline gap-0.5">
                             <span id="dashActualBill"
-                                class="text-3xl font-extrabold text-emerald-700 dark:text-emerald-400 tracking-tight">₹0</span>
+                                class="text-3xl font-extrabold text-indigo-700 dark:text-indigo-300 tracking-tight">₹0</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Opening vs Latest Reading Strip -->
                 <div id="dashCycleDates"
-                    class="bg-slate-50/90 dark:bg-slate-800/60 rounded-xl px-3.5 py-2.5 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs mb-4">
+                    class="bg-slate-50/90 dark:bg-slate-800/50 rounded-xl px-3.5 py-2.5 border border-slate-200/60 dark:border-slate-700/50 flex items-center justify-between text-xs mb-4">
                     <span>Open: <strong class="text-slate-800 dark:text-slate-200">0</strong></span>
                     <span>Latest: <strong class="text-slate-800 dark:text-slate-200">0 kWh</strong></span>
                 </div>
@@ -371,7 +371,7 @@
                 <!-- Quick Action Row: Log Reading & Reset Cycle -->
                 <div class="grid grid-cols-5 gap-2.5">
                     <button onclick="openReadingModal()"
-                        class="col-span-3 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition active:scale-95">
+                        class="col-span-3 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-sm shadow-sm transition active:scale-95">
                         <i data-lucide="plus-circle" class="w-4 h-4"></i>
                         <span>Log Reading</span>
                     </button>
@@ -385,38 +385,38 @@
 
             <!-- Usage Pace & 500-Unit Threshold Card -->
             <div
-                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-4">
+                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow space-y-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200">Usage
                         Pace & 500-Unit Limit</h2>
                     <span id="dashSubsidyBadge"
-                        class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400">200
+                        class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300">200
                         Free ≤500u</span>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2.5 text-center">
                     <div
-                        class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/70">
+                        class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
                         <span class="text-[10px] font-bold uppercase text-slate-400 block mb-0.5">Cycle Avg</span>
                         <span id="dashOverallAvg"
                             class="text-base font-extrabold text-slate-900 dark:text-white">0.0</span>
                         <span class="text-[10px] text-slate-500 dark:text-slate-400 block">u / day</span>
                     </div>
                     <div
-                        class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/70">
+                        class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
                         <span class="text-[10px] font-bold uppercase text-slate-400 block mb-0.5">Last Check</span>
                         <span id="dashRecentAvg"
                             class="text-base font-extrabold text-slate-900 dark:text-white">0.0</span>
                         <span class="text-[10px] text-slate-500 dark:text-slate-400 block">u / day</span>
                     </div>
                     <div
-                        class="p-3 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/60">
+                        class="p-3 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/60">
                         <span
-                            class="text-[10px] font-bold uppercase text-emerald-700 dark:text-emerald-400 block mb-0.5">Left
+                            class="text-[10px] font-bold uppercase text-indigo-700 dark:text-indigo-300 block mb-0.5">Left
                             ≤500</span>
                         <span id="dashUnitsLeft500"
-                            class="text-base font-extrabold text-emerald-700 dark:text-emerald-400">500</span>
-                        <span class="text-[10px] text-emerald-700/80 dark:text-emerald-400/80 block">kWh left</span>
+                            class="text-base font-extrabold text-indigo-700 dark:text-indigo-300">500</span>
+                        <span class="text-[10px] text-indigo-700/80 dark:text-indigo-300/80 block">kWh left</span>
                     </div>
                 </div>
 
@@ -429,7 +429,7 @@
                     </div>
                     <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                         <div id="dash500ProgressBar"
-                            class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 0%">
+                            class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width: 0%">
                         </div>
                     </div>
                     <p id="dashPaceNote" class="text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">Add your first
@@ -439,7 +439,7 @@
 
             <!-- Previous Bi-Month Records Summary Card -->
             <div
-                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
                 <div class="flex items-center justify-between gap-2 mb-3">
                     <div class="min-w-0">
                         <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Previous Bi-Month
@@ -449,11 +449,11 @@
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button onclick="downloadBiMonthPDF()" title="Download Bi-Month PDF"
                             class="inline-flex items-center gap-1 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-xl transition active:scale-95">
-                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
                             <span>PDF</span>
                         </button>
                         <button onclick="switchTab('history')"
-                            class="text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1.5 rounded-xl transition active:scale-95">
+                            class="text-xs font-bold text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 bg-indigo-50 dark:bg-indigo-950/80 px-2.5 py-1.5 rounded-xl transition active:scale-95">
                             All →
                         </button>
                     </div>
@@ -463,14 +463,14 @@
 
             <!-- Current Bi-Month Slab Breakdown Card -->
             <div
-                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
                 <div class="flex items-center justify-between mb-3">
                     <div>
                         <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">TNEB Slab Breakdown</h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Current bi-month tariff calculation</p>
                     </div>
                     <span id="dashSlabTierBadge"
-                        class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400">≤500
+                        class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300">≤500
                         Tier</span>
                 </div>
                 <div id="dashSlabTableContainer" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm"></div>
@@ -483,7 +483,7 @@
 
             <!-- Daily / Check Pace Chart Card -->
             <div
-                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
                 <div class="flex items-center justify-between mb-3">
                     <div>
                         <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Daily Unit Trend</h2>
@@ -491,7 +491,7 @@
                             cycle</p>
                     </div>
                     <span
-                        class="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1 rounded-full">kWh
+                        class="text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/80 px-2.5 py-1 rounded-full">kWh
                         / day</span>
                 </div>
                 <div class="h-44 w-full relative">
@@ -501,7 +501,7 @@
 
             <!-- Archived Bi-Month Cycles (28th to 27th) -->
             <div
-                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
                 <div class="flex items-center justify-between gap-2 mb-3">
                     <div class="min-w-0">
                         <h2 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Archived Bi-Month
@@ -511,7 +511,7 @@
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button onclick="downloadBiMonthPDF()"
-                            class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200/70 dark:border-emerald-800/60 px-2.5 py-1.5 rounded-xl transition active:scale-95">
+                            class="inline-flex items-center gap-1 text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200/70 dark:border-indigo-800/60 px-2.5 py-1.5 rounded-xl transition active:scale-95">
                             <i data-lucide="download" class="w-3.5 h-3.5"></i>
                             <span>PDF</span>
                         </button>
@@ -526,14 +526,14 @@
 
             <!-- Current Cycle Readings Timeline -->
             <div
-                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
                 <div class="flex items-center justify-between mb-3">
                     <div>
                         <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Current Cycle Reading Log</h2>
                         <p id="historyCountLabel" class="text-xs text-slate-500 dark:text-slate-400">0 checks logged</p>
                     </div>
                     <button onclick="openReadingModal()"
-                        class="text-xs font-bold bg-emerald-600 text-white px-3 py-1.5 rounded-xl hover:bg-emerald-700 transition active:scale-95">
+                        class="text-xs font-bold bg-indigo-600 text-white px-3 py-1.5 rounded-xl hover:bg-indigo-700 transition active:scale-95">
                         + Add Check
                     </button>
                 </div>
@@ -546,7 +546,7 @@
 
             <!-- Interactive Quick Bill Estimator -->
             <div
-                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow">
+                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <div>
                         <h2 class="text-sm font-extrabold text-slate-900 dark:text-white mb-0.5">Bi-Monthly Bill
@@ -560,9 +560,9 @@
                 </div>
 
                 <!-- Tariff Switcher inside Calculator -->
-                <div class="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 mb-3.5">
+                <div class="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/90 mb-3.5">
                     <button type="button" id="simTariffDomesticBtn" onclick="setSimTariff('domestic')"
-                        class="py-2 px-3 rounded-xl text-xs font-extrabold transition bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs">
+                        class="py-2 px-3 rounded-xl text-xs font-extrabold transition bg-white dark:bg-[#111629] text-indigo-700 dark:text-indigo-300 shadow-xs">
                         Domestic LT-IA
                     </button>
                     <button type="button" id="simTariffCommonBtn" onclick="setSimTariff('common')"
@@ -572,7 +572,7 @@
                 </div>
 
                 <div
-                    class="flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-2xl border border-slate-200/70 dark:border-slate-700/70 mb-4">
+                    class="flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200/70 dark:border-slate-700/70 mb-4">
                     <div class="flex-1">
                         <label for="simUnitsInput"
                             class="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400 block mb-1">Test
@@ -583,15 +583,15 @@
                     </div>
                     <div class="text-right">
                         <span
-                            class="text-[11px] font-bold uppercase text-emerald-700 dark:text-emerald-400 block mb-1">Estimated
+                            class="text-[11px] font-bold uppercase text-indigo-700 dark:text-indigo-300 block mb-1">Estimated
                             Bill</span>
                         <span id="simBillOutput"
-                            class="text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">₹2,796</span>
+                            class="text-2xl font-extrabold text-indigo-700 dark:text-indigo-300">₹2,796</span>
                     </div>
                 </div>
 
                 <input type="range" id="simUnitsSlider" min="0" max="1200" step="10" value="590"
-                    oninput="syncSimSlider(this.value)" class="w-full accent-emerald-600 mb-2 cursor-pointer">
+                    oninput="syncSimSlider(this.value)" class="w-full accent-indigo-600 mb-2 cursor-pointer">
                 <div class="flex justify-between text-[11px] font-semibold text-slate-400">
                     <span>200 u (Free)</span>
                     <span>400 u</span>
@@ -606,7 +606,7 @@
 
             <!-- Official TNEB Tariff Reference Card -->
             <div
-                class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 card-shadow space-y-4">
+                class="bg-white dark:bg-[#111629] rounded-3xl p-5 border border-indigo-100/80 dark:border-indigo-900/50 card-shadow space-y-4">
                 <div>
                     <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">TNEB Domestic Tariff (LT-IA ·
                         2026)</h2>
@@ -615,16 +615,16 @@
                 </div>
 
                 <div
-                    class="rounded-2xl border border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50/40 dark:bg-emerald-950/30 p-3.5 space-y-2">
+                    class="rounded-2xl border border-indigo-200/80 dark:border-indigo-800/60 bg-indigo-50/40 dark:bg-indigo-950/40 p-3.5 space-y-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-emerald-900 dark:text-emerald-300">Up to 500 Units
+                        <span class="text-xs font-extrabold text-indigo-900 dark:text-indigo-300">Up to 500 Units
                             (Subsidized)</span>
-                        <span class="text-[11px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-md">200
+                        <span class="text-[11px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded-md">200
                             Free</span>
                     </div>
                     <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-700 dark:text-slate-300 pt-1">
                         <div>0 – 200 units:</div>
-                        <div class="font-bold text-right text-emerald-700 dark:text-emerald-400">₹0.00 / unit</div>
+                        <div class="font-bold text-right text-emerald-600 dark:text-emerald-400">₹0.00 / unit</div>
                         <div>201 – 400 units:</div>
                         <div class="font-bold text-right">₹4.70 / unit</div>
                         <div>401 – 500 units:</div>
@@ -642,7 +642,7 @@
                     </div>
                     <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-700 dark:text-slate-300 pt-1">
                         <div>0 – 100 units:</div>
-                        <div class="font-bold text-right text-emerald-700 dark:text-emerald-400">₹0.00 / unit</div>
+                        <div class="font-bold text-right text-emerald-600 dark:text-emerald-400">₹0.00 / unit</div>
                         <div>101 – 400 units:</div>
                         <div class="font-bold text-right">₹4.70 / unit</div>
                         <div>401 – 500 units:</div>
@@ -667,7 +667,7 @@
                             subsidy</span>
                     </div>
                     <span
-                        class="text-xs font-extrabold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">₹8.40
+                        class="text-xs font-extrabold text-slate-800 dark:text-slate-200 bg-white dark:bg-[#111629] px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">₹8.40
                         / u</span>
                 </div>
             </div>
@@ -678,24 +678,24 @@
     <!-- Bottom Floating Pill Navigation Bar -->
     <nav class="fixed inset-x-0 pb-safe-nav z-30 px-4 pointer-events-none">
         <div
-            class="max-w-md mx-auto bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 rounded-full p-1.5 flex items-center justify-between gap-1.5 nav-shadow pointer-events-auto">
+            class="max-w-md mx-auto bg-white/90 dark:bg-[#111629]/90 backdrop-blur-xl border border-indigo-200/80 dark:border-indigo-900/70 rounded-full p-1.5 flex items-center justify-between gap-1.5 nav-shadow pointer-events-auto">
             <button onclick="switchTab('dashboard')" id="nav-dashboard"
-                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold transition bg-emerald-600 text-white shadow-sm">
+                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold transition bg-indigo-600 text-white shadow-sm">
                 <i data-lucide="home" class="w-4 h-4"></i>
                 <span>Home</span>
             </button>
             <button onclick="switchTab('history')" id="nav-history"
-                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 transition">
                 <i data-lucide="history" class="w-4 h-4"></i>
                 <span>History</span>
             </button>
             <button onclick="switchTab('slabs')" id="nav-slabs"
-                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                class="nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 transition">
                 <i data-lucide="percent" class="w-4 h-4"></i>
                 <span>Slabs</span>
             </button>
             <button onclick="openReadingModal()" title="Quick Log Reading"
-                class="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-md transition active:scale-95 shrink-0">
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white flex items-center justify-center shadow-md transition active:scale-95 shrink-0">
                 <i data-lucide="plus" class="w-5 h-5"></i>
             </button>
         </div>
@@ -703,9 +703,9 @@
 
     <!-- ==================== MODAL 1: LOG METER READING ==================== -->
     <div id="readingModal"
-        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Log Meter Reading</h3>
@@ -719,7 +719,7 @@
             </div>
 
             <div
-                class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-3 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between text-xs">
+                class="bg-slate-50 dark:bg-slate-800/70 rounded-2xl p-3 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between text-xs">
                 <span class="text-slate-500 dark:text-slate-400">Previous Reading:</span>
                 <span id="modalPrevReadingHint" class="font-extrabold text-slate-900 dark:text-white">0 kWh</span>
             </div>
@@ -731,40 +731,40 @@
                         (kWh)</label>
                     <input type="number" id="inputNewReading" step="0.1" placeholder="e.g. 4250"
                         oninput="updateLiveEntryPreview()"
-                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-lg font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-lg font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                 </div>
                 <div class="grid grid-cols-2 gap-3 items-end">
                     <div class="min-w-0">
                         <label for="inputReadingDate"
                             class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Check Date</label>
                         <input type="date" id="inputReadingDate" onchange="updateLiveEntryPreview()"
-                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                     </div>
                     <div class="min-w-0">
                         <label for="inputReadingNote"
                             class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Note
                             (Optional)</label>
                         <input type="text" id="inputReadingNote" placeholder="e.g. Week 2"
-                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                     </div>
                 </div>
             </div>
 
             <!-- Live Delta Preview -->
             <div id="liveEntryPreview"
-                class="hidden rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 p-3 text-xs space-y-1">
-                <div class="flex justify-between font-bold text-emerald-900 dark:text-emerald-300">
+                class="hidden rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 p-3 text-xs space-y-1">
+                <div class="flex justify-between font-bold text-indigo-900 dark:text-indigo-300">
                     <span>Units Added Since Last Check:</span>
                     <span id="previewDeltaUnits">+0 kWh</span>
                 </div>
-                <div class="flex justify-between text-emerald-800 dark:text-emerald-400">
+                <div class="flex justify-between text-indigo-800 dark:text-indigo-300">
                     <span>Updated Bi-Month Total & Bill:</span>
                     <span id="previewTotalBill" class="font-extrabold">0 kWh · ₹0</span>
                 </div>
             </div>
 
             <button onclick="saveNewReading()"
-                class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+                class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
                 Save Meter Reading
             </button>
         </div>
@@ -772,9 +772,9 @@
 
     <!-- ==================== MODAL 2: BI-MONTH UNIT RESET (28TH CYCLE) ==================== -->
     <div id="resetModal"
-        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Reset Bi-Month Units (28th)</h3>
@@ -810,7 +810,7 @@
                         class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Closing / New Opening
                         Meter Reading (kWh)</label>
                     <input type="number" id="inputResetOpeningKwh" step="0.1"
-                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-base font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-base font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                     <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Closes the old bi-month at this
                         reading and starts the new cycle at 0 units used.</p>
                 </div>
@@ -819,7 +819,7 @@
                         class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">New Bi-Month Start Date
                         (28th)</label>
                     <input type="date" id="inputResetNewStartDate"
-                        class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                 </div>
             </div>
 
@@ -832,9 +832,9 @@
 
     <!-- ==================== MODAL 3: MANAGE INDIVIDUAL METERS ==================== -->
     <div id="metersModal"
-        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto space-y-4">
+            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 max-h-[90vh] overflow-y-auto space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Individual Meters</h3>
@@ -851,7 +851,7 @@
             <div id="metersListContainer" class="space-y-2.5"></div>
 
             <button onclick="openMeterFormModal()"
-                class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95">
+                class="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-sm flex items-center justify-center gap-2 transition active:scale-95">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span>Add New Individual Meter</span>
             </button>
@@ -860,9 +860,9 @@
 
     <!-- ==================== MODAL 4: ADD / EDIT METER FORM ==================== -->
     <div id="meterFormModal"
-        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 id="meterFormTitle" class="text-base font-extrabold text-slate-900 dark:text-white">Add
@@ -882,7 +882,7 @@
                     <label for="inputMeterName"
                         class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Meter Name</label>
                     <input type="text" id="inputMeterName" placeholder="e.g. Ground Floor, House, Shop"
-                        class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                 </div>
 
                 <div>
@@ -890,7 +890,7 @@
                         class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">TNEB Consumer / Service No.
                         (Optional)</label>
                     <input type="text" id="inputServiceNo" placeholder="e.g. 09-123-456-789"
-                        class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 items-end">
@@ -899,19 +899,19 @@
                             class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Cycle Start
                             (28th)</label>
                         <input type="date" id="inputCycleStartDate" onchange="previewCycleWindowInForm()"
-                            class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                            class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                     </div>
                     <div class="min-w-0">
                         <label for="inputOpeningReading"
                             class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Opening
                             kWh</label>
                         <input type="number" id="inputOpeningReading" step="0.1" placeholder="0"
-                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                            class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-extrabold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                     </div>
                 </div>
 
                 <div id="formCyclePreviewBanner"
-                    class="rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/70 dark:border-emerald-800/60 px-3 py-2 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                    class="rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/70 dark:border-indigo-800/60 px-3 py-2 text-xs font-semibold text-indigo-800 dark:text-indigo-300">
                     Bi-Month Window: 28th → 27th
                 </div>
 
@@ -920,7 +920,7 @@
                         class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">TNEB Tariff / Subsidy
                         Slab</label>
                     <select id="inputMeterTariff"
-                        class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:outline-none focus:border-emerald-600">
+                        class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-800/90 focus:outline-none focus:border-indigo-600">
                         <option value="domestic">Domestic LT-IA (200 Units Free ≤500u)</option>
                         <option value="common">Common / Apartment LT-ID (₹8.40 Flat)</option>
                     </select>
@@ -928,7 +928,7 @@
             </div>
 
             <button onclick="saveMeterForm()"
-                class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
+                class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-sm shadow-md transition active:scale-95">
                 Save Meter
             </button>
         </div>
@@ -936,9 +936,9 @@
 
     <!-- ==================== MODAL 5: BACKUP & EXPORT ==================== -->
     <div id="backupModal"
-        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Backup & Data</h3>
@@ -953,12 +953,12 @@
             <div class="space-y-2.5">
                 <button onclick="installPWA()" id="installPwaBtn"
                     class="w-full py-3.5 px-4 rounded-2xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-sm flex items-center justify-center gap-2 border border-slate-700/60 shadow-sm transition active:scale-95">
-                    <i data-lucide="smartphone" class="w-4 h-4 text-emerald-400"></i>
+                    <i data-lucide="smartphone" class="w-4 h-4 text-indigo-400"></i>
                     <span>Add App to Home Screen</span>
                 </button>
 
                 <button onclick="downloadBiMonthPDF()"
-                    class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                    class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
                     <i data-lucide="file-text" class="w-4 h-4"></i>
                     <span>Download Bi-Month PDF Statement</span>
                 </button>
@@ -982,9 +982,9 @@
 
     <!-- ==================== MODAL 6: WEEKLY READING REMINDERS ==================== -->
     <div id="reminderModal"
-        class="fixed inset-0 z-50 hidden bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        class="fixed inset-0 z-50 hidden bg-slate-950/65 dark:bg-black/80 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div
-            class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 space-y-4">
+            class="bg-white dark:bg-[#111629] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-safe-modal shadow-2xl border-t sm:border border-indigo-100 dark:border-indigo-900/60 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Weekly Reading Reminder</h3>
@@ -1004,7 +1004,7 @@
 
             <!-- Enable Toggle Card -->
             <div
-                class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-3">
+                class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-3">
                 <div>
                     <span class="text-sm font-extrabold text-slate-900 dark:text-white block">Weekly Check Alert</span>
                     <span id="reminderStatusLabel" class="text-xs text-slate-500 dark:text-slate-400">Every Sunday at
@@ -1023,7 +1023,7 @@
                     <label for="inputReminderDay"
                         class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Day of Week</label>
                     <select id="inputReminderDay" onchange="saveReminderPrefs()"
-                        class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        class="w-full h-12 px-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                         <option value="0">Sunday</option>
                         <option value="1">Monday</option>
                         <option value="2">Tuesday</option>
@@ -1037,20 +1037,20 @@
                     <label for="inputReminderTime"
                         class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Reminder Time</label>
                     <input type="time" id="inputReminderTime" value="09:00" onchange="saveReminderPrefs()"
-                        class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600">
+                        class="w-full h-12 px-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600">
                 </div>
             </div>
 
             <!-- System Calendar & Test Notification Actions -->
             <div class="space-y-2 pt-1">
                 <button onclick="downloadWeeklyCalendarICS()"
-                    class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                    class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
                     <i data-lucide="calendar-plus" class="w-4 h-4"></i>
                     <span>Add Weekly Alert to Phone Calendar (.ics)</span>
                 </button>
                 <button onclick="sendTestReminderNotification()"
                     class="w-full py-3 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95">
-                    <i data-lucide="bell" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                    <i data-lucide="bell" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
                     <span>Send Test Notification Now</span>
                 </button>
             </div>
@@ -1623,13 +1623,13 @@
                     const tariffShort = item.tariff === 'common' ? 'LT-ID' : 'LT-IA';
 
                     const rowClasses = isActive
-                        ? 'bg-emerald-50 dark:bg-emerald-950/70 text-slate-900 dark:text-white border-emerald-300 dark:border-emerald-700'
+                        ? 'bg-indigo-50 dark:bg-indigo-950/70 text-slate-900 dark:text-white border-indigo-300 dark:border-indigo-700'
                         : 'bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-900 dark:text-white border-transparent';
                     const consumerBadgeHTML = item.serviceNo
                         ? `<span class="text-[10px] tracking-wide px-1.5 py-0.2 rounded shrink-0 bg-amber-100 dark:bg-amber-950/90 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/70 font-extrabold">SC ${escapeHTML(item.serviceNo)}</span>`
                         : '';
                     const checkBtnClasses = isChecked
-                        ? 'bg-emerald-600 text-white border-emerald-600'
+                        ? 'bg-indigo-600 text-white border-indigo-600'
                         : 'bg-white dark:bg-slate-900 text-transparent border-slate-300 dark:border-slate-600';
 
                     return `
@@ -1685,7 +1685,7 @@
                 bar.className = 'h-full bg-amber-500 rounded-full transition-all duration-300';
                 document.getElementById('dashPaceNote').textContent = `Caution: Only ${m.unitsLeft500} kWh left before losing the 200-unit free tier.`;
             } else {
-                bar.className = 'h-full bg-emerald-500 rounded-full transition-all duration-300';
+                bar.className = 'h-full bg-indigo-500 rounded-full transition-all duration-300';
                 document.getElementById('dashPaceNote').textContent = m.sortedReadings.length > 0
                     ? `Safe zone: ${m.unitsLeft500} kWh remaining inside the 200-unit free tier (≤500u).`
                     : 'Log a meter reading to track your daily unit pace.';
@@ -1714,7 +1714,7 @@
                 `).join('') + `
                     <div class="pt-3 flex items-center justify-between">
                         <span class="text-xs font-extrabold uppercase text-slate-500 dark:text-slate-400">Total Bi-Month Bill</span>
-                        <span class="text-base font-extrabold text-emerald-700 dark:text-emerald-400">₹${m.actualBillObj.total.toLocaleString('en-IN')}</span>
+                        <span class="text-base font-extrabold text-indigo-700 dark:text-indigo-300">₹${m.actualBillObj.total.toLocaleString('en-IN')}</span>
                     </div>
                 `;
             }
@@ -1739,20 +1739,20 @@
             }
 
             dashList.innerHTML = pastCycles.slice(0, 2).map(c => `
-                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/70">
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
                     <div>
                         <span class="text-xs font-extrabold text-slate-900 dark:text-white block">${formatDisplayDate(c.startDate)} → ${formatDisplayDate(c.endDate)}</span>
                         <span class="text-[11px] text-slate-500 dark:text-slate-400">${c.openingReading} → ${c.closingReading} kWh</span>
                     </div>
                     <div class="text-right">
-                        <span class="text-xs font-extrabold text-emerald-700 dark:text-emerald-400 block">₹${Number(c.billAmount).toLocaleString('en-IN')}</span>
+                        <span class="text-xs font-extrabold text-indigo-700 dark:text-indigo-300 block">₹${Number(c.billAmount).toLocaleString('en-IN')}</span>
                         <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300">${c.unitsUsed} kWh</span>
                     </div>
                 </div>
             `).join('');
 
             histList.innerHTML = pastCycles.map(c => `
-                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between">
+                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between">
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-extrabold text-slate-900 dark:text-white">${formatFullDate(c.startDate)} → ${formatFullDate(c.endDate)}</span>
@@ -1760,7 +1760,7 @@
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Meter: ${c.openingReading} → ${c.closingReading} kWh</p>
                     </div>
                     <div class="text-right">
-                        <span class="text-sm font-extrabold text-emerald-700 dark:text-emerald-400 block">₹${Number(c.billAmount).toLocaleString('en-IN')}</span>
+                        <span class="text-sm font-extrabold text-indigo-700 dark:text-indigo-300 block">₹${Number(c.billAmount).toLocaleString('en-IN')}</span>
                         <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${c.unitsUsed} units</span>
                     </div>
                 </div>
@@ -1794,11 +1794,11 @@
             }
 
             container.innerHTML = [...entriesWithDelta].reverse().map(item => `
-                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-2">
+                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-2">
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-sm font-extrabold text-slate-900 dark:text-white">${item.reading} kWh</span>
-                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-100/80 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">+${item.delta} u</span>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-100/80 dark:bg-indigo-950/90 text-indigo-800 dark:text-indigo-300">+${item.delta} u</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                             ${formatFullDate(item.date)} · ${item.avg} u/day${item.note ? ' · ' + escapeHTML(item.note) : ''}
@@ -1840,7 +1840,7 @@
 
             const isDark = document.documentElement.classList.contains('dark');
             const tickColor = isDark ? '#94a3b8' : '#64748b';
-            const gridColor = isDark ? 'rgba(51, 65, 85, 0.5)' : '#f1f5f9';
+            const gridColor = isDark ? 'rgba(51, 65, 85, 0.45)' : '#eef2ff';
 
             paceChartInstance = new Chart(canvas, {
                 type: 'bar',
@@ -1849,7 +1849,7 @@
                     datasets: [{
                         label: 'Units / Day',
                         data: dataPoints,
-                        backgroundColor: '#059669',
+                        backgroundColor: '#4f46e5',
                         borderRadius: 8,
                         maxBarThickness: 32
                     }]
@@ -1887,11 +1887,11 @@
             }
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = 'nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
+                btn.className = 'nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 transition';
             });
             const activeBtn = document.getElementById(`nav-${tabName}`);
             if (activeBtn) {
-                activeBtn.className = 'nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold transition bg-emerald-600 text-white shadow-sm';
+                activeBtn.className = 'nav-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold transition bg-indigo-600 text-white shadow-sm';
             }
 
             if (tabName === 'history') {
@@ -2064,17 +2064,17 @@
                     ? `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/90 text-amber-800 dark:text-amber-300 border border-amber-300/70 dark:border-amber-700/70">SC ${escapeHTML(item.serviceNo)}</span>`
                     : '';
                 return `
-                    <div class="p-3.5 rounded-2xl border ${isActive ? 'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/30' : 'border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70'} flex items-center justify-between gap-2">
+                    <div class="p-3.5 rounded-2xl border ${isActive ? 'border-indigo-500 bg-indigo-50/40 dark:bg-indigo-950/40' : 'border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70'} flex items-center justify-between gap-2">
                         <div onclick="selectMeter('${item.id}'); closeModal('metersModal')" class="cursor-pointer flex-1 min-w-0">
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <span class="text-sm font-extrabold text-slate-900 dark:text-white truncate">${escapeHTML(item.name)}</span>
                                 ${consumerChip}
-                                ${isActive ? '<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white">Active</span>' : ''}
+                                ${isActive ? '<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-600 text-white">Active</span>' : ''}
                             </div>
                             <span class="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">${Math.round(m.actualUnits)} kWh · ₹${m.actualBillObj.total} · ${formatDisplayDate(m.startStr)}</span>
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0">
-                            <button onclick="openMeterFormModal('${item.id}')" class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <button onclick="openMeterFormModal('${item.id}')" class="p-2 rounded-xl bg-white dark:bg-[#111629] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
                                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                             </button>
                             ${deleteBtn}
@@ -2213,13 +2213,13 @@
                     ? 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0'
                     : (units > 500
                         ? 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 shrink-0'
-                        : 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 shrink-0');
+                        : 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 shrink-0');
             }
 
             const domBtn = document.getElementById('simTariffDomesticBtn');
             const comBtn = document.getElementById('simTariffCommonBtn');
             if (domBtn && comBtn) {
-                const activeCls = 'py-2 px-3 rounded-xl text-xs font-extrabold transition bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs';
+                const activeCls = 'py-2 px-3 rounded-xl text-xs font-extrabold transition bg-white dark:bg-[#111629] text-indigo-700 dark:text-indigo-300 shadow-xs';
                 const inactiveCls = 'py-2 px-3 rounded-xl text-xs font-bold transition text-slate-600 dark:text-slate-300';
                 domBtn.className = activeTariff === 'domestic' ? activeCls : inactiveCls;
                 comBtn.className = activeTariff === 'common' ? activeCls : inactiveCls;
@@ -2254,7 +2254,7 @@
                 const m = getMeterMetrics(meter);
                 const tariffName = meter.tariff === 'common' ? 'Common / Apartment LT-ID' : 'Domestic LT-IA (200 Free ≤500u)';
 
-                doc.setFillColor(5, 150, 105);
+                doc.setFillColor(79, 70, 229);
                 doc.rect(0, 0, 210, 32, 'F');
                 doc.setTextColor(255, 255, 255);
                 doc.setFontSize(17);
@@ -2275,11 +2275,11 @@
                 doc.text(`Tariff: ${tariffName}${meter.serviceNo ? '   |   Consumer No: ' + meter.serviceNo : ''}`, 14, y + 6);
 
                 y += 16;
-                doc.setFillColor(248, 250, 252);
-                doc.setDrawColor(203, 213, 225);
+                doc.setFillColor(238, 242, 255);
+                doc.setDrawColor(199, 210, 254);
                 doc.roundedRect(14, y, 182, 26, 3, 3, 'FD');
 
-                doc.setTextColor(5, 150, 105);
+                doc.setTextColor(79, 70, 229);
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'bold');
                 doc.text('ACTIVE BI-MONTH CYCLE', 18, y + 7);
@@ -2332,7 +2332,7 @@
                         doc.text(`${c.closingReading}`, 120, y);
                         doc.setFont('helvetica', 'bold');
                         doc.text(`${c.unitsUsed} kWh`, 148, y);
-                        doc.setTextColor(5, 150, 105);
+                        doc.setTextColor(79, 70, 229);
                         doc.text(`Rs. ${Number(c.billAmount).toLocaleString('en-IN')}`, 176, y);
                         doc.setFont('helvetica', 'normal');
                         doc.setDrawColor(226, 232, 240);
@@ -2401,7 +2401,7 @@
             const toast = document.createElement('div');
             const bgClass = type === 'error'
                 ? 'bg-rose-600 text-white border-rose-500'
-                : 'bg-slate-900 dark:bg-slate-800 text-white border-slate-700/80';
+                : 'bg-slate-900 dark:bg-indigo-950 text-white border-indigo-700/70';
             toast.className = `toast-bottom px-4 py-2.5 rounded-2xl text-xs font-bold shadow-xl border ${bgClass} text-center max-w-full`;
             toast.textContent = msg;
             container.innerHTML = '';
@@ -2503,7 +2503,7 @@
             const statusLabel = document.getElementById('reminderStatusLabel');
             if (toggleBtn && knob) {
                 toggleBtn.className = prefs.enabled
-                    ? 'w-12 h-7 rounded-full bg-emerald-600 p-1 transition-colors relative shrink-0'
+                    ? 'w-12 h-7 rounded-full bg-indigo-600 p-1 transition-colors relative shrink-0'
                     : 'w-12 h-7 rounded-full bg-slate-300 dark:bg-slate-700 p-1 transition-colors relative shrink-0';
                 knob.className = prefs.enabled
                     ? 'block w-5 h-5 rounded-full bg-white shadow-sm transition-transform translate-x-5'
@@ -2721,8 +2721,8 @@
             if (!ctx) return '';
 
             const grad = ctx.createLinearGradient(0, 0, 512, 512);
-            grad.addColorStop(0, '#059669');
-            grad.addColorStop(1, '#0f766e');
+            grad.addColorStop(0, '#4f46e5');
+            grad.addColorStop(1, '#7c3aed');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, 512, 512);
 
@@ -2751,7 +2751,7 @@
                 ctx.stroke();
 
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '800 76px Inter, -apple-system, sans-serif';
+                ctx.font = '800 76px Plus Jakarta Sans, Inter, -apple-system, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(badgeCount > 9 ? '9+' : String(badgeCount), cx, cy + 4);
@@ -2774,8 +2774,8 @@
                     description: 'Bi-monthly TNEB kWh & bill tracker (28th to 27th cycle)',
                     start_url: window.location.href,
                     display: 'standalone',
-                    background_color: '#020617',
-                    theme_color: '#059669',
+                    background_color: '#090B14',
+                    theme_color: '#4f46e5',
                     icons: [
                         { src: iconDataUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
                     ]
