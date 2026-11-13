@@ -57,7 +57,8 @@
             box-sizing: border-box;
         }
 
-        input[type="date"] {
+        input[type="date"],
+        input[type="time"] {
             -webkit-appearance: none;
             appearance: none;
             display: flex;
@@ -68,12 +69,14 @@
             line-height: 1.2;
         }
 
-        input[type="date"]::-webkit-date-and-time-value {
+        input[type="date"]::-webkit-date-and-time-value,
+        input[type="time"]::-webkit-date-and-time-value {
             text-align: left;
             margin: 0;
         }
 
-        html.dark input[type="date"] {
+        html.dark input[type="date"],
+        html.dark input[type="time"] {
             color-scheme: dark;
         }
 
@@ -181,40 +184,40 @@
         class="fixed top-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors pt-safe-header">
         <div class="max-w-lg mx-auto px-4 pb-2.5">
             <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-2.5 min-w-0">
+                <div class="flex items-center gap-2 min-w-0">
                     <div
-                        class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-sm shrink-0">
-                        <i data-lucide="zap" class="w-5 h-5"></i>
+                        class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-sm shrink-0">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
                     </div>
                     <div class="min-w-0">
-                        <div class="flex items-center gap-1.5">
+                        <div class="flex items-center gap-1">
                             <h1
-                                class="text-base font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+                                class="text-[15px] font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight truncate">
                                 TNEB Tracker</h1>
                             <span id="headerTariffBadge"
-                                class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">LT-IA</span>
+                                class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">LT-IA</span>
                         </div>
-                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight truncate">
-                            28th → 27th · 200u Free Slab</p>
+                        <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 leading-tight truncate">
+                            28th → 27th · 200u Free</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-1.5 shrink-0">
+                <div class="flex items-center gap-1 shrink-0">
                     <button onclick="cycleTheme()" id="themeToggleBtn" title="Switch Theme (Auto / Light / Dark)"
-                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="monitor" class="w-4 h-4"></i>
                     </button>
                     <button onclick="openReminderModal()" id="headerBellBtn" title="Weekly Reading Reminders"
-                        class="relative p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        class="relative p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="bell" class="w-4 h-4"></i>
                         <span id="bellActiveDot"
                             class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500"></span>
                     </button>
                     <button onclick="openBackupModal()" title="Backup & Export Data"
-                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
+                        class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95">
                         <i data-lucide="folder-down" class="w-4 h-4"></i>
                     </button>
                     <button onclick="openMetersModal()"
-                        class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm">
+                        class="flex items-center gap-1 px-2.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm">
                         <i data-lucide="layers" class="w-3.5 h-3.5"></i>
                         <span>Meters</span>
                     </button>
@@ -968,7 +971,7 @@
 
             <!-- Day & Time Pickers -->
             <div class="grid grid-cols-2 gap-3 items-end">
-                <div class="min-w-0">
+                <div class="min-w-0 overflow-hidden">
                     <label for="inputReminderDay"
                         class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Day of Week</label>
                     <select id="inputReminderDay" onchange="saveReminderPrefs()"
@@ -982,7 +985,7 @@
                         <option value="6">Saturday</option>
                     </select>
                 </div>
-                <div class="min-w-0">
+                <div class="min-w-0 overflow-hidden">
                     <label for="inputReminderTime"
                         class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">Reminder Time</label>
                     <input type="time" id="inputReminderTime" value="09:00" onchange="saveReminderPrefs()"
