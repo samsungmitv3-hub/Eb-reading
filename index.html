@@ -67,6 +67,17 @@
             touch-action: manipulation;
         }
 
+        /* Hide native disclosure triangle on iOS Safari */
+        details#meterDropdownDetails > summary {
+            list-style: none;
+        }
+        details#meterDropdownDetails > summary::-webkit-details-marker {
+            display: none;
+        }
+        details#meterDropdownDetails[open] #meterDropdownChevronBtn {
+            transform: rotate(180deg);
+        }
+
         /* Authentic Apple SF Pro Display Optical Tracking */
         .sf-display-hero {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
@@ -355,7 +366,7 @@
         class="fixed bottom-24 inset-x-0 z-[70] px-4 pointer-events-none flex flex-col items-center justify-center gap-2">
     </div>
 
-    <!-- Top Fixed Apple Navigation Bar -->
+    <!-- Top Fixed Apple Navigation Bar (Clean Single Settings Button) -->
     <header class="fixed top-0 inset-x-0 z-30 liquid-header transition-colors pt-safe-header">
         <div class="max-w-lg mx-auto px-4 pb-2.5">
             <div class="flex items-center justify-between gap-2">
@@ -377,27 +388,14 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
-                    <button type="button" onclick="cycleTheme()" id="themeToggleBtn" title="Switch Theme (Auto / Light / Dark)"
-                        class="w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
-                        <i data-lucide="monitor" class="w-4 h-4"></i>
-                    </button>
-                    <button type="button" onclick="openReminderModal()" id="headerBellBtn" title="Weekly Reading Reminders"
-                        class="relative w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
-                        <i data-lucide="bell" class="w-4 h-4"></i>
-                        <span id="bellActiveDot"
-                            class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#007AFF]"></span>
-                        <span id="bellUnreadBadge"
-                            class="hidden absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#FF3B30] text-white text-[10px] font-bold flex items-center justify-center shadow-sm ring-1 ring-white/70">1</span>
-                    </button>
-                    <button type="button" onclick="openRecycleBinModal()" id="headerTrashBtn" title="Recycle Bin"
-                        class="relative w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        <span id="trashCountBadge"
-                            class="hidden absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#FF9500] text-white text-[10px] font-bold flex items-center justify-center shadow-sm ring-1 ring-white/70">0</span>
-                    </button>
-                    <button type="button" onclick="openBackupModal()" title="Backup & Export Data"
-                        class="w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
-                        <i data-lucide="folder-down" class="w-4 h-4"></i>
+                    <button type="button" onclick="openSettingsModal()" id="headerSettingsBtn" title="Settings"
+                        class="relative h-9 px-3 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 apple-tap">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span class="text-xs font-semibold">Settings</span>
+                        <span id="settingsActiveDot"
+                            class="hidden w-2 h-2 rounded-full bg-[#007AFF]"></span>
+                        <span id="settingsBadge"
+                            class="hidden min-w-[17px] h-[17px] px-1 rounded-full bg-[#FF3B30] text-white text-[10px] font-bold flex items-center justify-center shadow-sm">1</span>
                     </button>
                 </div>
             </div>
@@ -879,6 +877,116 @@
         </div>
     </nav>
 
+    <!-- ==================== SETTINGS HUB MODAL (CONSOLIDATED HEADER TOOLS) ==================== -->
+    <div id="settingsModal"
+        class="fixed inset-0 z-50 hidden bg-slate-950/35 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div
+            class="liquid-modal w-full max-w-md rounded-t-[34px] sm:rounded-[34px] p-6 pb-safe-modal max-h-[90vh] overflow-y-auto space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white">Settings</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Appearance, reminders, recycle bin & backups</p>
+                </div>
+                <button type="button" onclick="closeModal('settingsModal')"
+                    class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Appearance / Theme Segmented Control -->
+            <div class="p-3.5 rounded-[22px] liquid-lens space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-[#007AFF]/15 text-[#007AFF] dark:text-[#409CFF] flex items-center justify-center">
+                            <i data-lucide="sun-moon" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-900 dark:text-white block">Appearance</span>
+                            <span id="settingsThemeLabel" class="text-[11px] text-slate-500 dark:text-slate-400">Auto (System)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-1 p-1 rounded-full bg-slate-900/5 dark:bg-white/5">
+                    <button type="button" id="themeOptSystem" onclick="setThemePref('system')"
+                        class="py-1.5 px-2.5 rounded-full text-xs font-semibold transition">Auto</button>
+                    <button type="button" id="themeOptLight" onclick="setThemePref('light')"
+                        class="py-1.5 px-2.5 rounded-full text-xs font-semibold transition">Light</button>
+                    <button type="button" id="themeOptDark" onclick="setThemePref('dark')"
+                        class="py-1.5 px-2.5 rounded-full text-xs font-semibold transition">Dark</button>
+                </div>
+            </div>
+
+            <!-- Settings Navigation Rows -->
+            <div class="space-y-2">
+                <!-- Weekly Reading Reminders -->
+                <button type="button" onclick="closeModal('settingsModal'); openReminderModal();"
+                    class="w-full p-3.5 rounded-[22px] liquid-lens hover:bg-white/80 dark:hover:bg-white/15 flex items-center justify-between gap-3 text-left apple-tap">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-full bg-[#007AFF]/15 text-[#007AFF] dark:text-[#409CFF] flex items-center justify-center shrink-0">
+                            <i data-lucide="bell" class="w-4 h-4"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-sm font-bold text-slate-900 dark:text-white block">Weekly Reading Reminders</span>
+                            <span id="settingsReminderSummary" class="text-xs text-slate-500 dark:text-slate-400 truncate block">Sunday at 09:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <span id="settingsReminderBadge" class="hidden px-2 py-0.5 rounded-full bg-[#FF3B30] text-white text-[10px] font-bold">1</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                    </div>
+                </button>
+
+                <!-- Recycle Bin -->
+                <button type="button" onclick="closeModal('settingsModal'); openRecycleBinModal();"
+                    class="w-full p-3.5 rounded-[22px] liquid-lens hover:bg-white/80 dark:hover:bg-white/15 flex items-center justify-between gap-3 text-left apple-tap">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-full bg-[#FF9500]/15 text-[#FF9500] flex items-center justify-center shrink-0">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-sm font-bold text-slate-900 dark:text-white block">Recycle Bin</span>
+                            <span id="settingsTrashSummary" class="text-xs text-slate-500 dark:text-slate-400 truncate block">No deleted items</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <span id="settingsTrashBadge" class="hidden px-2 py-0.5 rounded-full bg-[#FF9500] text-white text-[10px] font-bold">0</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                    </div>
+                </button>
+
+                <!-- Backup, PDF Statement & Home Screen -->
+                <button type="button" onclick="closeModal('settingsModal'); openBackupModal();"
+                    class="w-full p-3.5 rounded-[22px] liquid-lens hover:bg-white/80 dark:hover:bg-white/15 flex items-center justify-between gap-3 text-left apple-tap">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-full bg-[#34C759]/15 text-emerald-700 dark:text-[#30D158] flex items-center justify-center shrink-0">
+                            <i data-lucide="folder-down" class="w-4 h-4"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-sm font-bold text-slate-900 dark:text-white block">Backup, PDF & Home Screen</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 truncate block">Export PDF statement, JSON backup & install</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                </button>
+
+                <!-- Manage EB Meters Shortcut -->
+                <button type="button" onclick="closeModal('settingsModal'); openMetersModal();"
+                    class="w-full p-3.5 rounded-[22px] liquid-lens hover:bg-white/80 dark:hover:bg-white/15 flex items-center justify-between gap-3 text-left apple-tap">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-full bg-[#5856D6]/15 text-[#5856D6] dark:text-[#5E5CE6] flex items-center justify-center shrink-0">
+                            <i data-lucide="gauge" class="w-4 h-4"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-sm font-bold text-slate-900 dark:text-white block">Manage EB Meters</span>
+                            <span id="settingsMetersSummary" class="text-xs text-slate-500 dark:text-slate-400 truncate block">1 meter configured</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ==================== MODAL 1: LOG METER READING ==================== -->
     <div id="readingModal"
         class="fixed inset-0 z-50 hidden bg-slate-950/35 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
@@ -1356,17 +1464,7 @@
 
             document.title = badgeCount > 0 ? `(${badgeCount}) ${BASE_TITLE}` : BASE_TITLE;
             updateDynamicAppIcon(badgeCount);
-
-            const bellDot = document.getElementById('bellActiveDot');
-            const bellUnread = document.getElementById('bellUnreadBadge');
-            const prefs = getReminderPrefs();
-            if (bellUnread) {
-                bellUnread.textContent = badgeCount > 9 ? '9+' : String(badgeCount);
-                bellUnread.classList.toggle('hidden', badgeCount <= 0);
-            }
-            if (bellDot) {
-                bellDot.classList.toggle('hidden', !prefs.enabled || badgeCount > 0);
-            }
+            updateHeaderSettingsIndicators();
         }
 
         function clearUnreadNotificationBadge() {
@@ -1385,7 +1483,7 @@
             updateHomeScreenBadge(prefs.unreadCount);
         }
 
-        // ==================== SAFE HAPTIC ENGINE (NO iOS CLICK HIJACK) ====================
+        // ==================== SAFE HAPTIC ENGINE ====================
         function triggerHaptic(style = 'light') {
             try {
                 if (navigator.vibrate) {
@@ -1410,30 +1508,98 @@
                 root.classList.remove('dark');
             }
 
-            const btn = document.getElementById('themeToggleBtn');
-            if (btn) {
-                const iconName = currentThemePref === 'system' ? 'monitor' : (currentThemePref === 'dark' ? 'moon' : 'sun');
-                btn.innerHTML = `<i data-lucide="${iconName}" class="w-4 h-4"></i>`;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-            }
+            syncSettingsThemeButtons();
 
             if (paceChartInstance && typeof renderAll === 'function') {
                 renderAll();
             }
         }
 
-        function cycleTheme() {
-            const order = ['system', 'light', 'dark'];
-            currentThemePref = order[(order.indexOf(currentThemePref) + 1) % order.length];
+        function setThemePref(pref) {
+            currentThemePref = pref;
             localStorage.setItem(THEME_KEY, currentThemePref);
             applyTheme();
-            const label = currentThemePref === 'system' ? 'Auto (System Theme)' : (currentThemePref === 'dark' ? 'Dark Mode' : 'Light Mode');
-            showToast(`Theme: ${label}`);
+            const label = currentThemePref === 'system' ? 'Auto (System)' : (currentThemePref === 'dark' ? 'Dark Mode' : 'Light Mode');
+            showToast(`Appearance: ${label}`);
+        }
+
+        function syncSettingsThemeButtons() {
+            const labelEl = document.getElementById('settingsThemeLabel');
+            if (labelEl) {
+                labelEl.textContent = currentThemePref === 'system'
+                    ? 'Auto (Follows Device)'
+                    : (currentThemePref === 'dark' ? 'Always Dark' : 'Always Light');
+            }
+            ['system', 'light', 'dark'].forEach(mode => {
+                const btn = document.getElementById('themeOpt' + mode.charAt(0).toUpperCase() + mode.slice(1));
+                if (!btn) return;
+                if (currentThemePref === mode) {
+                    btn.className = 'py-1.5 px-2.5 rounded-full text-xs font-semibold transition bg-white dark:bg-white/15 text-[#007AFF] dark:text-white shadow-xs';
+                } else {
+                    btn.className = 'py-1.5 px-2.5 rounded-full text-xs font-medium transition text-slate-600 dark:text-slate-300';
+                }
+            });
         }
 
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
             if (currentThemePref === 'system') applyTheme();
         });
+
+        // ==================== SETTINGS HUB MODAL ====================
+        function updateHeaderSettingsIndicators() {
+            const prefs = getReminderPrefs();
+            const unread = prefs.unreadCount || 0;
+            const trashCount = (appState.recycleBin || []).length;
+
+            const badge = document.getElementById('settingsBadge');
+            const dot = document.getElementById('settingsActiveDot');
+            if (badge) {
+                badge.textContent = unread > 9 ? '9+' : String(unread);
+                badge.classList.toggle('hidden', unread <= 0);
+            }
+            if (dot) {
+                dot.classList.toggle('hidden', !(prefs.enabled || trashCount > 0) || unread > 0);
+            }
+        }
+
+        function openSettingsModal() {
+            setMeterDropdownOpen(false);
+            triggerHaptic('light');
+            syncSettingsThemeButtons();
+
+            const prefs = getReminderPrefs();
+            const dayLabel = DAY_NAMES[prefs.dayOfWeek] || 'Sunday';
+            const remSummary = document.getElementById('settingsReminderSummary');
+            if (remSummary) {
+                remSummary.textContent = prefs.enabled ? `Every ${dayLabel} at ${prefs.time || '09:00'}` : 'Reminders paused';
+            }
+            const remBadge = document.getElementById('settingsReminderBadge');
+            if (remBadge) {
+                const unread = prefs.unreadCount || 0;
+                remBadge.textContent = String(unread);
+                remBadge.classList.toggle('hidden', unread <= 0);
+            }
+
+            const bin = appState.recycleBin || [];
+            const trashSummary = document.getElementById('settingsTrashSummary');
+            if (trashSummary) {
+                trashSummary.textContent = bin.length === 0 ? 'No deleted items' : `${bin.length} item${bin.length === 1 ? '' : 's'} in trash`;
+            }
+            const trashBadge = document.getElementById('settingsTrashBadge');
+            if (trashBadge) {
+                trashBadge.textContent = String(bin.length);
+                trashBadge.classList.toggle('hidden', bin.length <= 0);
+            }
+
+            const metersSummary = document.getElementById('settingsMetersSummary');
+            if (metersSummary) {
+                const count = appState.meters.length;
+                metersSummary.textContent = `${count} meter${count === 1 ? '' : 's'} configured`;
+            }
+
+            document.getElementById('settingsModal').classList.remove('hidden');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
 
         // ==================== DATE & 28TH -> 27TH CYCLE HELPERS ====================
         function getTodayStr() {
@@ -1928,8 +2094,7 @@
             // 6. History Timeline & Chart
             renderHistoryTimeline(meter, m);
             renderPaceChart(meter, m);
-            updateReminderUI(meter, m);
-            updateRecycleBinBadge();
+            updateHeaderSettingsIndicators();
             updateNavPillPosition(activeTabName);
 
             if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -2084,15 +2249,6 @@
         }
 
         // ==================== RECYCLE BIN ENGINE ====================
-        function updateRecycleBinBadge() {
-            const bin = appState.recycleBin || [];
-            const badge = document.getElementById('trashCountBadge');
-            if (badge) {
-                badge.textContent = bin.length > 9 ? '9+' : String(bin.length);
-                badge.classList.toggle('hidden', bin.length <= 0);
-            }
-        }
-
         function openRecycleBinModal() {
             setMeterDropdownOpen(false);
             pendingEmptyBinConfirm = false;
@@ -2993,20 +3149,6 @@
             syncReminderModalControls(prefs);
             renderAll();
             showToast(`Reminder updated: ${DAY_NAMES[prefs.dayOfWeek]} at ${prefs.time}`);
-        }
-
-        function updateReminderUI(meter, m) {
-            const prefs = getReminderPrefs();
-            const unread = prefs.unreadCount || 0;
-            const bellDot = document.getElementById('bellActiveDot');
-            const bellUnread = document.getElementById('bellUnreadBadge');
-            if (bellUnread) {
-                bellUnread.textContent = unread > 9 ? '9+' : String(unread);
-                bellUnread.classList.toggle('hidden', unread <= 0);
-            }
-            if (bellDot) {
-                bellDot.classList.toggle('hidden', !prefs.enabled || unread > 0);
-            }
         }
 
         async function fireReadingReminderNotification(isTest = false) {
