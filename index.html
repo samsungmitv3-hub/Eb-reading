@@ -61,15 +61,10 @@
             font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
         }
 
-        /* Hide native disclosure triangle on iOS Safari */
-        details#meterDropdownDetails > summary {
-            list-style: none;
-        }
-        details#meterDropdownDetails > summary::-webkit-details-marker {
-            display: none;
-        }
-        details#meterDropdownDetails[open] #meterDropdownChevronBtn {
-            transform: rotate(180deg);
+        /* iOS Safari reliable tap cursor on interactive elements */
+        button, [role="button"], select, input[type="date"], input[type="time"] {
+            cursor: pointer;
+            touch-action: manipulation;
         }
 
         /* Authentic Apple SF Pro Display Optical Tracking */
@@ -147,18 +142,18 @@
 
         /* Smooth Apple Spring View Transitions */
         .view-section {
-            animation: appleFade 0.3s var(--apple-spring);
+            animation: appleFade 0.25s var(--apple-spring);
         }
 
         @keyframes appleFade {
             from {
                 opacity: 0;
-                transform: scale(0.985) translateY(6px);
+                transform: translateY(4px);
             }
 
             to {
                 opacity: 1;
-                transform: scale(1) translateY(0);
+                transform: translateY(0);
             }
         }
 
@@ -176,7 +171,7 @@
         }
 
         .toast-bottom {
-            animation: slideUpToast 0.3s var(--apple-spring) forwards;
+            animation: slideUpToast 0.28s var(--apple-spring) forwards;
         }
 
         /* ==================== APPLE iOS 26 LIQUID GLASS MATERIAL SYSTEM ==================== */
@@ -187,7 +182,6 @@
                 radial-gradient(at 90% 12%, rgba(52, 199, 89, 0.16) 0px, transparent 48%),
                 radial-gradient(at 84% 56%, rgba(88, 86, 214, 0.18) 0px, transparent 52%),
                 radial-gradient(at 14% 86%, rgba(90, 200, 250, 0.24) 0px, transparent 50%);
-            background-attachment: fixed;
         }
 
         html.dark .liquid-wallpaper {
@@ -197,13 +191,12 @@
                 radial-gradient(at 88% 16%, rgba(48, 209, 88, 0.14) 0px, transparent 46%),
                 radial-gradient(at 82% 60%, rgba(94, 92, 230, 0.20) 0px, transparent 52%),
                 radial-gradient(at 16% 86%, rgba(100, 210, 255, 0.14) 0px, transparent 50%);
-            background-attachment: fixed;
         }
 
         .liquid-glass {
-            background: linear-gradient(160deg, rgba(255, 255, 255, 0.76) 0%, rgba(255, 255, 255, 0.52) 100%);
-            backdrop-filter: blur(44px) saturate(210%);
-            -webkit-backdrop-filter: blur(44px) saturate(210%);
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.62) 100%);
+            backdrop-filter: blur(28px) saturate(190%);
+            -webkit-backdrop-filter: blur(28px) saturate(190%);
             border: 0.5px solid rgba(255, 255, 255, 0.9);
             box-shadow:
                 0 10px 30px -8px rgba(0, 0, 0, 0.08),
@@ -213,9 +206,9 @@
         }
 
         html.dark .liquid-glass {
-            background: linear-gradient(160deg, rgba(44, 44, 46, 0.58) 0%, rgba(28, 28, 30, 0.48) 100%);
-            backdrop-filter: blur(44px) saturate(210%);
-            -webkit-backdrop-filter: blur(44px) saturate(210%);
+            background: linear-gradient(160deg, rgba(44, 44, 46, 0.68) 0%, rgba(28, 28, 30, 0.58) 100%);
+            backdrop-filter: blur(28px) saturate(190%);
+            -webkit-backdrop-filter: blur(28px) saturate(190%);
             border: 0.5px solid rgba(255, 255, 255, 0.16);
             box-shadow:
                 0 16px 36px -8px rgba(0, 0, 0, 0.72),
@@ -224,39 +217,35 @@
         }
 
         .liquid-lens {
-            background: rgba(255, 255, 255, 0.54);
-            backdrop-filter: blur(22px) saturate(185%);
-            -webkit-backdrop-filter: blur(22px) saturate(185%);
-            border: 0.5px solid rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.62);
+            border: 0.5px solid rgba(255, 255, 255, 0.85);
             box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 1px 4px -1px rgba(0, 0, 0, 0.04);
         }
 
         html.dark .liquid-lens {
-            background: rgba(255, 255, 255, 0.065);
-            backdrop-filter: blur(22px) saturate(185%);
-            -webkit-backdrop-filter: blur(22px) saturate(185%);
-            border: 0.5px solid rgba(255, 255, 255, 0.11);
+            background: rgba(255, 255, 255, 0.075);
+            border: 0.5px solid rgba(255, 255, 255, 0.12);
             box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.14);
         }
 
         .liquid-header {
-            background: rgba(242, 244, 248, 0.65);
-            backdrop-filter: blur(38px) saturate(210%);
-            -webkit-backdrop-filter: blur(38px) saturate(210%);
+            background: rgba(242, 244, 248, 0.78);
+            backdrop-filter: blur(28px) saturate(190%);
+            -webkit-backdrop-filter: blur(28px) saturate(190%);
             border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
         }
 
         html.dark .liquid-header {
-            background: rgba(18, 18, 20, 0.68);
-            backdrop-filter: blur(38px) saturate(210%);
-            -webkit-backdrop-filter: blur(38px) saturate(210%);
+            background: rgba(18, 18, 20, 0.78);
+            backdrop-filter: blur(28px) saturate(190%);
+            -webkit-backdrop-filter: blur(28px) saturate(190%);
             border-bottom: 0.5px solid rgba(255, 255, 255, 0.11);
         }
 
         .liquid-dock {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.62) 100%);
-            backdrop-filter: blur(46px) saturate(220%);
-            -webkit-backdrop-filter: blur(46px) saturate(220%);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.72) 100%);
+            backdrop-filter: blur(32px) saturate(200%);
+            -webkit-backdrop-filter: blur(32px) saturate(200%);
             border: 0.5px solid rgba(255, 255, 255, 0.95);
             box-shadow:
                 0 14px 36px -6px rgba(0, 0, 0, 0.14),
@@ -265,9 +254,9 @@
         }
 
         html.dark .liquid-dock {
-            background: linear-gradient(180deg, rgba(50, 50, 54, 0.68) 0%, rgba(30, 30, 34, 0.58) 100%);
-            backdrop-filter: blur(46px) saturate(220%);
-            -webkit-backdrop-filter: blur(46px) saturate(220%);
+            background: linear-gradient(180deg, rgba(50, 50, 54, 0.78) 0%, rgba(30, 30, 34, 0.68) 100%);
+            backdrop-filter: blur(32px) saturate(200%);
+            -webkit-backdrop-filter: blur(32px) saturate(200%);
             border: 0.5px solid rgba(255, 255, 255, 0.22);
             box-shadow:
                 0 18px 42px -6px rgba(0, 0, 0, 0.8),
@@ -292,12 +281,12 @@
 
         /* Sliding Liquid Glass Navbar Pill Indicator */
         #navActivePill {
-            transition: transform 0.38s cubic-bezier(0.22, 1.18, 0.36, 1), width 0.38s cubic-bezier(0.22, 1.18, 0.36, 1);
+            transition: transform 0.35s cubic-bezier(0.22, 1.15, 0.36, 1), width 0.35s cubic-bezier(0.22, 1.15, 0.36, 1);
             will-change: transform, width;
         }
 
         .nav-btn {
-            transition: color 0.24s ease, transform 0.18s var(--apple-spring);
+            transition: color 0.22s ease, transform 0.16s var(--apple-spring);
         }
 
         .nav-btn:active {
@@ -305,23 +294,23 @@
         }
 
         .liquid-modal {
-            background: linear-gradient(165deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 247, 252, 0.82) 100%);
-            backdrop-filter: blur(50px) saturate(220%);
-            -webkit-backdrop-filter: blur(50px) saturate(220%);
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.96) 0%, rgba(245, 247, 252, 0.92) 100%);
+            backdrop-filter: blur(36px) saturate(200%);
+            -webkit-backdrop-filter: blur(36px) saturate(200%);
             border: 0.5px solid rgba(255, 255, 255, 0.95);
             box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.22), inset 0 1px 0.5px rgba(255, 255, 255, 1);
         }
 
         html.dark .liquid-modal {
-            background: linear-gradient(165deg, rgba(42, 42, 46, 0.88) 0%, rgba(24, 24, 26, 0.84) 100%);
-            backdrop-filter: blur(50px) saturate(220%);
-            -webkit-backdrop-filter: blur(50px) saturate(220%);
+            background: linear-gradient(165deg, rgba(42, 42, 46, 0.94) 0%, rgba(24, 24, 26, 0.92) 100%);
+            backdrop-filter: blur(36px) saturate(200%);
+            -webkit-backdrop-filter: blur(36px) saturate(200%);
             border: 0.5px solid rgba(255, 255, 255, 0.18);
             box-shadow: 0 28px 64px -12px rgba(0, 0, 0, 0.88), inset 0 0.75px 0.5px rgba(255, 255, 255, 0.24);
         }
 
         .apple-tap {
-            transition: transform 0.18s var(--apple-spring), background-color 0.18s ease, opacity 0.18s ease;
+            transition: transform 0.16s var(--apple-spring), background-color 0.16s ease, opacity 0.16s ease;
         }
 
         .apple-tap:active {
@@ -388,11 +377,11 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
-                    <button onclick="cycleTheme()" id="themeToggleBtn" title="Switch Theme (Auto / Light / Dark)"
+                    <button type="button" onclick="cycleTheme()" id="themeToggleBtn" title="Switch Theme (Auto / Light / Dark)"
                         class="w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
                         <i data-lucide="monitor" class="w-4 h-4"></i>
                     </button>
-                    <button onclick="openReminderModal()" id="headerBellBtn" title="Weekly Reading Reminders"
+                    <button type="button" onclick="openReminderModal()" id="headerBellBtn" title="Weekly Reading Reminders"
                         class="relative w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
                         <i data-lucide="bell" class="w-4 h-4"></i>
                         <span id="bellActiveDot"
@@ -400,13 +389,13 @@
                         <span id="bellUnreadBadge"
                             class="hidden absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#FF3B30] text-white text-[10px] font-bold flex items-center justify-center shadow-sm ring-1 ring-white/70">1</span>
                     </button>
-                    <button onclick="openRecycleBinModal()" id="headerTrashBtn" title="Recycle Bin"
+                    <button type="button" onclick="openRecycleBinModal()" id="headerTrashBtn" title="Recycle Bin"
                         class="relative w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                         <span id="trashCountBadge"
                             class="hidden absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#FF9500] text-white text-[10px] font-bold flex items-center justify-center shadow-sm ring-1 ring-white/70">0</span>
                     </button>
-                    <button onclick="openBackupModal()" title="Backup & Export Data"
+                    <button type="button" onclick="openBackupModal()" title="Backup & Export Data"
                         class="w-9 h-9 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 flex items-center justify-center apple-tap">
                         <i data-lucide="folder-down" class="w-4 h-4"></i>
                     </button>
@@ -419,7 +408,7 @@
     <main class="max-w-lg mx-auto px-4 pt-safe-main space-y-3.5">
 
         <!-- Liquid Glass EB Meter Selector & Multi-Select Combined Total Card (Hidden on Slabs tab) -->
-        <div id="yourMetersCard" class="liquid-glass rounded-[28px] p-3.5 space-y-2.5 relative z-20">
+        <div id="yourMetersCard" class="liquid-glass rounded-[28px] p-3.5 space-y-2.5 relative">
             <div class="flex items-center justify-between gap-2 px-1">
                 <div class="flex items-center gap-1.5">
                     <i data-lucide="gauge" class="w-3.5 h-3.5 text-[#007AFF] dark:text-[#409CFF]"></i>
@@ -439,43 +428,46 @@
                 </div>
             </div>
 
-            <!-- Native iOS Disclosure Dropdown for EB Meters -->
-            <details id="meterDropdownDetails" class="group">
-                <summary
-                    class="px-3.5 py-2.5 rounded-[22px] liquid-capsule-active text-white flex items-center justify-between gap-2 cursor-pointer select-none">
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-1.5 flex-nowrap">
-                            <span id="dropdownActiveName" class="sf-display-title text-[14px] font-semibold truncate">Main Meter</span>
-                            <span id="dropdownActiveSC"
-                                class="hidden text-[10px] tracking-wide px-1.5 py-0.2 rounded-full bg-[#FFD60A] text-slate-950 font-bold shrink-0"></span>
-                            <span id="dropdownActiveTariff"
-                                class="text-[9px] font-semibold px-1.5 py-0.2 rounded-full bg-white/22 text-white shrink-0">LT-IA</span>
+            <!-- iOS-Bulletproof EB Meter Expandable Section -->
+            <div id="meterDropdownWrapper" class="space-y-2">
+                <div class="px-3.5 py-2.5 rounded-[22px] liquid-capsule-active text-white flex items-center justify-between gap-2">
+                    <button type="button" id="meterExpandMainBtn" onclick="toggleMeterDropdown()"
+                        class="min-w-0 flex-1 text-left flex items-center justify-between gap-2 bg-transparent border-0 p-0 text-white focus:outline-none">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-1.5 flex-nowrap">
+                                <span id="dropdownActiveName" class="sf-display-title text-[14px] font-semibold truncate">Main Meter</span>
+                                <span id="dropdownActiveSC"
+                                    class="hidden text-[10px] tracking-wide px-1.5 py-0.2 rounded-full bg-[#FFD60A] text-slate-950 font-bold shrink-0"></span>
+                                <span id="dropdownActiveTariff"
+                                    class="text-[9px] font-semibold px-1.5 py-0.2 rounded-full bg-white/22 text-white shrink-0">LT-IA</span>
+                            </div>
+                            <p id="dropdownActiveSub"
+                                class="text-[11px] font-normal text-white/85 truncate leading-tight mt-0.5 tabular-nums">
+                                28 Oct → 27 Dec (60d) · ₹0
+                            </p>
                         </div>
-                        <p id="dropdownActiveSub"
-                            class="text-[11px] font-normal text-white/85 truncate leading-tight mt-0.5 tabular-nums">
-                            28 Oct → 27 Dec (60d) · ₹0
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
                         <span id="dropdownActiveUnits"
-                            class="text-[12px] font-semibold px-2.5 py-0.5 rounded-full bg-white/22 text-white tabular-nums">0u</span>
-                        <span onclick="event.preventDefault(); event.stopPropagation(); openActiveMeterForm();"
-                            role="button" tabindex="0" title="Edit Meter Settings"
+                            class="text-[12px] font-semibold px-2.5 py-0.5 rounded-full bg-white/22 text-white tabular-nums shrink-0">0u</span>
+                    </button>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button type="button" onclick="openActiveMeterForm()"
+                            title="Edit Meter Settings"
                             class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center apple-tap">
                             <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
-                        </span>
-                        <span id="meterDropdownChevronBtn"
-                            class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center transition-transform duration-200">
-                            <i data-lucide="chevron-down" class="w-4 h-4 text-white"></i>
-                        </span>
+                        </button>
+                        <button type="button" id="meterDropdownChevronBtn" onclick="toggleMeterDropdown()"
+                            title="Expand / Collapse Meters"
+                            class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-transform duration-200">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
                     </div>
-                </summary>
-
-                <!-- Expanded Liquid Glass List of All EB Meters -->
-                <div id="meterDropdownMenu"
-                    class="mt-2 rounded-[22px] liquid-lens p-1.5 space-y-1 max-h-64 overflow-y-auto">
                 </div>
-            </details>
+
+                <!-- Inline Expanded List of All EB Meters -->
+                <div id="meterDropdownMenu"
+                    class="hidden rounded-[22px] liquid-lens p-1.5 space-y-1.5 max-h-72 overflow-y-auto">
+                </div>
+            </div>
 
             <!-- Selected Meters Combined Total Glass Strip -->
             <div id="selectedMetersTotalBar"
@@ -534,7 +526,7 @@
                         </div>
                     </div>
                     <div
-                        class="rounded-[22px] p-4 bg-gradient-to-br from-[#007AFF]/14 via-[#5AC8FA]/10 to-[#5856D6]/14 border border-[#007AFF]/20 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]">
+                        class="rounded-[22px] p-4 bg-gradient-to-br from-[#007AFF]/14 via-[#5AC8FA]/10 to-[#5856D6]/14 border border-[#007AFF]/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]">
                         <span
                             class="sf-caption-caps text-[#007AFF] dark:text-[#5AC8FA] block mb-1.5">TNEB
                             Bill</span>
@@ -554,13 +546,13 @@
 
                 <!-- Apple Capsule Action Buttons -->
                 <div class="grid grid-cols-5 gap-2.5">
-                    <button onclick="openReadingModal()"
+                    <button type="button" onclick="openReadingModal()"
                         class="col-span-3 flex items-center justify-center gap-2 py-3 px-4 rounded-full liquid-capsule-active text-white font-semibold text-[14px] apple-tap">
                         <i data-lucide="plus-circle" class="w-4 h-4"></i>
                         <span>Log Reading</span>
                     </button>
-                    <button onclick="openResetModal()"
-                        class="col-span-2 flex items-center justify-center gap-1.5 py-3 px-3 rounded-full bg-[#FF9500]/14 hover:bg-[#FF9500]/22 text-amber-800 dark:text-[#FF9F0A] border border-[#FF9500]/30 backdrop-blur-md font-semibold text-[13px] apple-tap">
+                    <button type="button" onclick="openResetModal()"
+                        class="col-span-2 flex items-center justify-center gap-1.5 py-3 px-3 rounded-full bg-[#FF9500]/14 hover:bg-[#FF9500]/22 text-amber-800 dark:text-[#FF9F0A] border border-[#FF9500]/30 font-semibold text-[13px] apple-tap">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                         <span>Unit Reset</span>
                     </button>
@@ -591,7 +583,7 @@
                         <span class="text-[10px] text-slate-500 dark:text-slate-400 block">u / day</span>
                     </div>
                     <div
-                        class="p-3 rounded-[20px] bg-[#007AFF]/12 dark:bg-[#0A84FF]/18 border border-[#007AFF]/20 backdrop-blur-md">
+                        class="p-3 rounded-[20px] bg-[#007AFF]/12 dark:bg-[#0A84FF]/18 border border-[#007AFF]/20">
                         <span
                             class="text-[10px] font-semibold uppercase tracking-wide text-[#007AFF] dark:text-[#5AC8FA] block mb-0.5">Left
                             ≤500</span>
@@ -627,12 +619,12 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Completed 28th → 27th cycles</p>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
-                        <button onclick="downloadBiMonthPDF()" title="Download Bi-Month PDF"
+                        <button type="button" onclick="downloadBiMonthPDF()" title="Download Bi-Month PDF"
                             class="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 dark:text-slate-200 liquid-lens hover:bg-white/80 dark:hover:bg-white/15 px-3 py-1.5 rounded-full apple-tap">
                             <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#007AFF] dark:text-[#409CFF]"></i>
                             <span>PDF</span>
                         </button>
-                        <button onclick="switchTab('history')"
+                        <button type="button" onclick="switchTab('history')"
                             class="text-xs font-semibold text-[#007AFF] dark:text-[#409CFF] bg-[#007AFF]/12 border border-[#007AFF]/20 px-3 py-1.5 rounded-full apple-tap">
                             All →
                         </button>
@@ -687,12 +679,12 @@
                             meter</p>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
-                        <button onclick="downloadBiMonthPDF()"
+                        <button type="button" onclick="downloadBiMonthPDF()"
                             class="inline-flex items-center gap-1 text-xs font-semibold text-[#007AFF] dark:text-[#409CFF] bg-[#007AFF]/12 border border-[#007AFF]/20 px-3 py-1.5 rounded-full apple-tap">
                             <i data-lucide="download" class="w-3.5 h-3.5"></i>
                             <span>PDF</span>
                         </button>
-                        <button onclick="openResetModal()"
+                        <button type="button" onclick="openResetModal()"
                             class="text-xs font-semibold text-amber-800 dark:text-[#FF9F0A] bg-[#FF9500]/15 border border-[#FF9500]/30 px-3 py-1.5 rounded-full apple-tap">
                             + Reset
                         </button>
@@ -709,12 +701,12 @@
                         <p id="historyCountLabel" class="text-xs text-slate-500 dark:text-slate-400">0 checks logged</p>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <button onclick="openRecycleBinModal()"
+                        <button type="button" onclick="openRecycleBinModal()"
                             class="text-xs font-semibold liquid-lens text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full apple-tap inline-flex items-center gap-1">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5 text-[#FF9500]"></i>
                             <span>Bin</span>
                         </button>
-                        <button onclick="openReadingModal()"
+                        <button type="button" onclick="openReadingModal()"
                             class="text-xs font-semibold liquid-capsule-active text-white px-3.5 py-1.5 rounded-full apple-tap">
                             + Add Check
                         </button>
@@ -796,7 +788,7 @@
                 </div>
 
                 <div
-                    class="rounded-[22px] border border-[#007AFF]/20 bg-[#007AFF]/10 backdrop-blur-md p-3.5 space-y-2">
+                    class="rounded-[22px] border border-[#007AFF]/20 bg-[#007AFF]/10 p-3.5 space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-sky-900 dark:text-[#5AC8FA]">Up to 500 Units
                             (Subsidized)</span>
@@ -814,7 +806,7 @@
                 </div>
 
                 <div
-                    class="rounded-[22px] border border-[#FF9500]/25 bg-[#FF9500]/10 backdrop-blur-md p-3.5 space-y-2">
+                    class="rounded-[22px] border border-[#FF9500]/25 bg-[#FF9500]/10 p-3.5 space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-amber-950 dark:text-[#FF9F0A]">Above 500 Units
                             (Non-Subsidized)</span>
@@ -864,23 +856,23 @@
                 <div id="navActivePill"
                     class="absolute inset-y-0 left-0 rounded-full liquid-capsule-active pointer-events-none"
                     style="width: 33.333%; transform: translateX(0px);"></div>
-                <button onclick="switchTab('dashboard')" id="nav-dashboard"
+                <button type="button" onclick="switchTab('dashboard')" id="nav-dashboard"
                     class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-semibold text-white">
                     <i data-lucide="home" class="w-4 h-4"></i>
                     <span>Home</span>
                 </button>
-                <button onclick="switchTab('history')" id="nav-history"
+                <button type="button" onclick="switchTab('history')" id="nav-history"
                     class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300">
                     <i data-lucide="history" class="w-4 h-4"></i>
                     <span>History</span>
                 </button>
-                <button onclick="switchTab('slabs')" id="nav-slabs"
+                <button type="button" onclick="switchTab('slabs')" id="nav-slabs"
                     class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300">
                     <i data-lucide="percent" class="w-4 h-4"></i>
                     <span>Slabs</span>
                 </button>
             </div>
-            <button onclick="openReadingModal()" title="Quick Log Reading"
+            <button type="button" onclick="openReadingModal()" title="Quick Log Reading"
                 class="w-10 h-10 rounded-full liquid-capsule-active text-white flex items-center justify-center apple-tap shrink-0">
                 <i data-lucide="plus" class="w-5 h-5"></i>
             </button>
@@ -898,7 +890,7 @@
                     <p id="readingModalMeterSubtitle" class="text-xs text-slate-500 dark:text-slate-400">Main Meter ·
                         28th Cycle</p>
                 </div>
-                <button onclick="closeModal('readingModal')"
+                <button type="button" onclick="closeModal('readingModal')"
                     class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
@@ -966,7 +958,7 @@
                 </div>
             </div>
 
-            <button onclick="saveNewReading()"
+            <button type="button" onclick="saveNewReading()"
                 class="w-full py-3.5 rounded-full liquid-capsule-active text-white font-semibold text-[15px] apple-tap">
                 Save Meter Reading
             </button>
@@ -984,7 +976,7 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Archive current 28th → 27th record & start
                         fresh at 0 units</p>
                 </div>
-                <button onclick="closeModal('resetModal')"
+                <button type="button" onclick="closeModal('resetModal')"
                     class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
@@ -1026,7 +1018,7 @@
                 </div>
             </div>
 
-            <button onclick="executeCycleReset()"
+            <button type="button" onclick="executeCycleReset()"
                 class="w-full py-3.5 rounded-full bg-gradient-to-b from-[#FF9F0A] to-[#FF9500] text-white font-semibold text-[15px] shadow-lg shadow-amber-500/30 ring-1 ring-white/40 apple-tap">
                 Archive Record & Start New 28th Cycle
             </button>
@@ -1044,7 +1036,7 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Each meter tracks its own 28th → 27th bi-month
                     </p>
                 </div>
-                <button onclick="closeModal('metersModal')"
+                <button type="button" onclick="closeModal('metersModal')"
                     class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
@@ -1053,7 +1045,7 @@
             <!-- List of Configured Meters -->
             <div id="metersListContainer" class="space-y-2.5"></div>
 
-            <button onclick="openMeterFormModal()"
+            <button type="button" onclick="openMeterFormModal()"
                 class="w-full py-3.5 rounded-full liquid-capsule-active text-white font-semibold text-[15px] flex items-center justify-center gap-2 apple-tap">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span>Add New Individual Meter</span>
@@ -1072,7 +1064,7 @@
                         Individual Meter</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Configure meter details & 28th cycle start</p>
                 </div>
-                <button onclick="closeModal('meterFormModal')"
+                <button type="button" onclick="closeModal('meterFormModal')"
                     class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
@@ -1130,7 +1122,7 @@
                 </div>
             </div>
 
-            <button onclick="saveMeterForm()"
+            <button type="button" onclick="saveMeterForm()"
                 class="w-full py-3.5 rounded-full liquid-capsule-active text-white font-semibold text-[15px] apple-tap">
                 Save Meter
             </button>
@@ -1147,26 +1139,26 @@
                     <h3 class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white">Backup & Data</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Export PDF statement or backup meter data</p>
                 </div>
-                <button onclick="closeModal('backupModal')"
+                <button type="button" onclick="closeModal('backupModal')"
                     class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <div class="space-y-2.5">
-                <button onclick="installPWA()" id="installPwaBtn"
+                <button type="button" onclick="installPWA()" id="installPwaBtn"
                     class="w-full py-3.5 px-4 rounded-full bg-slate-900/90 dark:bg-white/15 hover:bg-slate-800 text-white font-semibold text-sm flex items-center justify-center gap-2 border border-white/20 shadow-sm apple-tap">
                     <i data-lucide="smartphone" class="w-4 h-4 text-[#5AC8FA]"></i>
                     <span>Add App to Home Screen</span>
                 </button>
 
-                <button onclick="downloadBiMonthPDF()"
+                <button type="button" onclick="downloadBiMonthPDF()"
                     class="w-full py-3.5 px-4 rounded-full liquid-capsule-active text-white font-semibold text-sm flex items-center justify-center gap-2 apple-tap">
                     <i data-lucide="file-text" class="w-4 h-4"></i>
                     <span>Download Bi-Month PDF Statement</span>
                 </button>
 
-                <button onclick="exportBackupJSON()"
+                <button type="button" onclick="exportBackupJSON()"
                     class="w-full py-3.5 px-4 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 font-semibold text-sm flex items-center justify-center gap-2 apple-tap">
                     <i data-lucide="download" class="w-4 h-4"></i>
                     <span>Download JSON Backup</span>
@@ -1194,7 +1186,7 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Get notified every week to log your kWh
                         reading</p>
                 </div>
-                <button onclick="closeModal('reminderModal')"
+                <button type="button" onclick="closeModal('reminderModal')"
                     class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
@@ -1246,12 +1238,12 @@
 
             <!-- System Calendar & Test Notification Actions -->
             <div class="space-y-2 pt-1">
-                <button onclick="downloadWeeklyCalendarICS()"
+                <button type="button" onclick="downloadWeeklyCalendarICS()"
                     class="w-full py-3.5 px-4 rounded-full liquid-capsule-active text-white font-semibold text-sm flex items-center justify-center gap-2 apple-tap">
                     <i data-lucide="calendar-plus" class="w-4 h-4"></i>
                     <span>Add Weekly Alert to Phone Calendar (.ics)</span>
                 </button>
-                <button onclick="sendTestReminderNotification()"
+                <button type="button" onclick="sendTestReminderNotification()"
                     class="w-full py-3 px-4 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 font-semibold text-xs flex items-center justify-center gap-2 apple-tap">
                     <i data-lucide="bell" class="w-3.5 h-3.5 text-[#007AFF] dark:text-[#409CFF]"></i>
                     <span>Send Test Notification Now</span>
@@ -1270,7 +1262,7 @@
                     <h3 class="sf-display-title text-[17px] font-bold text-slate-900 dark:text-white">Recycle Bin</h3>
                     <p id="recycleBinSubtitle" class="text-xs text-slate-500 dark:text-slate-400">Deleted readings & meters</p>
                 </div>
-                <button onclick="closeModal('recycleBinModal')"
+                <button type="button" onclick="closeModal('recycleBinModal')"
                     class="w-8 h-8 rounded-full liquid-lens text-slate-500 dark:text-slate-300 flex items-center justify-center apple-tap">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
@@ -1280,7 +1272,7 @@
             <div id="recycleBinListContainer" class="space-y-2.5"></div>
 
             <!-- Empty Bin Button -->
-            <button id="emptyRecycleBinBtn" onclick="emptyRecycleBin()"
+            <button type="button" id="emptyRecycleBinBtn" onclick="emptyRecycleBin()"
                 class="hidden w-full py-3 rounded-full bg-[#FF3B30]/15 hover:bg-[#FF3B30]/25 text-[#FF3B30] border border-[#FF3B30]/30 font-semibold text-xs flex items-center justify-center gap-1.5 apple-tap">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 <span>Empty Recycle Bin Permanently</span>
@@ -1393,7 +1385,7 @@
             updateHomeScreenBadge(prefs.unreadCount);
         }
 
-        // ==================== iOS & MOBILE HAPTIC ENGINE ====================
+        // ==================== SAFE HAPTIC ENGINE (NO iOS CLICK HIJACK) ====================
         function triggerHaptic(style = 'light') {
             try {
                 if (navigator.vibrate) {
@@ -1401,31 +1393,8 @@
                     else if (style === 'success') navigator.vibrate([15, 30, 20]);
                     else navigator.vibrate(10);
                 }
-                if (isIOSDevice()) {
-                    const label = document.createElement('label');
-                    label.style.position = 'fixed';
-                    label.style.opacity = '0';
-                    label.style.pointerEvents = 'none';
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.setAttribute('switch', '');
-                    label.appendChild(checkbox);
-                    document.body.appendChild(label);
-                    label.click();
-                    label.remove();
-                }
             } catch (e) { }
         }
-
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('button, label[for], a, summary')) {
-                triggerHaptic('light');
-            }
-            const detailsEl = document.getElementById('meterDropdownDetails');
-            if (detailsEl && detailsEl.open && !detailsEl.contains(e.target)) {
-                detailsEl.open = false;
-            }
-        });
 
         // ==================== SYSTEM & MANUAL THEME CONTROLLER ====================
         let currentThemePref = localStorage.getItem(THEME_KEY) || 'system';
@@ -1725,13 +1694,22 @@
             };
         }
 
-        // ==================== EB METER DROPDOWN CONTROLS (NATIVE iOS DETAILS) ====================
+        // ==================== EB METER DROPDOWN CONTROLS (iOS BULLETPROOF) ====================
         function setMeterDropdownOpen(open) {
             isMeterDropdownOpen = Boolean(open);
-            const detailsEl = document.getElementById('meterDropdownDetails');
-            if (detailsEl) {
-                detailsEl.open = isMeterDropdownOpen;
+            const menu = document.getElementById('meterDropdownMenu');
+            const chevronBtn = document.getElementById('meterDropdownChevronBtn');
+            if (menu) {
+                menu.classList.toggle('hidden', !isMeterDropdownOpen);
             }
+            if (chevronBtn) {
+                chevronBtn.style.transform = isMeterDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        function toggleMeterDropdown() {
+            setMeterDropdownOpen(!isMeterDropdownOpen);
+            triggerHaptic('light');
         }
 
         function openActiveMeterForm() {
@@ -1862,10 +1840,10 @@
 
                     return `
                         <div class="px-2.5 py-2 rounded-2xl border transition flex items-center justify-between gap-2 ${rowClasses}">
-                            <button type="button" onclick="event.stopPropagation(); toggleMeterSelection('${item.id}')" title="Include in Combined Total" class="w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition active:scale-90 ${checkBtnClasses}">
+                            <button type="button" onclick="toggleMeterSelection('${item.id}')" title="Include in Combined Total" class="w-6 h-6 rounded-full border flex items-center justify-center shrink-0 transition active:scale-90 ${checkBtnClasses}">
                                 <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>
                             </button>
-                            <button type="button" onclick="event.stopPropagation(); selectMeter('${item.id}'); setMeterDropdownOpen(false);" class="min-w-0 flex-1 text-left cursor-pointer focus:outline-none">
+                            <button type="button" onclick="selectMeter('${item.id}'); setMeterDropdownOpen(false);" class="min-w-0 flex-1 text-left bg-transparent border-0 p-0 focus:outline-none">
                                 <div class="flex items-center gap-1.5 flex-nowrap">
                                     <span class="text-xs font-semibold truncate">${escapeHTML(item.name)}</span>
                                     ${consumerBadgeHTML}
@@ -1877,7 +1855,7 @@
                             </button>
                             <div class="flex items-center gap-1.5 shrink-0">
                                 <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full liquid-lens text-slate-700 dark:text-slate-200 tabular-nums">${Math.round(itemMetrics.actualUnits)}u</span>
-                                <button type="button" onclick="event.stopPropagation(); setMeterDropdownOpen(false); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="w-7 h-7 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-600 dark:text-slate-300 flex items-center justify-center apple-tap">
+                                <button type="button" onclick="setMeterDropdownOpen(false); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="w-7 h-7 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-600 dark:text-slate-300 flex items-center justify-center apple-tap">
                                     <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
@@ -2034,7 +2012,7 @@
                             ${formatFullDate(item.date)} · ${item.avg} u/day${item.note ? ' · ' + escapeHTML(item.note) : ''}
                         </p>
                     </div>
-                    <button onclick="deleteReading('${item.id}')" title="Move to Recycle Bin" class="w-8 h-8 rounded-full text-slate-400 hover:text-[#FF3B30] hover:bg-[#FF3B30]/10 flex items-center justify-center transition">
+                    <button type="button" onclick="deleteReading('${item.id}')" title="Move to Recycle Bin" class="w-8 h-8 rounded-full text-slate-400 hover:text-[#FF3B30] hover:bg-[#FF3B30]/10 flex items-center justify-center transition">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -2171,11 +2149,11 @@
                                 </p>
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
-                                <button onclick="restoreFromRecycleBin('${entry.id}')" title="Restore Meter"
+                                <button type="button" onclick="restoreFromRecycleBin('${entry.id}')" title="Restore Meter"
                                     class="px-2.5 py-1.5 rounded-full bg-[#34C759]/15 text-emerald-800 dark:text-[#30D158] border border-[#34C759]/30 text-[11px] font-semibold apple-tap">
                                     Restore
                                 </button>
-                                <button onclick="permanentlyDeleteBinItem('${entry.id}')" title="Delete Forever"
+                                <button type="button" onclick="permanentlyDeleteBinItem('${entry.id}')" title="Delete Forever"
                                     class="w-8 h-8 rounded-full bg-[#FF3B30]/15 text-[#FF3B30] flex items-center justify-center apple-tap">
                                     <i data-lucide="x" class="w-3.5 h-3.5"></i>
                                 </button>
@@ -2196,11 +2174,11 @@
                                 </p>
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
-                                <button onclick="restoreFromRecycleBin('${entry.id}')" title="Restore Reading"
+                                <button type="button" onclick="restoreFromRecycleBin('${entry.id}')" title="Restore Reading"
                                     class="px-2.5 py-1.5 rounded-full bg-[#34C759]/15 text-emerald-800 dark:text-[#30D158] border border-[#34C759]/30 text-[11px] font-semibold apple-tap">
                                     Restore
                                 </button>
-                                <button onclick="permanentlyDeleteBinItem('${entry.id}')" title="Delete Forever"
+                                <button type="button" onclick="permanentlyDeleteBinItem('${entry.id}')" title="Delete Forever"
                                     class="w-8 h-8 rounded-full bg-[#FF3B30]/15 text-[#FF3B30] flex items-center justify-center apple-tap">
                                     <i data-lucide="x" class="w-3.5 h-3.5"></i>
                                 </button>
@@ -2516,7 +2494,7 @@
                 const m = getMeterMetrics(item);
                 const isActive = item.id === appState.activeMeterId;
                 const deleteBtn = appState.meters.length > 1
-                    ? `<button onclick="deleteMeter('${item.id}')" class="px-2.5 py-1.5 rounded-full text-xs font-semibold ${pendingDeleteMeterId === item.id ? 'bg-[#FF3B30] text-white' : 'bg-[#FF3B30]/15 text-[#FF3B30]'}">${pendingDeleteMeterId === item.id ? 'Confirm?' : 'Delete'}</button>`
+                    ? `<button type="button" onclick="deleteMeter('${item.id}')" class="px-2.5 py-1.5 rounded-full text-xs font-semibold ${pendingDeleteMeterId === item.id ? 'bg-[#FF3B30] text-white' : 'bg-[#FF3B30]/15 text-[#FF3B30]'}">${pendingDeleteMeterId === item.id ? 'Confirm?' : 'Delete'}</button>`
                     : '';
                 const consumerChip = item.serviceNo
                     ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFD60A]/30 text-amber-950 dark:text-[#FFD60A] border border-amber-400/40">SC ${escapeHTML(item.serviceNo)}</span>`
@@ -2532,7 +2510,7 @@
                             <span class="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">${Math.round(m.actualUnits)} kWh · ₹${m.actualBillObj.total} · ${formatDisplayDate(m.startStr)}</span>
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0">
-                            <button onclick="openMeterFormModal('${item.id}')" class="w-8 h-8 rounded-full liquid-lens text-slate-600 dark:text-slate-300 flex items-center justify-center">
+                            <button type="button" onclick="openMeterFormModal('${item.id}')" class="w-8 h-8 rounded-full liquid-lens text-slate-600 dark:text-slate-300 flex items-center justify-center">
                                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                             </button>
                             ${deleteBtn}
