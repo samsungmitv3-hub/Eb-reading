@@ -67,17 +67,6 @@
             touch-action: manipulation;
         }
 
-        /* Hide native disclosure triangle on iOS Safari */
-        details#meterDropdownDetails > summary {
-            list-style: none;
-        }
-        details#meterDropdownDetails > summary::-webkit-details-marker {
-            display: none;
-        }
-        details#meterDropdownDetails[open] #meterDropdownChevronBtn {
-            transform: rotate(180deg);
-        }
-
         /* Authentic Apple SF Pro Display Optical Tracking */
         .sf-display-hero {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
@@ -288,6 +277,25 @@
                 0 6px 18px -3px rgba(10, 132, 255, 0.48),
                 inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.42);
             border: 0.5px solid rgba(255, 255, 255, 0.28);
+        }
+
+        /* Standalone Floating Plus Action Circle */
+        .liquid-fab-plus {
+            background: linear-gradient(180deg, #1e90ff 0%, #007AFF 100%);
+            box-shadow:
+                0 14px 32px -4px rgba(0, 122, 255, 0.52),
+                0 4px 12px -2px rgba(0, 0, 0, 0.14),
+                inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.65);
+            border: 0.5px solid rgba(255, 255, 255, 0.45);
+        }
+
+        html.dark .liquid-fab-plus {
+            background: linear-gradient(180deg, #2196ff 0%, #0A84FF 100%);
+            box-shadow:
+                0 16px 36px -4px rgba(10, 132, 255, 0.58),
+                0 6px 16px -2px rgba(0, 0, 0, 0.75),
+                inset 0 1px 0.75px 0 rgba(255, 255, 255, 0.45);
+            border: 0.5px solid rgba(255, 255, 255, 0.32);
         }
 
         /* Sliding Liquid Glass Navbar Pill Indicator */
@@ -542,19 +550,12 @@
                     <span class="text-slate-500 dark:text-slate-400">Latest: <strong class="font-semibold text-slate-900 dark:text-white">0 kWh</strong></span>
                 </div>
 
-                <!-- Apple Capsule Action Buttons -->
-                <div class="grid grid-cols-5 gap-2.5">
-                    <button type="button" onclick="openReadingModal()"
-                        class="col-span-3 flex items-center justify-center gap-2 py-3 px-4 rounded-full liquid-capsule-active text-white font-semibold text-[14px] apple-tap">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                        <span>Log Reading</span>
-                    </button>
-                    <button type="button" onclick="openResetModal()"
-                        class="col-span-2 flex items-center justify-center gap-1.5 py-3 px-3 rounded-full bg-[#FF9500]/14 hover:bg-[#FF9500]/22 text-amber-800 dark:text-[#FF9F0A] border border-[#FF9500]/30 font-semibold text-[13px] apple-tap">
-                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                        <span>Unit Reset</span>
-                    </button>
-                </div>
+                <!-- Unit Reset Capsule Button (Log Reading removed; use floating + button) -->
+                <button type="button" onclick="openResetModal()"
+                    class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full bg-[#FF9500]/14 hover:bg-[#FF9500]/22 text-amber-800 dark:text-[#FF9F0A] border border-[#FF9500]/30 font-semibold text-[14px] apple-tap">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    <span>Unit Reset (28th Cycle)</span>
+                </button>
             </div>
 
             <!-- Usage Pace & 500-Unit Threshold Liquid Glass Card -->
@@ -846,33 +847,37 @@
 
     </main>
 
-    <!-- Floating Apple Liquid Glass Tab Bar with Sliding Active Pill -->
+    <!-- Floating Apple Liquid Glass Tab Bar + Separated Standalone Plus (+) Button -->
     <nav class="fixed inset-x-0 pb-safe-nav z-30 px-4 pointer-events-none">
-        <div
-            class="max-w-md mx-auto liquid-dock rounded-full p-1.5 flex items-center justify-between gap-1.5 pointer-events-auto">
-            <div id="navTabsTrack" class="relative flex-1 flex items-center">
-                <div id="navActivePill"
-                    class="absolute inset-y-0 left-0 rounded-full liquid-capsule-active pointer-events-none"
-                    style="width: 33.333%; transform: translateX(0px);"></div>
-                <button type="button" onclick="switchTab('dashboard')" id="nav-dashboard"
-                    class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-semibold text-white">
-                    <i data-lucide="home" class="w-4 h-4"></i>
-                    <span>Home</span>
-                </button>
-                <button type="button" onclick="switchTab('history')" id="nav-history"
-                    class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300">
-                    <i data-lucide="history" class="w-4 h-4"></i>
-                    <span>History</span>
-                </button>
-                <button type="button" onclick="switchTab('slabs')" id="nav-slabs"
-                    class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300">
-                    <i data-lucide="percent" class="w-4 h-4"></i>
-                    <span>Slabs</span>
-                </button>
+        <div class="max-w-md mx-auto flex items-center justify-between gap-2.5">
+            <!-- Navigation Pill Capsule -->
+            <div class="flex-1 liquid-dock rounded-full p-1.5 pointer-events-auto">
+                <div id="navTabsTrack" class="relative flex items-center">
+                    <div id="navActivePill"
+                        class="absolute inset-y-0 left-0 rounded-full liquid-capsule-active pointer-events-none"
+                        style="width: 33.333%; transform: translateX(0px);"></div>
+                    <button type="button" onclick="switchTab('dashboard')" id="nav-dashboard"
+                        class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-semibold text-white">
+                        <i data-lucide="home" class="w-4 h-4"></i>
+                        <span>Home</span>
+                    </button>
+                    <button type="button" onclick="switchTab('history')" id="nav-history"
+                        class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300">
+                        <i data-lucide="history" class="w-4 h-4"></i>
+                        <span>History</span>
+                    </button>
+                    <button type="button" onclick="switchTab('slabs')" id="nav-slabs"
+                        class="nav-btn relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300">
+                        <i data-lucide="percent" class="w-4 h-4"></i>
+                        <span>Slabs</span>
+                    </button>
+                </div>
             </div>
-            <button type="button" onclick="openReadingModal()" title="Quick Log Reading"
-                class="w-10 h-10 rounded-full liquid-capsule-active text-white flex items-center justify-center apple-tap shrink-0">
-                <i data-lucide="plus" class="w-5 h-5"></i>
+
+            <!-- Separated Floating Plus (+) Action Circle -->
+            <button type="button" onclick="openReadingModal()" title="Log Meter Reading"
+                class="w-12 h-12 rounded-full liquid-fab-plus text-white flex items-center justify-center apple-tap pointer-events-auto shrink-0">
+                <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
     </nav>
