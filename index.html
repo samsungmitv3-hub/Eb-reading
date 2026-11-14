@@ -61,6 +61,17 @@
             font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
         }
 
+        /* Hide native disclosure triangle on iOS Safari */
+        details#meterDropdownDetails > summary {
+            list-style: none;
+        }
+        details#meterDropdownDetails > summary::-webkit-details-marker {
+            display: none;
+        }
+        details#meterDropdownDetails[open] #meterDropdownChevronBtn {
+            transform: rotate(180deg);
+        }
+
         /* Authentic Apple SF Pro Display Optical Tracking */
         .sf-display-hero {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
@@ -348,7 +359,7 @@
 </head>
 
 <body
-    class="liquid-wallpaper text-slate-900 dark:text-white antialiased selection:bg-[#007AFF]/20 selection:text-[#007AFF] pb-28 min-h-screen transition-colors duration-300 relative overflow-x-hidden">
+    class="liquid-wallpaper text-slate-900 dark:text-white antialiased selection:bg-[#007AFF]/20 selection:text-[#007AFF] pb-28 min-h-screen transition-colors duration-300 relative">
 
     <!-- Bottom Floating Glass Toast Container -->
     <div id="toastContainer"
@@ -428,11 +439,11 @@
                 </div>
             </div>
 
-            <!-- Active EB Meter Liquid Glass Pill Trigger (iOS Safe Touch & Click) -->
-            <div class="relative z-30" id="meterDropdownWrapper">
-                <div onclick="handleMeterPillTap(event)"
+            <!-- Native iOS Disclosure Dropdown for EB Meters -->
+            <details id="meterDropdownDetails" class="group">
+                <summary
                     class="px-3.5 py-2.5 rounded-[22px] liquid-capsule-active text-white flex items-center justify-between gap-2 cursor-pointer select-none">
-                    <div class="min-w-0 flex-1 pointer-events-none">
+                    <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-1.5 flex-nowrap">
                             <span id="dropdownActiveName" class="sf-display-title text-[14px] font-semibold truncate">Main Meter</span>
                             <span id="dropdownActiveSC"
@@ -447,24 +458,24 @@
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
                         <span id="dropdownActiveUnits"
-                            class="text-[12px] font-semibold px-2.5 py-0.5 rounded-full bg-white/22 text-white tabular-nums pointer-events-none">0u</span>
-                        <button type="button" data-edit-active="true" onclick="event.stopPropagation(); openActiveMeterForm()"
-                            title="Edit Meter Settings"
+                            class="text-[12px] font-semibold px-2.5 py-0.5 rounded-full bg-white/22 text-white tabular-nums">0u</span>
+                        <span onclick="event.preventDefault(); event.stopPropagation(); openActiveMeterForm();"
+                            role="button" tabindex="0" title="Edit Meter Settings"
                             class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center apple-tap">
-                            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 pointer-events-none"></i>
-                        </button>
-                        <div id="meterDropdownChevronBtn"
-                            class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center transition-transform duration-200 pointer-events-none">
+                            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+                        </span>
+                        <span id="meterDropdownChevronBtn"
+                            class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center transition-transform duration-200">
                             <i data-lucide="chevron-down" class="w-4 h-4 text-white"></i>
-                        </div>
+                        </span>
                     </div>
-                </div>
+                </summary>
 
-                <!-- Liquid Glass Dropdown Menu List of All EB Meters -->
+                <!-- Expanded Liquid Glass List of All EB Meters -->
                 <div id="meterDropdownMenu"
-                    class="hidden mt-2 rounded-[22px] liquid-modal shadow-2xl p-1.5 space-y-1 max-h-64 overflow-y-auto relative z-40">
+                    class="mt-2 rounded-[22px] liquid-lens p-1.5 space-y-1 max-h-64 overflow-y-auto">
                 </div>
-            </div>
+            </details>
 
             <!-- Selected Meters Combined Total Glass Strip -->
             <div id="selectedMetersTotalBar"
@@ -474,7 +485,7 @@
                         class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 block">Selected
                         Total (1 Meter)</span>
                     <span id="selectedMetersNamesHint"
-                        class="text-[11px] text-slate-500 dark:text-slate-400 truncate block">Open dropdown to combine
+                        class="text-[11px] text-slate-500 dark:text-slate-400 truncate block">Tap above to combine
                         meters</span>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
@@ -1407,12 +1418,12 @@
         }
 
         document.addEventListener('click', (e) => {
-            if (e.target.closest('button, label[for], a')) {
+            if (e.target.closest('button, label[for], a, summary')) {
                 triggerHaptic('light');
             }
-            const wrapper = document.getElementById('meterDropdownWrapper');
-            if (isMeterDropdownOpen && wrapper && !wrapper.contains(e.target)) {
-                setMeterDropdownOpen(false);
+            const detailsEl = document.getElementById('meterDropdownDetails');
+            if (detailsEl && detailsEl.open && !detailsEl.contains(e.target)) {
+                detailsEl.open = false;
             }
         });
 
@@ -1714,31 +1725,13 @@
             };
         }
 
-        // ==================== EB METER DROPDOWN CONTROLS (iOS SAFE) ====================
+        // ==================== EB METER DROPDOWN CONTROLS (NATIVE iOS DETAILS) ====================
         function setMeterDropdownOpen(open) {
             isMeterDropdownOpen = Boolean(open);
-            const menu = document.getElementById('meterDropdownMenu');
-            const chevronBtn = document.getElementById('meterDropdownChevronBtn');
-            if (menu) {
-                menu.classList.toggle('hidden', !isMeterDropdownOpen);
+            const detailsEl = document.getElementById('meterDropdownDetails');
+            if (detailsEl) {
+                detailsEl.open = isMeterDropdownOpen;
             }
-            if (chevronBtn) {
-                chevronBtn.style.transform = isMeterDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)';
-            }
-        }
-
-        function handleMeterPillTap(event) {
-            if (event) {
-                event.stopPropagation();
-                if (event.target.closest('[data-edit-active="true"]')) return;
-            }
-            setMeterDropdownOpen(!isMeterDropdownOpen);
-            triggerHaptic('light');
-        }
-
-        function toggleMeterDropdown() {
-            setMeterDropdownOpen(!isMeterDropdownOpen);
-            triggerHaptic('light');
         }
 
         function openActiveMeterForm() {
@@ -1800,7 +1793,7 @@
             }
             if (namesHintEl) {
                 namesHintEl.textContent = count === 0
-                    ? 'Open dropdown to sum units & bills'
+                    ? 'Tap above to combine meters'
                     : selectedMeters.map(m => m.name).join(' + ');
             }
             if (unitsEl) {
@@ -1861,7 +1854,7 @@
                         ? 'bg-[#007AFF]/14 text-slate-900 dark:text-white border-[#007AFF]/30'
                         : 'bg-transparent hover:bg-white/60 dark:hover:bg-white/10 text-slate-900 dark:text-white border-transparent';
                     const consumerBadgeHTML = item.serviceNo
-                        ? `<span class="text-[10px] tracking-wide px-2 py-0.2 rounded-full shrink-0 bg-[#FFD60A]/30 text-amber-950 dark:text-[#FFD60A] border border-amber-400/40 font-bold">SC ${escapeHTML(item.serviceNo)}</span>`
+                        ? `<span class="text-[10px] tracking-wide px-1.5 py-0.2 rounded-full shrink-0 bg-[#FFD60A]/30 text-amber-950 dark:text-[#FFD60A] border border-amber-400/40 font-bold">SC ${escapeHTML(item.serviceNo)}</span>`
                         : '';
                     const checkBtnClasses = isChecked
                         ? 'bg-[#007AFF] text-white border-[#007AFF]'
@@ -1873,10 +1866,10 @@
                                 <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>
                             </button>
                             <button type="button" onclick="event.stopPropagation(); selectMeter('${item.id}'); setMeterDropdownOpen(false);" class="min-w-0 flex-1 text-left cursor-pointer focus:outline-none">
-                                <div class="flex items-center gap-1.5 flex-wrap">
+                                <div class="flex items-center gap-1.5 flex-nowrap">
                                     <span class="text-xs font-semibold truncate">${escapeHTML(item.name)}</span>
                                     ${consumerBadgeHTML}
-                                    <span class="text-[9px] font-semibold px-2 py-0.2 rounded-full shrink-0 bg-slate-500/15 text-slate-700 dark:text-slate-300">${tariffShort}</span>
+                                    <span class="text-[9px] font-semibold px-1.5 py-0.2 rounded-full shrink-0 bg-slate-500/15 text-slate-700 dark:text-slate-300">${tariffShort}</span>
                                 </div>
                                 <p class="text-[10px] font-normal text-slate-500 dark:text-slate-400 truncate leading-tight mt-0.5 tabular-nums">
                                     ${formatDisplayDate(itemMetrics.startStr)} → ${formatDisplayDate(itemMetrics.endStr)} · ₹${itemMetrics.actualBillObj.total.toLocaleString('en-IN')}
