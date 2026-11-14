@@ -408,7 +408,7 @@
     <main class="max-w-lg mx-auto px-4 pt-safe-main space-y-3.5">
 
         <!-- Liquid Glass EB Meter Selector & Multi-Select Combined Total Card (Hidden on Slabs tab) -->
-        <div id="yourMetersCard" class="liquid-glass rounded-[28px] p-3.5 space-y-2.5 relative">
+        <div id="yourMetersCard" class="liquid-glass rounded-[28px] p-3.5 space-y-2.5 relative z-20">
             <div class="flex items-center justify-between gap-2 px-1">
                 <div class="flex items-center gap-1.5">
                     <i data-lucide="gauge" class="w-3.5 h-3.5 text-[#007AFF] dark:text-[#409CFF]"></i>
@@ -428,44 +428,41 @@
                 </div>
             </div>
 
-            <!-- Active EB Meter Liquid Glass Pill Trigger -->
-            <div class="relative" id="meterDropdownWrapper">
-                <div class="px-3.5 py-2.5 rounded-[22px] liquid-capsule-active text-white flex items-center justify-between gap-2">
-                    <button type="button" id="meterDropdownTrigger" onclick="toggleMeterDropdown()"
-                        class="min-w-0 flex-1 text-left flex items-center justify-between gap-2 cursor-pointer focus:outline-none">
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-1.5 flex-wrap">
-                                <span id="dropdownActiveName" class="sf-display-title text-[14px] font-semibold truncate">Main Meter</span>
-                                <span id="dropdownActiveSC"
-                                    class="hidden text-[10px] tracking-wide px-2 py-0.2 rounded-full bg-[#FFD60A] text-slate-950 font-bold shrink-0"></span>
-                                <span id="dropdownActiveTariff"
-                                    class="text-[10px] font-semibold px-2 py-0.2 rounded-full bg-white/22 backdrop-blur-md text-white shrink-0">LT-IA</span>
-                            </div>
-                            <p id="dropdownActiveSub"
-                                class="text-[11px] font-normal text-white/85 truncate leading-tight mt-0.5 tabular-nums">
-                                28 Oct → 27 Dec (60d) · ₹0
-                            </p>
+            <!-- Active EB Meter Liquid Glass Pill Trigger (iOS Safe Touch & Click) -->
+            <div class="relative z-30" id="meterDropdownWrapper">
+                <div onclick="handleMeterPillTap(event)"
+                    class="px-3.5 py-2.5 rounded-[22px] liquid-capsule-active text-white flex items-center justify-between gap-2 cursor-pointer select-none">
+                    <div class="min-w-0 flex-1 pointer-events-none">
+                        <div class="flex items-center gap-1.5 flex-nowrap">
+                            <span id="dropdownActiveName" class="sf-display-title text-[14px] font-semibold truncate">Main Meter</span>
+                            <span id="dropdownActiveSC"
+                                class="hidden text-[10px] tracking-wide px-1.5 py-0.2 rounded-full bg-[#FFD60A] text-slate-950 font-bold shrink-0"></span>
+                            <span id="dropdownActiveTariff"
+                                class="text-[9px] font-semibold px-1.5 py-0.2 rounded-full bg-white/22 text-white shrink-0">LT-IA</span>
                         </div>
-                        <span id="dropdownActiveUnits"
-                            class="text-[12px] font-semibold px-2.5 py-0.5 rounded-full bg-white/22 backdrop-blur-md text-white tabular-nums shrink-0">0u</span>
-                    </button>
+                        <p id="dropdownActiveSub"
+                            class="text-[11px] font-normal text-white/85 truncate leading-tight mt-0.5 tabular-nums">
+                            28 Oct → 27 Dec (60d) · ₹0
+                        </p>
+                    </div>
                     <div class="flex items-center gap-1.5 shrink-0">
-                        <button type="button" onclick="openActiveMeterForm()"
+                        <span id="dropdownActiveUnits"
+                            class="text-[12px] font-semibold px-2.5 py-0.5 rounded-full bg-white/22 text-white tabular-nums pointer-events-none">0u</span>
+                        <button type="button" data-edit-active="true" onclick="event.stopPropagation(); openActiveMeterForm()"
                             title="Edit Meter Settings"
                             class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center apple-tap">
-                            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+                            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 pointer-events-none"></i>
                         </button>
-                        <button type="button" id="meterDropdownChevronBtn" onclick="toggleMeterDropdown()"
-                            title="Toggle EB Meters List"
-                            class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-transform duration-200">
+                        <div id="meterDropdownChevronBtn"
+                            class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center transition-transform duration-200 pointer-events-none">
                             <i data-lucide="chevron-down" class="w-4 h-4 text-white"></i>
-                        </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Liquid Glass Dropdown Menu List of All EB Meters -->
                 <div id="meterDropdownMenu"
-                    class="hidden mt-2 rounded-[22px] liquid-modal shadow-2xl p-1.5 space-y-1 max-h-64 overflow-y-auto">
+                    class="hidden mt-2 rounded-[22px] liquid-modal shadow-2xl p-1.5 space-y-1 max-h-64 overflow-y-auto relative z-40">
                 </div>
             </div>
 
@@ -1717,7 +1714,7 @@
             };
         }
 
-        // ==================== EB METER DROPDOWN CONTROLS ====================
+        // ==================== EB METER DROPDOWN CONTROLS (iOS SAFE) ====================
         function setMeterDropdownOpen(open) {
             isMeterDropdownOpen = Boolean(open);
             const menu = document.getElementById('meterDropdownMenu');
@@ -1728,6 +1725,15 @@
             if (chevronBtn) {
                 chevronBtn.style.transform = isMeterDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)';
             }
+        }
+
+        function handleMeterPillTap(event) {
+            if (event) {
+                event.stopPropagation();
+                if (event.target.closest('[data-edit-active="true"]')) return;
+            }
+            setMeterDropdownOpen(!isMeterDropdownOpen);
+            triggerHaptic('light');
         }
 
         function toggleMeterDropdown() {
@@ -1863,10 +1869,10 @@
 
                     return `
                         <div class="px-2.5 py-2 rounded-2xl border transition flex items-center justify-between gap-2 ${rowClasses}">
-                            <button type="button" onclick="toggleMeterSelection('${item.id}')" title="Include in Combined Total" class="w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition active:scale-90 ${checkBtnClasses}">
+                            <button type="button" onclick="event.stopPropagation(); toggleMeterSelection('${item.id}')" title="Include in Combined Total" class="w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition active:scale-90 ${checkBtnClasses}">
                                 <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>
                             </button>
-                            <button type="button" onclick="selectMeter('${item.id}'); setMeterDropdownOpen(false);" class="min-w-0 flex-1 text-left cursor-pointer focus:outline-none">
+                            <button type="button" onclick="event.stopPropagation(); selectMeter('${item.id}'); setMeterDropdownOpen(false);" class="min-w-0 flex-1 text-left cursor-pointer focus:outline-none">
                                 <div class="flex items-center gap-1.5 flex-wrap">
                                     <span class="text-xs font-semibold truncate">${escapeHTML(item.name)}</span>
                                     ${consumerBadgeHTML}
@@ -1878,7 +1884,7 @@
                             </button>
                             <div class="flex items-center gap-1.5 shrink-0">
                                 <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full liquid-lens text-slate-700 dark:text-slate-200 tabular-nums">${Math.round(itemMetrics.actualUnits)}u</span>
-                                <button type="button" onclick="setMeterDropdownOpen(false); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="w-7 h-7 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-600 dark:text-slate-300 flex items-center justify-center apple-tap">
+                                <button type="button" onclick="event.stopPropagation(); setMeterDropdownOpen(false); openMeterFormModal('${item.id}')" title="Edit Meter Settings" class="w-7 h-7 rounded-full liquid-lens hover:bg-white/80 dark:hover:bg-white/15 text-slate-600 dark:text-slate-300 flex items-center justify-center apple-tap">
                                     <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
